@@ -1,4 +1,4 @@
-package Entities;
+package entities;
 
 /**
  * Holds data about a BodyDesignOption
