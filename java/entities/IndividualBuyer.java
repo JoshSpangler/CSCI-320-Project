@@ -1,4 +1,10 @@
 package entities;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Holds data about an IndividualBuyer

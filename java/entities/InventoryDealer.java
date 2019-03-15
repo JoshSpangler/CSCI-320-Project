@@ -8,31 +8,34 @@ import java.util.ArrayList;
 import java.sql.Statement;
 
 /**
- * Holds data about a ColorOption
+ * Holds data about reduction-resulting class InventoryDealer
  */
-public class ColorOption {
+public class InventoryDealer {
 
   //
   // Attributes
   //
-  private String color;
+  private int dealerID, inventoryID;
 
   /**
-   * ColorOption constructor
-   * @param data contains relevant attributes for ColorOption class
+   * InventoryDealer constructor
+   * @param data contains relevant attributes for InventoryDealer class
    */
-  public ColorOption(String[] data) {
-    this.color = data[0];
+  public InventoryDealer(String[] data) {
+    this.dealerID = Integer.parseInt(data[0]);
+    this.inventoryID = Integer.parseInt(data[1]);
   }
 
   /**
-   * Create the ColorOption table with the given attributes
+   * Create the InventoryDealer table with the given attributes
    * @param conn the database connection to work with
    */
   public static void createTable(Connection conn) {
     try {
-      String query = "CREATE TABLE IF NOT EXISTS color_option("
-          + "COLOR VARCHAR(255) PRIMARY KEY,"
+      String query = "CREATE TABLE IF NOT EXISTS inventory_dealer("
+          + "DEALER_ID INT,"
+          + "INVENTORY_ID INT,"
+          + "PRIMARY KEY (DEALER_ID, INVENTORY_ID),"
           + ");";
 
       /**
@@ -47,13 +50,13 @@ public class ColorOption {
   }
 
   /**
-   * Populates a table for the ColorOption class
+   * Populates a table for the InventoryDealer class
    * @param conn database connection to work with
    * @param fileName name of CSV file
    * @throws SQLException
    */
   public static void populateTableFromCSV(Connection conn, String fileName) throws SQLException {
-    ArrayList<ColorOption> arr = new ArrayList<>();
+    ArrayList<InventoryDealer> arr = new ArrayList<>();
 
     try {
       BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -61,7 +64,7 @@ public class ColorOption {
       String[] data;
       while((line = br.readLine()) != null) {
         data = line.split(",");
-        arr.add(new ColorOption(data));
+        arr.add(new InventoryDealer(data));
       }
       br.close();
     }
@@ -78,10 +81,10 @@ public class ColorOption {
   }
 
   /**
-   * Creates SQL statement to do a bulk add of ColorOption entities
+   * Creates SQL statement to do a bulk add of InventoryDealer entities
    * @param arr list of entities
    */
-  private static String createInsertEntitiesSQL(ArrayList<ColorOption> arr) {
+  private static String createInsertEntitiesSQL(ArrayList<InventoryDealer> arr) {
     StringBuilder sb = new StringBuilder();
 
     /**
@@ -90,11 +93,11 @@ public class ColorOption {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO color_option (COLOR) VALUES");
+    sb.append("INSERT INTO inventory_dealer (DEALER_ID, INVENTORY_ID) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
-      ColorOption e = arr.get(i);
-      sb.append(String.format("(\'%s\')", e.getColor()));
+      InventoryDealer e = arr.get(i);
+      sb.append(String.format("(%d, %d)", e.getDealerID(), e.getInventoryID()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -107,7 +110,11 @@ public class ColorOption {
     return sb.toString();
   }
 
-  public String getColor() {
-    return color;
+  public int getDealerID() {
+    return dealerID;
+  }
+
+  public int getInventoryID() {
+    return inventoryID;
   }
 }
