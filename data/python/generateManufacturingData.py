@@ -1,5 +1,5 @@
-import GenerateCustomerData as cd
-import GenerateBusiness as b
+import generateCustomerData as cd
+import generateBusiness as b
 
 def generate(streetfile, countyfile, stateFile, businessFile, str,number):
     names=b.generate(businessFile, number)

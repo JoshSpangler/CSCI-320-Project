@@ -1,8 +1,8 @@
 import random as r
 import collections as c
 import sys
-import GenerateData as d
-import Options as o
+import generateData as d
+import options as o
 
 Car=c.namedtuple("Car", ("VIN","Brand","Series","Model","ModelYear","Design","Engine", "DriveTrain","Wheel","Upholstry","Color", "BaseCost"))
 

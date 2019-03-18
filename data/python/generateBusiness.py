@@ -28,7 +28,7 @@ def generate(Filename, Number):
 
 def main():
     if(len(sys.argv)!=3):
-        print("Usage: GenerateBusiness.py -filename -number")
+        print("Usage: generateBusiness.py -filename -number")
     else:
         businesses=list()
         for x in range((int)(sys.argv[2])):

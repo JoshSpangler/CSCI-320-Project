@@ -1,5 +1,5 @@
 import random as r
-import GenerateCustomerData as gcd
+import generateCustomerData as gcd
 import sys
 
 def getName(names):
@@ -37,7 +37,7 @@ def generate(Person,BoysNamesFile, GirlsNamesFile, LastNamesFile, StreetFile, Co
 
 def main():
     if(len(sys.argv)!=5):
-        print("Usage: GeneratePeople.py -boysFirstnameFile -girlsFirstNames -lastnameFile -number")
+        print("Usage: generatePeople.py -boysFirstnameFile -girlsFirstNames -lastnameFile -number")
     else:
         boysfirstnames, girlsfirstnames, lastname=getFileData(sys.argv[1],sys.argv[2],sys.argv[3])
         fullnames=list()

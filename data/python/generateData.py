@@ -1,12 +1,12 @@
 import sys
-import GenerateCar as c
-import GeneratePeople as p
-import GenerateBusiness as b
-import GenerateManufacturingData as m
-import GenerateCustomerData as cd
+import generateCar as c
+import generatePeople as p
+import generateBusiness as b
+import generateManufacturingData as m
+import generateCustomerData as cd
 import random as r
-import GenerateRelations as gr
-import Options as o
+import generateRelations as gr
+import options as o
 
 def substituteOptions(dataset):
     wheels=list()
