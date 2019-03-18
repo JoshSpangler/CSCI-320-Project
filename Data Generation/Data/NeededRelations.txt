@@ -1,0 +1,10 @@
+Needs:
+Transmission
+Dealer ID
+optional upgrades
+
+brand=Brand
+model=Brand Model Series Year Design Cost
+vehicles=VIN Model DriveTrain Engine Wheels Transmission Color Upholstry DealerID
+optional upgrades=upgrade cost
+vehicle upgrade=VIN upgrade
