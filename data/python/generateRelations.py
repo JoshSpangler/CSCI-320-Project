@@ -12,7 +12,7 @@ def getData(allData):
             elif 'Company' in filename and 'BusinessSize' not in data:
                 continue
             split_data = data.split(',')
-            string=''
+            string = ''
             for query in parsed_query:
                 for data_element in range(len(split_data)):
                     if query + '=' in split_data[data_element]:
@@ -26,6 +26,6 @@ def getData(allData):
             if 'OptionalUpgrade' not in parsed_query and string[:-1] not in alreadyDone:
                 if 'InventoryID' not in parsed_query or 'NULL' not in string:
                     if 'SaleDay' not in parsed_query or 'NULL' not in string:
-                        f.write(string[:-1]+'\n')
+                        f.write(string[:-1] + '\n')
                         alreadyDone.append(string[:-1])
         f.close()

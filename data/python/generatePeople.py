@@ -6,25 +6,25 @@ def getName(names):
     return names[r.randint(0, len(names)-1)]
 
 def getFileData(fnf, mnf, lnf):
-    boysnames = []
-    girlsnames = []
-    lastnames = []
+    maleNames = []
+    femaleNames = []
+    lastNames = []
     with open(fnf) as f:
         for name in f:
-            boysnames.append(name.strip().lower())
-            boysnames[len(boysnames) - 1] = \
-                boysnames[len(boysnames)-1][0].upper()+boysnames[len(boysnames)-1][1:]
+            maleNames.append(name.strip().lower())
+            maleNames[len(maleNames) - 1] = \
+                maleNames[len(maleNames)-1][0].upper()+maleNames[len(maleNames)-1][1:]
     with open(mnf) as f:
         for name in f:
-            girlsnames.append(name.strip().lower())
-            girlsnames[len(girlsnames) - 1] = \
-                girlsnames[len(girlsnames) - 1][0].upper() + girlsnames[len(girlsnames) - 1][1:]
+            femaleNames.append(name.strip().lower())
+            femaleNames[len(femaleNames) - 1] = \
+                femaleNames[len(femaleNames) - 1][0].upper() + femaleNames[len(femaleNames) - 1][1:]
     with open(lnf) as f:
         for name in f:
-            lastnames.append(name.strip().lower())
-            lastnames[len(lastnames) - 1] = \
-                lastnames[len(lastnames) - 1][0].upper() + lastnames[len(lastnames) - 1][1:]
-    return boysnames, girlsnames, lastnames
+            lastNames.append(name.strip().lower())
+            lastNames[len(lastNames) - 1] = \
+                lastNames[len(lastNames) - 1][0].upper() + lastNames[len(lastNames) - 1][1:]
+    return maleNames, femaleNames, lastNames
 
 def generate(person, maleNameFile, femaleNameFile, lastNameFile, streetFile, countyFile, stateFile, numEntries):
     maleNames, femaleNames, lastNames = getFileData(maleNameFile, femaleNameFile, lastNameFile)
