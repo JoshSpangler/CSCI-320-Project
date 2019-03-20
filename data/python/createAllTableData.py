@@ -136,7 +136,7 @@ def parseColorData(data):
     textColorDict = {}
 
     colorOpts = []
-    modelColorOpts = []
+    modelColorOpts = set()
     colorDict = {model: [] for colors, model in data}
 
     for colors, model in data:
@@ -148,17 +148,17 @@ def parseColorData(data):
                 colorOpts.append(colorOpt)
                 textColorDict[color] = colorOpt
 
-            modelColorOpts.append(ModelColorOpt(model, color))
+            modelColorOpts.add(ModelColorOpt(model, color))
             colorDict[model].append(textColorDict[color])
 
-    return colorOpts, modelColorOpts, colorDict
+    return colorOpts, list(modelColorOpts), colorDict
 
 def parseDesignData(data):
     uniqueDesigns = set()
     textDesignDict = {}
 
     designOpts = []
-    modelDesignOpts = []
+    modelDesignOpts = set()
     designDict = {model: [] for designs, model in data}
 
     for designs, model in data:
@@ -170,17 +170,17 @@ def parseDesignData(data):
                 designOpts.append(designOpt)
                 textDesignDict[design] = designOpt
 
-            modelDesignOpts.append(ModelDesignOpt(model, design))
+            modelDesignOpts.add(ModelDesignOpt(model, design))
             designDict[model].append(textDesignDict[design])
 
-    return designOpts, modelDesignOpts, designDict
+    return designOpts, list(modelDesignOpts), designDict
 
 def parseUpholsteryData(data):
     uniqueUpholsteries = set()
     textUpholsteryDict = {}
 
     upholsteryOpts = []
-    modelUpholsteryOpts = []
+    modelUpholsteryOpts = set()
     upholsteryDict = {model: [] for colors, model in data}
 
     for upholsteries, model in data:
@@ -192,10 +192,10 @@ def parseUpholsteryData(data):
                 upholsteryOpts.append(upholsteryOpt)
                 textUpholsteryDict[upholstery] = upholsteryOpt
 
-            modelUpholsteryOpts.append(ModelUpholsteryOpt(model, upholstery))
+            modelUpholsteryOpts.add(ModelUpholsteryOpt(model, upholstery))
             upholsteryDict[model].append(textUpholsteryDict[upholstery])
 
-    return upholsteryOpts, modelUpholsteryOpts, upholsteryDict
+    return upholsteryOpts, list(modelUpholsteryOpts), upholsteryDict
 
 def parseUpgradeData(data):
     uniqueUpgrades = set()
