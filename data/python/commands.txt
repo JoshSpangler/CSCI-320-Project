@@ -1,0 +1,73 @@
+y
+Brand
+Brand
+y
+Model Series ModelYear DriveTrain Transmission BaseCost Brand EngineID
+Model
+y
+VIN Model DriveTrain EngineName WheelID Transmission Color Upholstry DealerID
+Vehicle
+y
+Design
+Body_Design_option
+y
+Model Design
+Model_Body_Design_Option
+y
+Color
+Color_Option
+y
+Model Color
+Model_Color_Option
+y
+Upholstry
+Upholstry_Option
+y
+Model Upholstry
+Model_Upholstry_Option
+y
+WheelID WheelDiameter WheelName WheelStyle WheelRunFlat
+Wheels_Option
+y
+Model WheelID
+Model_Wheels_Option
+y
+VIN Color WheelID Upholstry Model ManufacturerID InventoryID SaleID
+Vehicle
+y
+VIN OptionalUpgrade OptionalUpgradeCost
+Optional_Upgrades
+y
+InventoryID
+Inventory
+y
+DealerID DealerName DealerStreet DealerCounty DealerZip
+Dealer
+y
+DealerID InventoryID
+Inventory_Dealer
+y
+SaleID TotalCost SaleDay SaleMonth SaleYear DealerID CustomerID
+Sale
+y
+CustomerID CustomerName CustomerStreet CustomerCounty CustomerState CustomerZip
+Customer
+y
+CustomerID CustomerPhoneNumber
+Customer_Phone
+y
+ManufacturerID ManufacturerName ManufacturerStreet ManufacturerCounty ManufacturerState ManufacturerZip
+Manufacturer
+y
+SupplierID SupplierName SupplierStreet SupplierCounty SupplierState SupplierZip
+Supplier
+y
+ManufacturerID SupplierID
+Manufacturer_Supplier
+y
+CustomerID CustomerName CustomerStreet CustomerCity CustomerState CustomerZip CustomerGender CustomerIncome
+Individual_Buyer
+y
+CustomerID CustomerName CustomerStreet CustomerCity CustomerState CustomerZip BusinessSize
+Company
+n
