@@ -17,8 +17,7 @@ def setupDict():
         tables[ttype] = []
     return tables
 
-def createEngineData(engineData):
-    WITHEM = ' with integrated electric motor'
+def parseEngineData(data):
     ENGINE = ' engine'
     LITER = '-liter '
     FOUR_CYL = ' 4-cylinder'
@@ -26,58 +25,219 @@ def createEngineData(engineData):
     EIGHT_CYL = 'V-8'
     TWELVE_CYL = 'V-12'
 
+    uniqueEngines = {}
+
     engines = []
+    pairs = {}
 
     idgen = IDGenerator(3)
-    for engine in engineData:
-        engineID = idgen.getNewID()
-        engineName = ''
-        if engine.endswith(WITHEM):
-            engineName += WITHEM
-            engine.replace(WITHEM, '')
+    for engine, model in data:
+        # If we already processed, assign that id to the model and move on
+        if engine in uniqueEngines:
+            pairs[model] = uniqueEngines[engine]
+            continue
 
-        engine.replace(ENGINE, '')
-        if engine.endswith(FOUR_CYL):
-            engine.replace(FOUR_CYL, '')
+        # Otherwise start the process of unpacking the csv
+
+        # Start with generating a new id and add that to appropriate dictionaries
+        engineID = idgen.getNewID()
+        uniqueEngines[engine] = engineID
+        pairs[model] = engineID
+
+        # Get the engine cylinders
+        engine = engine.replace(ENGINE, '')
+        if engine.count(FOUR_CYL) > 0:
+            engine = engine.replace(FOUR_CYL, '')
             engineCylinders = 4
-        elif engine.endswith(SIX_CYL):
-            engine.replace(SIX_CYL, '')
+        elif engine.count(SIX_CYL) > 0:
+            engine = engine.replace(SIX_CYL, '')
             engineCylinders = 6
-        elif engine.endswith(EIGHT_CYL):
-            engine.replace(EIGHT_CYL, '')
+        elif engine.count(EIGHT_CYL) > 0:
+            engine = engine.replace(EIGHT_CYL, '')
             engineCylinders = 8
-        elif engine.endswith(TWELVE_CYL):
-            engine.replace(TWELVE_CYL, '')
+        elif engine.count(TWELVE_CYL) > 0:
+            engine = engine.replace(TWELVE_CYL, '')
             engineCylinders = 12
         else:
             engineCylinders = 0
 
+        # Get engine volume
         engineLiters = float(engine[0:3])
-        engine.replace(LITER, '')
+        engine = engine.replace(LITER, '')
         engine = engine[3:]
 
-        engineName = engine + engineName
+        # Finally the engine name is all that remains
+        engineName = engine.strip()
 
         engines.append(EngineOpt(engineID, engineName, engineLiters, engineCylinders))
 
-    return engines
+    return engines, pairs
+
+def parseWheelData(data):
+    uniqueWheels = {}
+
+    wheelOpts = []
+    modelWheelOpts = []
+
+    idgen = IDGenerator(3)
+    for wheels, model in data:
+        # Process the wheels data to separate into unique wheels
+        wheels = wheels.strip().split('/')
+        wheels = [wheels[i] + '/' + wheels[i+1] for i in range(0, len(wheels), 2)]
+
+        for wheel in wheels:
+            # If we already processed, assign that id to the model and move on
+            if wheel in uniqueWheels:
+                modelWheelOpts.append(ModelWheelOpt(model, uniqueWheels[wheel]))
+                continue
+
+            # Otherwise start the process of unpacking the csv
+
+            # Start with generating a new id and add that to appropriate dictionaries
+            wheelsID = idgen.getNewID()
+            uniqueWheels[wheel] = wheelsID
+            modelWheelOpts.append(ModelWheelOpt(model, wheelsID))
+
+            wheel = wheel.replace('\"', '')
+            firstHalf, secondHalf = wheel.strip().split('/')
+
+            diameter = int(firstHalf[0:2])
+            wheelName = firstHalf[2:].replace('wheels', '').strip()
+
+            stylePart, runFlatPart = secondHalf.split('with')
+            tireStyle = stylePart.replace('style', '').strip()
+            runFlat = runFlatPart.replace('tires', '').strip()
+
+            wheelOpts.append(WheelOpt(wheelsID, diameter, wheelName, tireStyle, runFlat))
+
+    return wheelOpts, modelWheelOpts
+
+def parseColorData(data):
+    uniqueColors = set()
+
+    colorOpts = []
+    modelColorOpts = []
+
+    for colors, model in data:
+        for color in colors.split('/'):
+            color = color.strip()
+            if color not in uniqueColors:
+                uniqueColors.add(color)
+                colorOpts.append(ColorOpt(color))
+
+            modelColorOpts.append(ModelColorOpt(model, color))
+
+    return colorOpts, modelColorOpts
+
+def parseDesignData(data):
+    uniqueDesigns = set()
+
+    designOpts = []
+    modelDesignOpts = []
+
+    for designs, model in data:
+        for design in designs.split('/'):
+            design = design.strip()
+            if design not in uniqueDesigns:
+                uniqueDesigns.add(design)
+                designOpts.append(BodyDesignOpt(design))
+
+            modelDesignOpts.append(ModelDesignOpt(model, design))
+
+    return designOpts, modelDesignOpts
+
+def parseUpholsteryData(data):
+    uniqueUpholsteries = set()
+
+    upholsteryOpts = []
+    modelUpholsteryOpts = []
+
+    for upholsteries, model in data:
+        for upholstery in upholsteries.split('/'):
+            upholstery = upholstery.strip()
+            if upholstery not in uniqueUpholsteries:
+                uniqueUpholsteries.add(upholstery)
+                upholsteryOpts.append(UpholsteryOpt(upholstery, 100 * r.randint(0, 5)))
+
+            modelUpholsteryOpts.append(ModelUpholsteryOpt(model, upholstery))
+
+    return upholsteryOpts, modelUpholsteryOpts
+
+def parseUpgradeData(data):
+    uniqueUpgrades = set()
+
+    upgradeOpts = []
+
+    for upgrades in data:
+        for upgrade in upgrades.split('/'):
+            upgrade, cost = upgrade.strip().split(':')
+            if upgrade not in uniqueUpgrades:
+                uniqueUpgrades.add(upgrade)
+                upgradeOpts.append(OptUpgrade(upgrade, int(cost)))
+
+    return upgradeOpts
 
 def readStaticInfo(tables):
-    CSVDataRow = namedtuple('CSVDataRow', ('series', 'model', 'year', 'design', 'engine', 'drivetrain',
+    # Get initial data from the csv
+    CSVDataRow = namedtuple('CSVDataRow', ('brand', 'series', 'model', 'year', 'design', 'engine', 'drivetrain',
                                            'wheels', 'upholstery', 'color', 'optional_upgrades', 'cost'))
     with open(STATIC_DATA_FILEPATH, 'r') as f:
-        staticDataRows = [CSVDataRow(line.strip().split(',')) for line in f]
+        staticDataRows = [CSVDataRow(*line.strip().split(',')) for line in f]
 
     # Create the engine data
-    engineData = set(map(lambda x: x.engine, staticDataRows))
-    tables[ENGINE_OPT] += createEngineData(engineData)
+    data = [(x.engine, x.model) for x in staticDataRows]
+    engines, engineModelPairs = parseEngineData(data)
+    tables[ENGINE_OPT] = engines
 
+    # Combine with engine and create model data
+    models = [Model(d.model, d.brand, d.series, d.year, d.drivetrain,
+                    'Automatic', d.cost, engineModelPairs[d.model]) for d in staticDataRows]
+    tables[MODEL] = models
+
+    # Create the wheel data
+    data = [(x.wheels, x.model) for x in staticDataRows]
+    wheels, modelWheelOpts = parseWheelData(data)
+    tables[WHEEL_OPT] = wheels
+    tables[MODEL_WHEEL_OPT] = modelWheelOpts
+
+    # Create the color data
+    data = [(x.color, x.model) for x in staticDataRows]
+    colors, modelColorOpts = parseColorData(data)
+    tables[COLOR_OPT] = colors
+    tables[MODEL_COLOR_OPT] = modelColorOpts
+
+    # Create the body design data
+    data = [(x.design, x.model) for x in staticDataRows]
+    designs, modelDesignOpts = parseDesignData(data)
+    tables[BODY_DESIGN_OPT] = designs
+    tables[MODEL_DESIGN_OPT] = modelDesignOpts
+
+    # Create the upholstery data
+    data = [(x.upholstery, x.model) for x in staticDataRows]
+    upholsteries, modelUpholsteryOpts = parseUpholsteryData(data)
+    tables[UPHOLSTERY_OPT] = upholsteries
+    tables[MODEL_UPHOLSTERY_OPT] = modelUpholsteryOpts
+
+    # Create optional upgrade data
+    data = [x.optional_upgrades for x in staticDataRows]
+    upgrades = parseUpgradeData(data)
+    tables[OPT_UPGRADE] = upgrades
+
+def createGeneratedInfo(tables):
+    pass
+
+def outputTablesToFiles(tables):
+    for table in tables.values():
+        if len(table) > 0:
+            outputToFile(table)
 
 def main():
     tables = setupDict()
-    readStaticInfo(tables)
 
-    print(tables[ENGINE_OPT])
+    readStaticInfo(tables)
+    createGeneratedInfo(tables)
+
+    outputTablesToFiles(tables)
 
 if __name__ == '__main__':
     main()

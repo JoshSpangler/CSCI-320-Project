@@ -89,14 +89,12 @@ TABLE_TYPES = {ENGINE_OPT: EngineOpt, WHEEL_OPT: WheelOpt, COLOR_OPT: ColorOpt,
                CUSTOMER: Customer, CUST_PHONE: CustPhone, PERSON: Person, COMPANY: Company,
                MANUFACTURER: Manufacturer, SUPPLIER: Supplier, SUPPLIES: Supplies}
 
+
+# noinspection PyProtectedMember
 def outputToFile(schemaList):
-    for name, ttype in TABLE_TYPES:
+    for name, ttype in TABLE_TYPES.iteritems():
         if ttype._fields == schemaList[0]._fields:
             with open(OUTPUT_PATH + name + '.csv', 'w') as f:
                 for schema in schemaList:
-                    f.write(', '.join(schema) + '\n')
+                    f.write(','.join([str(x) for x in schema]) + '\n')
             return
-
-c = CustPhone(1, 2)
-
-print(c.customer_id)
