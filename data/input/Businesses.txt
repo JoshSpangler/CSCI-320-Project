@@ -7,157 +7,157 @@ ABM Industries Incorporated
 Ace Hardware Corporation
 ACT Manufacturing Inc.
 Acterna Corp.
-Adams Resources & Energy, Inc.
-ADC Telecommunications, Inc.
+Adams Resources & Energy Inc.
+ADC Telecommunications Inc.
 Adelphia Communications Corporation
-Administaff, Inc.
+Administaff Inc.
 Adobe Systems Incorporated
 Adolph Coors Company
-Advance Auto Parts, Inc.
-Advanced Micro Devices, Inc.
-AdvancePCS, Inc.
-Advantica Restaurant Group, Inc.
+Advance Auto Parts Inc.
+Advanced Micro Devices Inc.
+AdvancePCS Inc.
+Advantica Restaurant Group Inc.
 The AES Corporation
 Aetna Inc.
-Affiliated Computer Services, Inc.
+Affiliated Computer Services Inc.
 AFLAC Incorporated
 AGCO Corporation
-Agilent Technologies, Inc.
+Agilent Technologies Inc.
 Agway Inc.
 Apartment Investment and Management Company
-Air Products and Chemicals, Inc.
-Airborne, Inc.
-Airgas, Inc.
+Air Products and Chemicals Inc.
+Airborne Inc.
+Airgas Inc.
 AK Steel Holding Corporation
-Alaska Air Group, Inc.
+Alaska Air Group Inc.
 Alberto-Culver Company
-Albertsons, Inc.
+Albertsons Inc.
 Alcoa Inc.
 Alleghany Corporation
-Allegheny Energy, Inc.
+Allegheny Energy Inc.
 Allegheny Technologies Incorporated
-Allergan, Inc.
-ALLETE, Inc.
+Allergan Inc.
+ALLETE Inc.
 Alliant Energy Corporation
-Allied Waste Industries, Inc.
+Allied Waste Industries Inc.
 Allmerica Financial Corporation
 The Allstate Corporation
 ALLTEL Corporation
-The Alpine Group, Inc.
-Amazon.com, Inc.
+The Alpine Group Inc.
+Amazon.com Inc.
 AMC Entertainment Inc.
 American Power Conversion Corporation
 Amerada Hess Corporation
 AMERCO
 Ameren Corporation
 America West Holdings Corporation
-American Axle & Manufacturing Holdings, Inc.
-American Eagle Outfitters, Inc.
-American Electric Power Company, Inc.
+American Axle & Manufacturing Holdings Inc.
+American Eagle Outfitters Inc.
+American Electric Power Company Inc.
 American Express Company
-American Financial Group, Inc.
+American Financial Group Inc.
 American Greetings Corporation
-American International Group, Inc.
+American International Group Inc.
 American Standard Companies Inc.
-American Water Works Company, Inc.
+American Water Works Company Inc.
 AmerisourceBergen Corporation
-Ames Department Stores, Inc.
+Ames Department Stores Inc.
 Amgen Inc.
-Amkor Technology, Inc.
+Amkor Technology Inc.
 AMR Corporation
 AmSouth Bancorp.
-Amtran, Inc.
+Amtran Inc.
 Anadarko Petroleum Corporation
-Analog Devices, Inc.
-Anheuser-Busch Companies, Inc.
+Analog Devices Inc.
+Anheuser-Busch Companies Inc.
 Anixter International Inc.
 AnnTaylor Inc.
-Anthem, Inc.
+Anthem Inc.
 AOL Time Warner Inc.
 Aon Corporation
 Apache Corporation
-Apple Computer, Inc.
+Apple Computer Inc.
 Applera Corporation
-Applied Industrial Technologies, Inc.
-Applied Materials, Inc.
-Aquila, Inc.
+Applied Industrial Technologies Inc.
+Applied Materials Inc.
+Aquila Inc.
 ARAMARK Corporation
-Arch Coal, Inc.
+Arch Coal Inc.
 Archer Daniels Midland Company
 Arkansas Best Corporation
-Armstrong Holdings, Inc.
-Arrow Electronics, Inc.
-ArvinMeritor, Inc.
+Armstrong Holdings Inc.
+Arrow Electronics Inc.
+ArvinMeritor Inc.
 Ashland Inc.
 Astoria Financial Corporation
 AT&T Corp.
 Atmel Corporation
 Atmos Energy Corporation
 Audiovox Corporation
-Autoliv, Inc.
-Automatic Data Processing, Inc.
-AutoNation, Inc.
-AutoZone, Inc.
+Autoliv Inc.
+Automatic Data Processing Inc.
+AutoNation Inc.
+AutoZone Inc.
 Avaya Inc.
 Avery Dennison Corporation
 Avista Corporation
-Avnet, Inc.
-Avon Products, Inc.
+Avnet Inc.
+Avon Products Inc.
 Baker Hughes Incorporated
 Ball Corporation
 Bank of America Corporation
-The Bank of New York Company, Inc.
+The Bank of New York Company Inc.
 Bank One Corporation
-Banknorth Group, Inc.
+Banknorth Group Inc.
 Banta Corporation
-Barnes & Noble, Inc.
+Barnes & Noble Inc.
 Bausch & Lomb Incorporated
 Baxter International Inc.
 BB&T Corporation
 The Bear Stearns Companies Inc.
-Beazer Homes USA, Inc.
-Beckman Coulter, Inc.
-Becton, Dickinson and Company
+Beazer Homes USA Inc.
+Beckman Coulter Inc.
+Becton Dickinson and Company
 Bed Bath & Beyond Inc.
-Belk, Inc.
+Belk Inc.
 Bell Microproducts Inc.
 BellSouth Corporation
 Belo Corp.
-Bemis Company, Inc.
-Benchmark Electronics, Inc.
+Bemis Company Inc.
+Benchmark Electronics Inc.
 Berkshire Hathaway Inc.
-Best Buy Co., Inc.
+Best Buy Co. Inc.
 Bethlehem Steel Corporation
-Beverly Enterprises, Inc.
-Big Lots, Inc.
+Beverly Enterprises Inc.
+Big Lots Inc.
 BJ Services Company
-BJs Wholesale Club, Inc.
+BJs Wholesale Club Inc.
 The Black & Decker Corporation
 Black Hills Corporation
-BMC Software, Inc.
+BMC Software Inc.
 The Boeing Company
 Boise Cascade Corporation
-Borders Group, Inc.
+Borders Group Inc.
 BorgWarner Inc.
 Boston Scientific Corporation
 Bowater Incorporated
 Briggs & Stratton Corporation
-Brightpoint, Inc.
-Brinker International, Inc.
+Brightpoint Inc.
+Brinker International Inc.
 Bristol-Myers Squibb Company
-Broadwing, Inc.
-Brown Shoe Company, Inc.
+Broadwing Inc.
+Brown Shoe Company Inc.
 Brown-Forman Corporation
 Brunswick Corporation
-Budget Group, Inc.
+Budget Group Inc.
 Burlington Coat Factory Warehouse Corporation
-Burlington Industries, Inc.
+Burlington Industries Inc.
 Burlington Northern Santa Fe Corporation
 Burlington Resources Inc.
 C. H. Robinson Worldwide Inc.
 Cablevision Systems Corp
 Cabot Corp
-Cadence Design Systems, Inc.
+Cadence Design Systems Inc.
 Calpine Corp.
 Campbell Soup Co.
 Capital One Financial Corp.
@@ -192,7 +192,7 @@ Cinergy Corp.
 Cintas Corp.
 Circuit City Stores Inc.
 Cisco Systems Inc.
-Citigroup, Inc
+Citigroup Inc
 Citizens Communications Co.
 CKE Restaurants Inc.
 Clear Channel Communications Inc.
@@ -217,7 +217,7 @@ Compuware Corp.
 Comverse Technology Inc.
 ConAgra Foods Inc.
 Concord EFS Inc.
-Conectiv, Inc
+Conectiv Inc
 Conoco Inc
 Conseco Inc.
 Consolidated Freightways Corp.
@@ -243,7 +243,7 @@ CSX Corp.
 Cummins Inc.
 CVS Corp.
 Cytec Industries Inc.
-D&K Healthcare Resources, Inc.
+D&K Healthcare Resources Inc.
 D.R. Horton Inc.
 Dana Corporation
 Danaher Corporation
@@ -262,18 +262,18 @@ Dial Corporation
 Diebold Incorporated
 Dillards Inc.
 DIMON Incorporated
-Dole Food Company, Inc.
+Dole Food Company Inc.
 Dollar General Corporation
-Dollar Tree Stores, Inc.
-Dominion Resources, Inc.
+Dollar Tree Stores Inc.
+Dominion Resources Inc.
 Dominos Pizza LLC
-Dover Corporation, Inc.
+Dover Corporation Inc.
 Dow Chemical Company
-Dow Jones & Company, Inc.
+Dow Jones & Company Inc.
 DPL Inc.
 DQE Inc.
-Dreyers Grand Ice Cream, Inc.
-DST Systems, Inc.
+Dreyers Grand Ice Cream Inc.
+DST Systems Inc.
 DTE Energy Co.
 E.I. Du Pont de Nemours and Company
 Duke Energy Corp
@@ -281,9 +281,9 @@ Dun & Bradstreet Inc.
 DURA Automotive Systems Inc.
 DynCorp
 Dynegy Inc.
-E*Trade Group, Inc.
+E*Trade Group Inc.
 E.W. Scripps Company
-Earthlink, Inc.
+Earthlink Inc.
 Eastman Chemical Company
 Eastman Kodak Company
 Eaton Corporation
@@ -305,7 +305,7 @@ Engelhard Corporation
 Enron Corp.
 Entergy Corporation
 Enterprise Products Partners L.P.
-EOG Resources, Inc.
+EOG Resources Inc.
 Equifax Inc.
 Equitable Resources Inc.
 Equity Office Properties Trust
@@ -352,7 +352,7 @@ Franklin Resources Inc.
 Freeport McMoran Copper & Gold Inc.
 Frontier Oil Corp
 Furniture Brands International Inc.
-Gannett Co., Inc.
+Gannett Co. Inc.
 Gap Inc.
 Gateway Inc.
 GATX Corporation
@@ -542,7 +542,7 @@ MeadWestvaco Corporation
 Medtronic Inc.
 Mellon Financial Corporation
 The Mens Wearhouse Inc.
-Merck & Co., Inc.
+Merck & Co. Inc.
 Mercury General Corporation
 Merrill Lynch & Co. Inc.
 Metaldyne Corporation
@@ -638,7 +638,7 @@ Pennzoil-Quaker State Company
 Pentair Inc
 Peoples Energy Corp.
 PeopleSoft Inc
-Pep Boys Manny, Moe & Jack
+Pep Boys Manny Moe & Jack
 Potomac Electric Power Co.
 Pepsi Bottling Group Inc.
 PepsiAmericas Inc.
@@ -648,7 +648,7 @@ Perini Corp
 PerkinElmer Inc
 Perot Systems Corp
 Petco Animal Supplies Inc.
-Peter Kiewit Sons, Inc.
+Peter Kiewit Sons Inc.
 PETsMART Inc
 Pfizer Inc
 Pacific Gas & Electric Corp.
@@ -805,7 +805,7 @@ SunGard Data Systems Inc.
 Sunoco Inc.
 SunTrust Banks Inc
 Supervalu Inc
-Swift Transportation, Co., Inc
+Swift Transportation Co. Inc
 Symbol Technologies Inc
 Synovus Financial Corp.
 Sysco Corp
