@@ -18,7 +18,7 @@ Desc: Container file for all the helper constants for the schemas. The schemas a
         vehicle(VIN, model_name, wheel_id, color, design_name, style, day, month, year, price, 
                         dealer_id, sale_id, manufacturer_id)
         dealer(dealer_id, name, street, city, state, ZIP)
-        sale(sale_id, dealer_id, customer, day, month, year)
+        sale(sale_id, customer, day, month, year)
         customer(customer_id, name, street, city, state, ZIP)
         cust_phone(customer_id, phone_num)
         person(customer_id, gender, annual_income)
@@ -72,7 +72,7 @@ Vehicle         = namedtuple('Vehicle', ('VIN', 'model_name', 'wheel_id', 'color
                                          'style', 'day', 'month', 'year', 'price', 'dealer_id',
                                          'sale_id', 'manufacturer_id'))
 Dealer      = namedtuple('Dealer', ('dealer_id', 'name', 'street', 'city', 'state', 'ZIP'))
-Sale        = namedtuple('Sale', ('sale_id', 'dealer_id', 'customer', 'day', 'month', 'year'))
+Sale        = namedtuple('Sale', ('sale_id', 'customer', 'day', 'month', 'year'))
 Customer    = namedtuple('Customer', ('customer_id', 'name', 'street', 'city', 'state', 'ZIP'))
 CustPhone   = namedtuple('CustPhone', ('customer_id', 'phone_num'))
 Person      = namedtuple('Person', ('customer_id', 'gender', 'annual_income'))
@@ -98,3 +98,8 @@ def outputToFile(schemaList):
                 for schema in schemaList:
                     f.write(','.join([str(x) for x in schema]) + '\n')
             return
+
+def outputTablesToFiles(tables):
+    for table in tables.values():
+        if len(table) > 0:
+            outputToFile(table)

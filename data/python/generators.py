@@ -21,17 +21,22 @@ STATE_LIST_FILEPATH     = INPUT_FILE_PATH + 'States.txt'
 class IDGenerator:
     generatedIDs = set()
     digits = -1
+    counter = 0
 
-    def __init__(self, numDigits):
+    def __init__(self, numDigits=-1):
         self.digits = numDigits
 
     def getNewID(self):
+        if self.digits == -1:
+            self.counter += 1
+            return self.counter - 1
+
         if len(self.generatedIDs) >= 10**self.digits:
             raise Exception('No more IDs available to generate')
 
-        ID = r.randint(0, 10**self.digits)
+        ID = r.randint(0, 10**self.digits - 1)
         while ID in self.generatedIDs:
-            ID = r.randint(0, 10**self.digits)
+            ID = r.randint(0, 10**self.digits - 1)
         self.generatedIDs.add(ID)
         return ID
 
@@ -39,58 +44,58 @@ Address = c.namedtuple('Address', ('street', 'city', 'state', 'zip'))
 
 class AddressGenerator:
     generatedAddresses = set()
-    streets = set()
-    cities = set()
-    states = set()
+    streets = []
+    cities = []
+    states = []
 
     def __init__(self):
         with open(STREET_LIST_FILEPATH, 'r') as f:
             for line in f:
-                self.streets.add(line.strip())
+                self.streets.append(line.strip())
         with open(CITY_LIST_FILEPATH, 'r') as f:
             for line in f:
-                self.cities.add(line.strip())
+                self.cities.append(line.strip())
         with open(STATE_LIST_FILEPATH, 'r') as f:
             for line in f:
-                self.states.add(line.strip())
+                self.states.append(line.strip())
 
     def getNewAddress(self):
         address = Address(r.choice(self.streets), r.choice(self.cities),
-                          r.choice(self.states), '{:0>5}'.format(r.randint(0, 100000)))
+                          r.choice(self.states), '{:0>5}'.format(r.randint(0, 99999)))
         while address in self.generatedAddresses:
             address = Address(r.choice(self.streets), r.choice(self.cities),
-                              r.choice(self.states), '{:0>5}'.format(r.randint(0, 100000)))
+                              r.choice(self.states), '{:0>5}'.format(r.randint(0, 99999)))
         self.generatedAddresses.add(address)
         return address
 
 Name = c.namedtuple('Name', ('firstName', 'lastName'))
 
 class NameGenerator:
-    maleNames = set()
-    femaleNames = set()
-    lastNames = set()
+    maleNames = []
+    femaleNames = []
+    lastNames = []
 
     def __init__(self):
         with open(MALE_NAME_FILEPATH, 'r') as f:
             for line in f:
-                self.maleNames.add(line.strip())
+                self.maleNames.append(line.strip())
         with open(FEMALE_NAME_FILEPATH, 'r') as f:
             for line in f:
-                self.femaleNames.add(line.strip())
+                self.femaleNames.append(line.strip())
         with open(LAST_NAME_FILEPATH, 'r') as f:
             for line in f:
-                self.lastNames.add(line.strip())
+                self.lastNames.append(line.strip())
 
     def getNewName(self, male):
         return Name(r.choice(self.maleNames if male else self.femaleNames), r.choice(self.lastNames))
 
 class BusinessNameGenerator:
-    businessNames = set()
+    businessNames = []
 
     def __init__(self):
         with open(BUSINESS_NAME_FILEPATH, 'r') as f:
             for line in f:
-                self.businessNames.add(line.strip())
+                self.businessNames.append(line.strip())
 
     def getNewName(self):
         if len(self.businessNames) <= 0:
