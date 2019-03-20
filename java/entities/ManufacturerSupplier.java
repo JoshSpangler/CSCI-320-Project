@@ -22,8 +22,8 @@ public class ManufacturerSupplier {
    * @param data contains relevant attributes for ManufacturerSupplier class
    */
   public ManufacturerSupplier(String[] data) {
-    this.manufacturerID = Integer.parseInt(data[0]);
-    this.supplierID = Integer.parseInt(data[1]);
+    this.supplierID = Integer.parseInt(data[0]);
+    this.manufacturerID = Integer.parseInt(data[1]);
   }
 
   /**
@@ -32,10 +32,10 @@ public class ManufacturerSupplier {
    */
   public static void createTable(Connection conn) {
     try {
-      String query = "CREATE TABLE IF NOT EXISTS manufacturer_supplier("
-          + "MANUFACTURER_ID INT,"
+      String query = "CREATE TABLE IF NOT EXISTS supplies("
           + "SUPPLIER_ID INT,"
-          + "PRIMARY KEY (MANUFACTURER_ID, SUPPLIER_ID),"
+          + "MANUFACTURER_ID INT,"
+          + "PRIMARY KEY (SUPPLIER_ID, MANUFACTURER_ID),"
           + ");";
 
       /**
@@ -93,11 +93,11 @@ public class ManufacturerSupplier {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO manufacturer_supplier (MANUFACTURER_ID, SUPPLIER_ID) VALUES");
+    sb.append("INSERT INTO supplies (SUPPLIER_ID, MANUFACTURER_ID) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       ManufacturerSupplier e = arr.get(i);
-      sb.append(String.format("(%d, %d)", e.getManufacturerID(), e.getSupplierID()));
+      sb.append(String.format("(%d, %d)", e.getSupplierID(), e.getManufacturerID()));
 
       if(i != arr.size()-1) {
         sb.append(",");

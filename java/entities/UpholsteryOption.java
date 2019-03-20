@@ -16,6 +16,7 @@ public class UpholsteryOption {
   // Attributes
   //
   private String name;
+  private int materialCost;
 
   /**
    * UpholsteryOption constructor
@@ -23,6 +24,7 @@ public class UpholsteryOption {
    */
   public UpholsteryOption(String[] data) {
     this.name = data[0];
+    this.materialCost = Integer.parseInt(data[1]);
   }
 
   /**
@@ -33,6 +35,7 @@ public class UpholsteryOption {
     try {
       String query = "CREATE TABLE IF NOT EXISTS upholstery_option("
           + "NAME VARCHAR(255) PRIMARY KEY,"
+          + "MATERIAL_COST INT,"
           + ");";
 
       /**
@@ -90,11 +93,11 @@ public class UpholsteryOption {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO upholstery_option (NAME) VALUES");
+    sb.append("INSERT INTO upholstery_option (NAME, MATERIAL_COST) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       UpholsteryOption e = arr.get(i);
-      sb.append(String.format("(\'%s\')", e.getName()));
+      sb.append(String.format("(\'%s\', %d)", e.getName(), e.getMaterialCost()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -110,4 +113,6 @@ public class UpholsteryOption {
   public String getName() {
     return name;
   }
+
+  public int getMaterialCost() { return materialCost; }
 }

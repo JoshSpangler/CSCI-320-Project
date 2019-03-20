@@ -24,12 +24,12 @@ public class Model {
    */
   public Model(String[] data) {
     this.modelName = data[0];
-    this.series = data[1];
-    this.year = Integer.parseInt(data[2]);
-    this.driveTrain = data[3];
-    this.transmission = data[4];
-    this.baseCost = Integer.parseInt(data[5]);
-    this.brandName = data[6];
+    this.brandName = data[1];
+    this.series = data[2];
+    this.year = Integer.parseInt(data[3]);
+    this.driveTrain = data[4];
+    this.transmission = data[5];
+    this.baseCost = Integer.parseInt(data[6]);
     this.engineID = Integer.parseInt(data[7]);
   }
 
@@ -40,14 +40,13 @@ public class Model {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS model("
-          + "ID INT AUTO_INCREMENT PRIMARY KEY,"
-          + "MODEL_NAME VARCHAR(255),"
+          + "MODEL_NAME VARCHAR(255) PRIMARY KEY,"
+          + "BRAND_NAME VARCHAR(255),"
           + "SERIES VARCHAR(255),"
           + "YEAR INT,"
           + "DRIVETRAIN VARCHAR(255),"
           + "TRANSMISSION VARCHAR(255),"
           + "BASE_COST INT,"
-          + "BRAND_NAME VARCHAR(255),"
           + "ENGINE_ID INT,"
           + ");";
 
@@ -106,13 +105,13 @@ public class Model {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO model (MODEL_NAME, SERIES, YEAR, DRIVETRAIN, TRANSMISSION, BASE_COST, BRAND_NAME, ENGINE_ID) VALUES");
+    sb.append("INSERT INTO model (MODEL_NAME, BRAND_NAME, SERIES, YEAR, DRIVETRAIN, TRANSMISSION, BASE_COST, ENGINE_ID) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       Model e = arr.get(i);
-      sb.append(String.format("(\'%s\', \'%s\', %d, \'%s\', \'%s\', %d, \'%s\', %d)",
-          e.getModelName(), e.getSeries(), e.getYear(), e.getDriveTrain(), e.getTransmission(),
-          e.getBaseCost(), e.getBrandName(), e.getEngineID()));
+      sb.append(String.format("(\'%s\', \'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d)",
+          e.getModelName(), e.getBrandName(), e.getSeries(), e.getYear(), e.getDriveTrain(), e.getTransmission(),
+          e.getBaseCost(), e.getEngineID()));
 
       if(i != arr.size()-1) {
         sb.append(",");

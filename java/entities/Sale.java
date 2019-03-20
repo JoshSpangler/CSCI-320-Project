@@ -15,8 +15,8 @@ public class Sale {
   //
   // Attributes
   //
-  private int saleID, dealerID, customerID,
-      totalCost, day, month, year;
+  private int saleID, customerID,
+      day, month, year;
 
   /**
    * Sale constructor
@@ -24,12 +24,10 @@ public class Sale {
    */
   public Sale(String[] data) {
     this.saleID = Integer.parseInt(data[0]);
-    this.totalCost = Integer.parseInt(data[1]);
+    this.customerID = Integer.parseInt(data[1]);
     this.day = Integer.parseInt(data[2]);
     this.month = Integer.parseInt(data[3]);
     this.year = Integer.parseInt(data[4]);
-    this.dealerID = Integer.parseInt(data[5]);
-    this.customerID = Integer.parseInt(data[6]);
   }
 
   /**
@@ -40,12 +38,10 @@ public class Sale {
     try {
       String query = "CREATE TABLE IF NOT EXISTS sale("
           + "SALE_ID INT PRIMARY KEY,"
-          + "TOTAL_COST INT,"
+          + "CUSTOMER_ID INT,"
           + "DAY INT,"
           + "MONTH INT,"
           + "YEAR INT,"
-          + "DEALER_ID INT,"
-          + "CUSTOMER_ID INT,"
           + ");";
 
       /**
@@ -103,14 +99,12 @@ public class Sale {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO sale (SALE_ID, TOTAL_COST, DAY, MONTH, " +
-        "YEAR, DEALER_ID, CUSTOMER_ID) VALUES");
+    sb.append("INSERT INTO sale (SALE_ID, CUSTOMER_ID, DAY, MONTH, YEAR) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       Sale e = arr.get(i);
-      sb.append(String.format("(%d, %d, %d, %d, %d, %d, %d)",
-          e.getSaleID(), e.getTotalCost(), e.getDay(), e.getMonth(),
-          e.getYear(), e.getDealerID(), e.getCustomerID()));
+      sb.append(String.format("(%d, %d, %d, %d, %d)",
+          e.getSaleID(), e.getCustomerID(), e.getDay(), e.getMonth(), e.getYear()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -127,16 +121,9 @@ public class Sale {
     return saleID;
   }
 
-  public int getDealerID() {
-    return dealerID;
-  }
 
   public int getCustomerID() {
     return customerID;
-  }
-
-  public int getTotalCost() {
-    return totalCost;
   }
 
   public int getDay() {

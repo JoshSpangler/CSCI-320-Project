@@ -8,34 +8,35 @@ import java.util.ArrayList;
 import java.sql.Statement;
 
 /**
- * Holds data about reduction-resulting class InventoryDealer
+ * Holds data about reduction-resulting class VehicleOptionalUpgrade
  */
-public class InventoryDealer {
+public class VehicleOptionalUpgrade {
 
   //
   // Attributes
   //
-  private int dealerID, inventoryID;
+  private String name;
+  private int VIN;
 
   /**
-   * InventoryDealer constructor
-   * @param data contains relevant attributes for InventoryDealer class
+   * VehicleOptionalUpgrade constructor
+   * @param data contains relevant attributes for VehicleOptionalUpgrade class
    */
-  public InventoryDealer(String[] data) {
-    this.dealerID = Integer.parseInt(data[0]);
-    this.inventoryID = Integer.parseInt(data[1]);
+  public VehicleOptionalUpgrade(String[] data) {
+    this.VIN = Integer.parseInt(data[0]);
+    this.name = data[1];
   }
 
   /**
-   * Create the InventoryDealer table with the given attributes
+   * Create the VehicleOptionalUpgrade table with the given attributes
    * @param conn the database connection to work with
    */
   public static void createTable(Connection conn) {
     try {
-      String query = "CREATE TABLE IF NOT EXISTS inventory_dealer("
-          + "DEALER_ID INT,"
-          + "INVENTORY_ID INT,"
-          + "PRIMARY KEY (DEALER_ID, INVENTORY_ID),"
+      String query = "CREATE TABLE IF NOT EXISTS vehicle_optional_upgrade("
+          + "VIN INT,"
+          + "NAME VARCHAR(255),"
+          + "PRIMARY KEY (VIN, NAME)"
           + ");";
 
       /**
@@ -50,13 +51,13 @@ public class InventoryDealer {
   }
 
   /**
-   * Populates a table for the InventoryDealer class
+   * Populates a table for the VehicleOptionalUpgrade class
    * @param conn database connection to work with
    * @param fileName name of CSV file
    * @throws SQLException
    */
   public static void populateTableFromCSV(Connection conn, String fileName) throws SQLException {
-    ArrayList<InventoryDealer> arr = new ArrayList<>();
+    ArrayList<VehicleOptionalUpgrade> arr = new ArrayList<>();
 
     try {
       BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -64,7 +65,7 @@ public class InventoryDealer {
       String[] data;
       while((line = br.readLine()) != null) {
         data = line.split(",");
-        arr.add(new InventoryDealer(data));
+        arr.add(new VehicleOptionalUpgrade(data));
       }
       br.close();
     }
@@ -81,10 +82,10 @@ public class InventoryDealer {
   }
 
   /**
-   * Creates SQL statement to do a bulk add of InventoryDealer entities
+   * Creates SQL statement to do a bulk add of VehicleOptionalUpgrade entities
    * @param arr list of entities
    */
-  private static String createInsertEntitiesSQL(ArrayList<InventoryDealer> arr) {
+  private static String createInsertEntitiesSQL(ArrayList<VehicleOptionalUpgrade> arr) {
     StringBuilder sb = new StringBuilder();
 
     /**
@@ -93,11 +94,11 @@ public class InventoryDealer {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO inventory_dealer (DEALER_ID, INVENTORY_ID) VALUES");
+    sb.append("INSERT INTO vehicle_optional_upgrade (VIN, NAME) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
-      InventoryDealer e = arr.get(i);
-      sb.append(String.format("(%d, %d)", e.getDealerID(), e.getInventoryID()));
+      VehicleOptionalUpgrade e = arr.get(i);
+      sb.append(String.format("(%d, \'%s\')", e.getVIN(), e.getName()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -110,11 +111,11 @@ public class InventoryDealer {
     return sb.toString();
   }
 
-  public int getDealerID() {
-    return dealerID;
+  public int getVIN() {
+    return VIN;
   }
 
-  public int getInventoryID() {
-    return inventoryID;
+  public String getName() {
+    return name;
   }
 }

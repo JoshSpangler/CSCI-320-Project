@@ -15,7 +15,7 @@ public class OptionalUpgrades {
   //
   // Attributes
   //
-  private String VIN, optionalUpgrade;
+  private String optionalUpgrade;
   private int cost;
 
 
@@ -24,9 +24,8 @@ public class OptionalUpgrades {
    * @param data contains relevant attributes for OptionalUpgrades class
    */
   public OptionalUpgrades(String[] data) {
-    this.VIN = data[0];
-    this.optionalUpgrade = data[1];
-    this.cost = Integer.parseInt(data[2]);
+    this.optionalUpgrade = data[0];
+    this.cost = Integer.parseInt(data[1]);
   }
 
   /**
@@ -36,9 +35,7 @@ public class OptionalUpgrades {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS optional_upgrades("
-          + "ID INT AUTO_INCREMENT PRIMARY KEY,"
-          + "VIN VARCHAR(255),"
-          + "OPTIONAL_UPGRADE VARCHAR(255),"
+          + "OPTIONAL_UPGRADE VARCHAR(255) PRIMARY KEY,"
           + "COST INT,"
           + ");";
 
@@ -97,12 +94,12 @@ public class OptionalUpgrades {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO optional_upgrades (VIN, OPTIONAL_UPGRADE, COST) VALUES");
+    sb.append("INSERT INTO optional_upgrades (OPTIONAL_UPGRADE, COST) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       OptionalUpgrades e = arr.get(i);
-      sb.append(String.format("(\'%s\', \'%s\', %d)",
-          e.getVIN(), e.getOptionalUpgrade(), e.getCost()));
+      sb.append(String.format("(\'%s\', %d)",
+          e.getOptionalUpgrade(), e.getCost()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -113,10 +110,6 @@ public class OptionalUpgrades {
     }
 
     return sb.toString();
-  }
-
-  public String getVIN() {
-    return VIN;
   }
 
   public String getOptionalUpgrade() {

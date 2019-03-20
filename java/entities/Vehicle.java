@@ -15,22 +15,27 @@ public class Vehicle {
   //
   // Attributes
   //
-  private String VIN, color, upholstery, model;
-  private int wheelsID, manufacturerID, inventoryID, saleID;
+  private String color, model, design, style, saleID;
+  private int VIN, wheelsID, dealerID, manufacturerID, day, month, year, price;
 
   /**
    * Vehicle constructor
    * @param data contains relevant attributes for Vehicle class
    */
   public Vehicle(String[] data) {
-    this.VIN = data[0];
-    this.color = data[1];
+    this.VIN = Integer.parseInt(data[0]);
+    this.model = data[1];
     this.wheelsID = Integer.parseInt(data[2]);
-    this.upholstery = data[3];
-    this.model = data[4];
-    this.manufacturerID = Integer.parseInt(data[5]);
-    this.inventoryID = Integer.parseInt(data[6]);
-    this.saleID = Integer.parseInt(data[7]);
+    this.color = data[3];
+    this.design = data[4];
+    this.style = data[5];
+    this.day = Integer.parseInt(data[6]);
+    this.month = Integer.parseInt(data[7]);
+    this.year = Integer.parseInt(data[8]);
+    this.price = Integer.parseInt(data[9]);
+    this.dealerID = Integer.parseInt(data[10]);
+    this.saleID = data[11];
+    this.manufacturerID = Integer.parseInt(data[12]);
   }
 
   /**
@@ -40,14 +45,19 @@ public class Vehicle {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS vehicle("
-          + "VIN VARCHAR(255) PRIMARY KEY,"
-          + "COLOR VARCHAR(255),"
-          + "WHEELS_ID INT,"
-          + "UPHOLSTERY VARCHAR(255),"
+          + "VIN INT PRIMARY KEY,"
           + "MODEL VARCHAR(255),"
+          + "WHEELS_ID INT,"
+          + "COLOR VARCHAR(255),"
+          + "DESIGN VARCHAR(255),"
+          + "STYLE VARCHAR(255),"
+          + "DAY INT,"
+          + "MONTH INT,"
+          + "YEAR INT,"
+          + "PRICE INT,"
+          + "DEALER_ID INT,"
+          + "SALE_ID VARCHAR(255),"
           + "MANUFACTURER_ID INT,"
-          + "INVENTORY_ID INT,"
-          + "SALE_ID INT,"
           + ");";
 
       /**
@@ -105,14 +115,14 @@ public class Vehicle {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO vehicle (VIN, COLOR, WHEELS_ID, UPHOLSTERY, " +
-        "MODEL, MANUFACTURER_ID, INVENTORY_ID, SALE_ID) VALUES");
+    sb.append("INSERT INTO vehicle (VIN, MODEL, WHEELS_ID, COLOR, DESIGN, STYLE, DAY, MONTH, YEAR, " +
+        "PRICE, DEALER_ID, SALE_ID, MANUFACTURER_ID) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       Vehicle e = arr.get(i);
-      sb.append(String.format("(\'%s\', \'%s\', %d, \'%s\', \'%s\', %d, %d, %d)",
-          e.getVIN(), e.getColor(), e.getWheelsID(), e.getUpholstery(), e.getModel(),
-          e.getManufacturerID(), e.getInventoryID(), e.getSaleID()));
+      sb.append(String.format("(%d, \'%s\', %d, \'%s\', \'%s\', \'%s\', %d, %d, %d, %d, %d, \'%s\', %d)",
+          e.getVIN(), e.getModel(), e.getWheelsID(), e.getColor(), e.getDesign(), e.getStyle(), e.getDay(),
+          e.getMonth(), e.getYear(), e.getPrice(), e.getDealerID(), e.getSaleID(), e.getManufacturerID()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -125,7 +135,7 @@ public class Vehicle {
     return sb.toString();
   }
 
-  public String getVIN() {
+  public int getVIN() {
     return VIN;
   }
 
@@ -133,9 +143,6 @@ public class Vehicle {
     return color;
   }
 
-  public String getUpholstery() {
-    return upholstery;
-  }
 
   public String getModel() {
     return model;
@@ -149,11 +156,35 @@ public class Vehicle {
     return manufacturerID;
   }
 
-  public int getInventoryID() {
-    return inventoryID;
+  public String getDesign() {
+    return design;
   }
 
-  public int getSaleID() {
+  public String getStyle() {
+    return style;
+  }
+
+  public int getDealerID() {
+    return dealerID;
+  }
+
+  public int getDay() {
+    return day;
+  }
+
+  public int getMonth() {
+    return month;
+  }
+
+  public int getYear() {
+    return year;
+  }
+
+  public int getPrice() {
+    return price;
+  }
+
+  public String getSaleID() {
     return saleID;
   }
 }

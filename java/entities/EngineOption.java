@@ -17,7 +17,8 @@ public class EngineOption {
   //
   // Attributes
   //
-  private int numLitres, numCylinders, prodCost;
+  private int ID, numCylinders;
+  private float numLitres;
   private String engineName;
 
   /**
@@ -25,10 +26,10 @@ public class EngineOption {
    * @param data contains relevant attributes for EngineOption class
    */
   public EngineOption(String[] data) {
+    this.ID = Integer.parseInt(data[0]);
     this.engineName = data[1];
-    this.numLitres = Integer.parseInt(data[2]);
+    this.numLitres = Float.parseFloat(data[2]);
     this.numCylinders = Integer.parseInt(data[3]);
-    this.prodCost = Integer.parseInt(data[5]);
   }
 
   /**
@@ -38,11 +39,10 @@ public class EngineOption {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS engine_option("
-          + "ID INT AUTO_INCREMENT PRIMARY KEY,"
+          + "ID INT PRIMARY KEY,"
           + "ENGINE_NAME VARCHAR(255),"
-          + "NUM_LITRES INT,"
+          + "NUM_LITRES NUMERIC(2, 1),"
           + "NUM_CYLINDERS INT,"
-          + "PRODUCTION_COST INT,"
           + ");";
 
       /**
@@ -100,13 +100,12 @@ public class EngineOption {
      * the order of the data in reference
      * to the columns to ad dit to
      */
-    sb.append("INSERT INTO engine_option (ENGINE_NAME, NUM_LITRES, NUM_CYLINDERS, " +
-        "PRODUCTION_COST) VALUES");
+    sb.append("INSERT INTO engine_option (ID, ENGINE_NAME, NUM_LITRES, NUM_CYLINDERS) VALUES");
 
     for(int i = 0; i < arr.size(); i++) {
       EngineOption e = arr.get(i);
-      sb.append(String.format("(\'%s\', %d, %d, %d)",
-          e.getEngineName(), e.getNumLitres(), e.getNumCylinders(), e.getProdCost()));
+      sb.append(String.format("(%d, \'%s\', %f, %d)",
+          e.getID(), e.getEngineName(), e.getNumLitres(), e.getNumCylinders()));
 
       if(i != arr.size()-1) {
         sb.append(",");
@@ -119,16 +118,14 @@ public class EngineOption {
     return sb.toString();
   }
 
-  public int getNumLitres() {
+  public int getID() { return ID; }
+
+  public float getNumLitres() {
     return numLitres;
   }
 
   public int getNumCylinders() {
     return numCylinders;
-  }
-
-  public int getProdCost() {
-    return prodCost;
   }
 
   public String getEngineName() {

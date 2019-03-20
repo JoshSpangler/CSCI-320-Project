@@ -55,7 +55,7 @@ public class Populator {
     Populator p = new Populator();
 
     // Hard drive location of the database
-    String location = "./h2demo/h2demo";
+    String location = "./database/database";
     String user = "me";
     String password = "password";
 
@@ -66,83 +66,91 @@ public class Populator {
     try {
       BodyDesignOption.createTable(p.getConnection());
       BodyDesignOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Body_Design_option.csv");
-
-      Brand.createTable(p.getConnection());
-      Brand.populateTableFromCSV(p.getConnection(),
-          "csvs/Brand.csv");
+          "data/output/body_design_opt.csv");
 
       ColorOption.createTable(p.getConnection());
       ColorOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Color_Option.csv");
+          "data/output/color_opt.csv");
+
+      Company.createTable(p.getConnection());
+      Company.populateTableFromCSV(p.getConnection(),
+          "data/output/company.csv");
 
       Customer.createTable(p.getConnection());
       Customer.populateTableFromCSV(p.getConnection(),
-          "csvs/Customer.csv");
+          "data/output/customer.csv");
 
       CustomerPhone.createTable(p.getConnection());
       CustomerPhone.populateTableFromCSV(p.getConnection(),
-          "csvs/Customer_Phone.csv");
+          "data/output/cust_phone.csv");
 
-      Inventory.createTable(p.getConnection());
-      Inventory.populateTableFromCSV(p.getConnection(),
-          "csvs/Inventory.csv");
+      Dealer.createTable(p.getConnection());
+      Dealer.populateTableFromCSV(p.getConnection(),
+          "data/output/dealer.csv");
 
-      InventoryDealer.createTable(p.getConnection());
-      InventoryDealer.populateTableFromCSV(p.getConnection(),
-          "csvs/Inventory_Dealer.csv");
+      EngineOption.createTable(p.getConnection());
+      EngineOption.populateTableFromCSV(p.getConnection(),
+          "data/output/engine_opt.csv");
+
+      IndividualBuyer.createTable(p.getConnection());
+      IndividualBuyer.populateTableFromCSV(p.getConnection(),
+          "data/output/person.csv");
 
       Manufacturer.createTable(p.getConnection());
       Manufacturer.populateTableFromCSV(p.getConnection(),
-          "csvs/Manufacturer.csv");
+          "data/output/manufacturer.csv");
 
       ManufacturerSupplier.createTable(p.getConnection());
       ManufacturerSupplier.populateTableFromCSV(p.getConnection(),
-          "csvs/Manufacturer_Supplier.csv");
+          "data/output/supplies.csv");
 
       Model.createTable(p.getConnection());
       Model.populateTableFromCSV(p.getConnection(),
-          "csvs/Model.csv");
+          "data/output/model.csv");
 
       ModelBodyDesignOption.createTable(p.getConnection());
       ModelBodyDesignOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Model_Body_Design_Option.csv");
+          "data/output/model_design.csv");
 
       ModelColorOption.createTable(p.getConnection());
       ModelColorOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Model_Color_Option.csv");
+          "data/output/model_color_opt.csv");
 
       ModelUpholsteryOption.createTable(p.getConnection());
       ModelUpholsteryOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Model_Upholstry_Option.csv");
+          "data/output/model_upholstery_opt.csv");
 
       ModelWheelsOption.createTable(p.getConnection());
       ModelWheelsOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Model_Wheels_Option.csv");
+          "data/output/model_wheel_opt.csv");
 
       OptionalUpgrades.createTable(p.getConnection());
       OptionalUpgrades.populateTableFromCSV(p.getConnection(),
-          "csvs/Optional_Upgrades.csv");
+          "data/output/opt_upgrade.csv");
 
       Sale.createTable(p.getConnection());
       Sale.populateTableFromCSV(p.getConnection(),
-          "csvs/Sale.csv");
+          "data/output/sale.csv");
 
       Supplier.createTable(p.getConnection());
       Supplier.populateTableFromCSV(p.getConnection(),
-          "csvs/Supplier.csv");
+          "data/output/supplier.csv");
 
       UpholsteryOption.createTable(p.getConnection());
       UpholsteryOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Upholstry_Option.csv");
+          "data/output/upholstery_opt.csv");
 
       Vehicle.createTable(p.getConnection());
       Vehicle.populateTableFromCSV(p.getConnection(),
-          "csvs/Vehicle.csv");
+          "data/output/vehicle.csv");
+
+      VehicleOptionalUpgrade.createTable(p.getConnection());
+      VehicleOptionalUpgrade.populateTableFromCSV(p.getConnection(),
+          "data/output/vehicle_upgrade.csv");
 
       WheelsOption.createTable(p.getConnection());
       WheelsOption.populateTableFromCSV(p.getConnection(),
-          "csvs/Wheels_Option.csv");
+          "data/output/wheel_opt.csv");
 
 
     }

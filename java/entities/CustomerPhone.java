@@ -34,8 +34,9 @@ public class CustomerPhone {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS customer_phone("
-          + "ID INT AUTO_INCREMENT PRIMARY KEY,"
-          + "PHONE_NUMBER VARCHAR(255),"
+          + "ID INT,"
+          + "PHONE_NUMBER VARCHAR(10),"
+          + "PRIMARY KEY (ID, PHONE_NUMBER),"
           + ");";
 
       /**

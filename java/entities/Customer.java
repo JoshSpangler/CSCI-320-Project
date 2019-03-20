@@ -15,8 +15,8 @@ public class Customer {
   //
   // Attributes
   //
-  private int ID, zip;
-  private String name, street, county, state;
+  private int ID;
+  private String name, street, county, state, zip;
 
   /**
    * Customer constructor
@@ -28,7 +28,7 @@ public class Customer {
     this.street = data[2];
     this.county = data[3];
     this.state = data[4];
-    this.zip = Integer.parseInt(data[5]);
+    this.zip = data[5];
   }
 
   /**
@@ -38,12 +38,12 @@ public class Customer {
   public static void createTable(Connection conn) {
     try {
       String query = "CREATE TABLE IF NOT EXISTS customer("
-          + "ID INT AUTO_INCREMENT PRIMARY KEY,"
+          + "ID INT PRIMARY KEY,"
           + "NAME VARCHAR(255),"
           + "STREET VARCHAR(255),"
           + "COUNTY VARCHAR(255),"
           + "STATE VARCHAR(255),"
-          + "ZIP INT,"
+          + "ZIP VARCHAR(255),"
           + ");";
 
       /**
@@ -105,7 +105,7 @@ public class Customer {
 
     for(int i = 0; i < arr.size(); i++) {
       Customer e = arr.get(i);
-      sb.append(String.format("(%d, \'%s\', \'%s\', \'%s\', \'%s\', %d)",
+      sb.append(String.format("(%d, \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')",
           e.getID(), e.getName(), e.getStreet(), e.getCounty(), e.getState(), e.getZip()));
 
       if(i != arr.size()-1) {
@@ -121,7 +121,7 @@ public class Customer {
 
   public int getID() { return ID; }
 
-  public int getZip() {
+  public String getZip() {
     return zip;
   }
 
