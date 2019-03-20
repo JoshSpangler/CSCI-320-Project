@@ -60,15 +60,13 @@ class AddressGenerator:
                 self.states.append(line.strip())
 
     def getNewAddress(self):
-        address = Address(r.choice(self.streets), r.choice(self.cities),
+        address = Address(str(r.randint(1, 999)) + ' ' + r.choice(self.streets), r.choice(self.cities),
                           r.choice(self.states), '{:0>5}'.format(r.randint(0, 99999)))
         while address in self.generatedAddresses:
             address = Address(r.choice(self.streets), r.choice(self.cities),
                               r.choice(self.states), '{:0>5}'.format(r.randint(0, 99999)))
         self.generatedAddresses.add(address)
         return address
-
-Name = c.namedtuple('Name', ('firstName', 'lastName'))
 
 class NameGenerator:
     maleNames = []
@@ -87,7 +85,7 @@ class NameGenerator:
                 self.lastNames.append(line.strip())
 
     def getNewName(self, male):
-        return Name(r.choice(self.maleNames if male else self.femaleNames), r.choice(self.lastNames))
+        return r.choice(self.maleNames if male else self.femaleNames) + ' ' + r.choice(self.lastNames)
 
 class BusinessNameGenerator:
     businessNames = []

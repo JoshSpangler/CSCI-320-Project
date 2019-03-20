@@ -317,14 +317,17 @@ def createGeneratedInfo(tables, wheelDict, colorDict, designDict, upholsteryDict
         street, city, state, ZIP = addrgen.getNewAddress()
         male = r.randint(0, 1) == 0
         tables[CUSTOMER].append(Customer(ID, persongen.getNewName(male), street, city, state, ZIP))
-        tables[PERSON].append(Person(ID, 'male' if male else 'female', 1000 * r.randint(28, 3000)))
+        tables[PERSON].append(Person(ID, 'male' if male else 'female', 1000 * r.randint(28, 300)))
 
     idgen = IDGenerator()
     phonegen = IDGenerator(10)
     for cust in tables[CUSTOMER]:
         for _ in xrange(r.randint(MIN_PHONE_NUMS, MAX_PHONE_NUMS)):
             tables[CUST_PHONE].append(CustPhone(cust.customer_id, str(phonegen.getNewID()).zfill(10)))
-        tables[SALE].append(Sale(idgen.getNewID(), cust.customer_id,
+    nums = range(0, len(tables[CUSTOMER]))
+    r.shuffle(nums)
+    for i in nums:
+        tables[SALE].append(Sale(idgen.getNewID(), tables[CUSTOMER][i].customer_id,
                                  r.randint(1, 30), r.randint(1, 12), 2019))
     for _ in xrange(EXTRA_SALES):
         tables[SALE].append(Sale(idgen.getNewID(), r.choice(tables[CUSTOMER]).customer_id,
@@ -344,7 +347,7 @@ def createGeneratedInfo(tables, wheelDict, colorDict, designDict, upholsteryDict
                                            upholstery.style,
                                            r.randint(1, 30),
                                            r.randint(1, 12),
-                                           2019,
+                                           2018,
                                            model.base_cost + upholstery.material_cost,
                                            dealer.dealer_id,
                                            'null',
