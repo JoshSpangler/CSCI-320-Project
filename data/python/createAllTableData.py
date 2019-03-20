@@ -92,19 +92,19 @@ def parseWheelData(data):
     textWheelDict = {}
 
     wheelOpts = []
-    modelWheelOpts = []
+    modelWheelOpts = set()
     wheelDict = {model: [] for wheels, model in data}
 
     idgen = IDGenerator()
     for wheels, model in data:
         # Process the wheels data to separate into unique wheels
         wheels = wheels.strip().split('/')
-        wheels = [wheels[i] + '/' + wheels[i+1] for i in range(0, len(wheels), 2)]
+        wheels = [wheels[i].strip() + '/' + wheels[i+1].strip() for i in range(0, len(wheels), 2)]
 
         for wheel in wheels:
             # If we already processed, assign that id to the model and move on
             if wheel in uniqueWheels:
-                modelWheelOpts.append(ModelWheelOpt(model, uniqueWheels[wheel]))
+                modelWheelOpts.add(ModelWheelOpt(model, uniqueWheels[wheel]))
                 wheelDict[model].append(textWheelDict[wheel])
                 continue
 
@@ -112,7 +112,7 @@ def parseWheelData(data):
 
             # Start with generating a new id and add that to appropriate dictionaries
             wheelsID = idgen.getNewID()
-            modelWheelOpts.append(ModelWheelOpt(model, wheelsID))
+            modelWheelOpts.add(ModelWheelOpt(model, wheelsID))
             uniqueWheels[wheel] = wheelsID
 
             firstHalf, secondHalf = wheel.replace('\"', '').strip().split('/')
@@ -129,7 +129,7 @@ def parseWheelData(data):
             textWheelDict[wheel] = wheelOpt
             wheelDict[model].append(wheelOpt)
 
-    return wheelOpts, modelWheelOpts, wheelDict
+    return wheelOpts, list(modelWheelOpts), wheelDict
 
 def parseColorData(data):
     uniqueColors = set()
