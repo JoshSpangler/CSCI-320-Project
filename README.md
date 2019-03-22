@@ -2,7 +2,7 @@
 
 ### To Connect to the h2 Browser Database:
 1. Make sure a .db file is present in the database/ folder (if not, run __Populator.java__ class)
-2. Run the h2-1.4.197.jar file and make sure the following settings are set properly:
+2. Run the **h2-1.4.197.jar** file and make sure the following settings are set properly:
     * The JDBC URL is **jdbc:h2:./database/database**
     * The username is **me**
     * The password is **password**
