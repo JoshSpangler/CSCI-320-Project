@@ -1,20 +1,20 @@
 xDrive28i,WMBx,X1,2019,AWD,Automatic,36950,0
 sDrive28i,WMBx,X1,2019,FWD,Automatic,34950,0
-xDrive28i,WMBx,X2,2019,AWD,Automatic,38400,0
+xDrive28i2,WMBx,X2,2019,AWD,Automatic,38400,0
 M35i,WMBx,X2,2019,AWD,Automatic,46450,0
-sDrive28i,WMBx,X2,2019,FWD,Automatic,36400,0
+sDrive28i2,WMBx,X2,2019,FWD,Automatic,36400,0
 xDrive30i,WMBx,X3,2019,AWD,Automatic,43000,0
 M40i,WMBx,X3,2019,AWD,Automatic,54650,1
 sDrive30i,WMBx,X3,2019,RWD,Automatic,41000,0
-xDrive30i,WMBx,X4,2019,AWD,Automatic,50450,0
-M40i,WMBx,X4,2019,AWD,Automatic,60450,1
-xDrive40i,WMBx,X5,2019,AWD,Automatic,60700,4
-xDrive50i,WMBx,X5,2019,AWD,Automatic,75750,5
+xDrive30i2,WMBx,X4,2019,AWD,Automatic,50450,0
+M40i2,WMBx,X4,2019,AWD,Automatic,60450,1
+xDrive40i,WMBx,X5,2019,AWD,Automatic,60700,2
+xDrive50i,WMBx,X5,2019,AWD,Automatic,75750,3
 xDrive35i,WMBx,X6,2019,AWD,Automatic,65850,2
-xDrive50i,WMBx,X6,2019,AWD,Automatic,78300,5
+xDrive50i2,WMBx,X6,2019,AWD,Automatic,78300,3
 sDrive35i,WMBx,X6,2019,RWD,Automatic,63550,2
-xDrive40i,WMBx,X7,2019,AWD,Automatic,73900,4
-xDrive50i,WMBx,X7,2019,AWD,Automatic,92600,5
+xDrive40i2,WMBx,X7,2019,AWD,Automatic,73900,4
+xDrive50i3,WMBx,X7,2019,AWD,Automatic,92600,5
 330i xDrive Sedan,WMB,3,2019,AWD,Automatic,42250,0
 330i Sedan,WMB,3,2019,RWD,Automatic,40250,0
 330i xDrive Sports Wagon,WMB,3,2019,AWD,Automatic,45000,0
