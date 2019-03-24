@@ -5,10 +5,9 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 public class gui{
-
     private JFrame jf;
     //for sorting based on any conjunction of these
-    private String dboModel,dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID, selectedCar;
+    private String dboSeries, dboModel,dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID, selectedCar;
     private Connection c;
 
     /**
@@ -34,6 +33,7 @@ public class gui{
         JButton dealer=new JButton("Dealer");
         JButton customer=new JButton("Customer");
         //sets sorting options to *
+        dboSeries="*";
         dboModel="*";
         dboColor="*";
         dboWheelDiameter="*";
@@ -49,7 +49,7 @@ public class gui{
         dealer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dealerMenuPane();
+                getDealerName();
             }
         });
         //if customer is chosen
@@ -81,7 +81,7 @@ public class gui{
         inventory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getDealerName();
+                inventoryPane();
             }
         });
         //if the dealer wants to look at the sale history
@@ -89,12 +89,13 @@ public class gui{
         history.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getDealerHistory();
+                getDealerHistory(new JPanel());
             }
         });
         jf.add(new JLabel("Do you want to order a new car, look at your inventory, or check your sale history?"));
         jf.add(order);
         jf.add(inventory);
+        jf.add(history);
         jf.pack();
         jf.repaint();
     }
@@ -111,6 +112,8 @@ public class gui{
         JPanel dealerRight=new JPanel();
         //the panel to put buttons on in the JScrollPane
         JPanel dealerScroll=new JPanel();
+        dboDealerID="*";
+        JComboBox<String> Series=getSeries("Dealer");
         //The models option
         JComboBox<String> Model=getModel("Dealer");
         //The color option
@@ -136,10 +139,11 @@ public class gui{
         jf.add(dealerLeft);
         jf.add(dealerRight);
         //set layouts
-        dealerLeft.setLayout(new GridLayout(5,1));
+        dealerLeft.setLayout(new GridLayout(6,1));
         dealerRight.setLayout(new GridLayout(2,1));
         //Add all the choices
         dealerRight.add(dealerCars);
+        dealerLeft.add(Series);
         dealerLeft.add(Model);
         dealerLeft.add(ColorChoice);
         dealerLeft.add(WheelChoice);
@@ -149,6 +153,47 @@ public class gui{
         jf.repaint();
     }
 
+    public JComboBox<String> getSeries(String accessor){
+        //gets the output from the database
+        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+                ,dboWheelRF,dboUpholstry,dboDealerID);
+        //creates and adds the strings to the combo box
+        String[] series=new String[carData.length+1];
+        series[0]="Series";
+        for(int i=0; i<carData.length; i++){
+            series[i+1]=carData[i][0];
+        }
+        JComboBox<String> seriesCBox=new JComboBox<String>(series);
+        //what to initially select the combo box as
+        if(dboSeries.equals("*")){
+            seriesCBox.setSelectedItem("Series");
+        }
+        else{
+            seriesCBox.setSelectedItem(dboSeries);
+        }
+        //what to do when one is chosen
+        seriesCBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String series2=e.toString();
+                series2=series2.substring(series2.indexOf("selectedItemReminder=")+21,series2.length()-1);
+                if(series2.equals("Series")){
+                    series2="*";
+                }
+                System.out.println(series2);
+                dboSeries=series2;
+                //refreshes the pane
+                if(accessor.toLowerCase().equals("dealer")) {
+                    dealerOrderingPane();
+                }
+                else{
+                    customerPaneInit();
+                }
+            }
+        });
+        return seriesCBox;
+    }
+    
     /**
      * Gets the model based on the sort by data
      * @param accessor the person accessing the info
@@ -156,12 +201,12 @@ public class gui{
      */
     public JComboBox<String> getModel(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
-                ,dboWheelRF,dboUpholstry,"*");
+        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+                ,dboWheelRF,dboUpholstry,dboDealerID);
         String[] models=new String[carData.length+1];
         models[0]="Model";
         for(int i=0; i<carData.length; i++){
-            models[i+1]=carData[i][0];
+            models[i+1]=carData[i][1];
         }
         JComboBox<String> modelCBox=new JComboBox<String>(models);
         //sets the selected item based on the sort-by data
@@ -201,12 +246,12 @@ public class gui{
 
     public JComboBox<String> getColor(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry,dboDealerID);
         String[] colors=new String[carData.length+1];
         colors[0]="Colors";
         for(int i=0; i<carData.length; i++){
-            colors[i+1]=carData[i][1];
+            colors[i+1]=carData[i][2];
         }
         JComboBox<String> colorsCBox=new JComboBox<String>(colors);
         //sets the selected item based on the sort-by data
@@ -245,13 +290,13 @@ public class gui{
      */
     public JComboBox<String> getWheels(String accessor){
         //gets the data to fill in the wheel combo box from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry, dboDealerID);
         //Creates the combo box
         String[] wheels=new String[carData.length+1];
         wheels[0]="Wheels";
         for(int i=0; i<carData.length; i++){
-            wheels[i+1]=carData[i][5]+", "+carData[i][6]+", "+carData[i][7]+", "+carData[i][8];
+            wheels[i+1]=carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
         }
         JComboBox<String> wheelsCBox=new JComboBox<String>(wheels);
         //sets the default value for the combobox
@@ -295,12 +340,12 @@ public class gui{
      */
     public JComboBox<String> getUpholstry(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor,dboWheelDiameter,dboWheelName,dboWheelStyle,
-                dboWheelRF,dboUpholstry,dboDealerID);
+        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
+                dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID);
         String[] upholstries=new String[carData.length+1];
         upholstries[0]="Upholstry";
         for(int i=0; i<carData.length; i++){
-            upholstries[i+1]=carData[i][3];
+            upholstries[i+1]=carData[i][4];
         }
         JComboBox<String> upholstriesCBox=new JComboBox<String>(upholstries);
         //what to set the selected item to based on the sort-by data
@@ -379,7 +424,7 @@ public class gui{
             @Override
             public void actionPerformed(ActionEvent e) {
                 dboDealerID=dealerField.getText();
-                inventoryPane();
+                dealerMenuPane();
             }
         });
         jf.add(new JLabel("Enter your dealer ID"));
@@ -396,14 +441,9 @@ public class gui{
         jf.getContentPane().removeAll();
         jf.setLayout(new GridLayout(2,1));
         //creates the scroll pane
-        JPanel scroll=new JPanel();
         JButton cont=new JButton("Continue");
-        JLabel[] labels=getCarsByDealerID();
-        scroll.setLayout(new GridLayout(labels.length, 1));
-        for(JLabel l:labels){
-            scroll.add(l);
-        }
-        JScrollPane scrollPane=new JScrollPane(scroll);
+        JTable table=getCarsByDealerID();
+        JScrollPane scrollPane=new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(750,325));
         //when the user tries to continue
@@ -422,28 +462,93 @@ public class gui{
     }
 
     /**
-     * Gets a list of JLabels with each car that fits the sort-by data
-     * @return an array of JLabels with each car that fits the sort-by data
+     * Gets a JTable with each car that fits the sort-by data
+     * @return a JTable with each car that fits the sort-by data
      */
-    public JLabel[] getCarsByDealerID(){
+    public JTable getCarsByDealerID(){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
-        JLabel[] cars=new JLabel[carData.length];
-        //string and JLabel builder
+        JTable cars=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
+        //string and JTable builder
         for(int i=0; i<carData.length; i++){
-            String car=carData[i][0]+", "+carData[i][1]+", "+carData[i][2]+", "+carData[i][3]+", "+carData[i][4]+", "+
-                    carData[i][5]+", "+carData[i][6]+", "+carData[i][7]+", "+carData[i][8];
-            cars[i]=new JLabel(car);
+            for(int j=0; j<carData[i].length; j++){
+                cars.setValueAt(carData[i][j],i,j);
+            }
         }
+        //Creates the header for the columns
+        String[] header=new String[]{"Series","Model","Color","Design","Upholstery", "Price", "Wheel Diameter","Wheel Name",
+                "Wheel Style", "Wheel Runflat"};
+        for(int i=0; i<cars.getColumnCount(); i++) {
+            cars.getColumnModel().getColumn(i).setMinWidth(200);
+            cars.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(header[i]);
+        }
+        cars.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return cars;
     }
 
     /**
      * Shows the dealer's history with regard to sales
+     * @param scrollPanel the scrollPanel to be shown (initially blank)
      */
-    public void getDealerHistory(){
+
+    public void getDealerHistory(JPanel scrollPanel){
         jf.getContentPane().removeAll();
+        jf.setLayout(new GridLayout(2,2));
+        JPanel checkBoxes=new JPanel();
+        JButton show=new JButton("Show data");
+        JButton cont=new JButton("Continue");
+        JCheckBox[] cba=new JCheckBox[]{
+                new JCheckBox("VIN"), new JCheckBox("Model"), new JCheckBox("Series"),
+                new JCheckBox("Color"),new JCheckBox("Design"),new JCheckBox("Upholstery"),
+                new JCheckBox("Manufactured Day"), new JCheckBox("Manufacture Month"),
+                new JCheckBox("Manufacture Year"), new JCheckBox("Base Cost"),
+                new JCheckBox("Total Cost"), new JCheckBox("Optional upgrades"),
+                new JCheckBox("Additional Cost"), new JCheckBox("Wheel Diameter"),
+                new JCheckBox("Wheel Name"),new JCheckBox("Wheel Style"),new JCheckBox("Wheel Runflat"),
+                new JCheckBox("Drivetrain"),new JCheckBox("Transmission"),new JCheckBox("Sale Day"),
+                new JCheckBox("Sale Month"), new JCheckBox("Sale Year"), new JCheckBox("Customer Name"),
+                new JCheckBox("Customer Street"), new JCheckBox("Customer County"),
+                new JCheckBox("Customer State"), new JCheckBox("Customer ZIP")};
+        checkBoxes.setLayout(new GridLayout(cba.length,1));
+        for(JCheckBox c:cba){
+            checkBoxes.add(c);
+        }
+        show.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean[] isSelected=new boolean[cba.length];
+                for(int i=0; i<cba.length; i++){
+                    isSelected[i]=cba[i].isSelected();
+                }
+                String[][] carData=accessDatabase.getCarHistoryByDealerID(c,dboDealerID, isSelected);
+                JTable table=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
+                JScrollPane scrollPane=new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                for(int i=0; i<carData.length; i++){
+                    for(int j=0; j<carData[i].length; j++){
+                        table.setValueAt(carData[i][j],i,j);
+                    }
+                }
+                for(int i=0; i<table.getColumnCount(); i++){
+                    table.getColumnModel().getColumn(i).setMinWidth(200);
+                    table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(cba[i].getText());
+                }
+                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                scrollPanel.add(scrollPane);
+                getDealerHistory(scrollPanel);
+            }
+        });
+        cont.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuPane();
+            }
+        });
+        jf.add(checkBoxes);
+        jf.add(scrollPanel);
+        jf.add(show);
+        jf.add(cont);
         jf.pack();
         jf.repaint();
     }
@@ -453,7 +558,7 @@ public class gui{
      */
     public void customerPaneInit(){
         jf.getContentPane().removeAll();
-        jf.setLayout(new GridLayout(4,2));
+        jf.setLayout(new GridLayout(6,2));
         JButton cont=new JButton("Continue");
         //when continue is pressed
         cont.addActionListener(new ActionListener() {
@@ -462,11 +567,14 @@ public class gui{
                 chooseCar();
             }
         });
+        JLabel seriesPane=new JLabel("Series");
         JLabel modelPane=new JLabel("Model");
         JLabel colorPane=new JLabel("Color");
         JLabel upholstryPane=new JLabel("Upholstry");
         JLabel wheelPane=new JLabel("Wheels");
         //gets all JComboBoxes based on the sort-by data
+        jf.add(seriesPane);
+        jf.add(getSeries("Customer"));
         jf.add(modelPane);
         jf.add(getModel("Customer"));
         jf.add(colorPane);
@@ -509,7 +617,7 @@ public class gui{
 
     public JButton[] getUnsoldCars(){
         //Gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,  dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
         JButton[] buttons=new JButton[carData.length];
         //builds the car buttons
