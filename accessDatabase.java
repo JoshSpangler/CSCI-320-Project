@@ -192,7 +192,18 @@ public class accessDatabase {
                 }
             }
             if (count == 0) {
-                query += " *";
+                for(int i=0; i<cQuery.length; i++){
+                    if(i!=0){
+                        query+=",";
+                    }
+                    query+=" "+cQuery[i];
+                    if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
+                        optUpgrade = count;
+                    } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST")) {
+                        addCost = count;
+                    }
+                    count++;
+                }
             }
             query += " FROM ((((((VEHICLE JOIN VEHICLE_OPTIONAL_UPGRADE ON VEHICLE.VIN=VEHICLE_OPTIONAL_UPGRADE.VIN) " +
                     "JOIN OPTIONAL_UPGRADES ON VEHICLE_OPTIONAL_UPGRADE.NAME=OPTIONAL_UPGRADES.OPTIONAL_UPGRADE) " +
