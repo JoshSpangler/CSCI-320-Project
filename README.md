@@ -8,4 +8,4 @@
     * The password is **password**
 
 ### To Start the Database Application:
-1. Locate and run the **gui.java** class
+1. Locate and run the **gui.java** class in the **java** folder
