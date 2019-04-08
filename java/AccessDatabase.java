@@ -285,6 +285,7 @@ public class AccessDatabase {
             int price=0;
             int[] date=getDate();
             String saleID="null";
+            query="INSERT INTO VEHICLE VALUES()";
         }catch (SQLException e){
             e.printStackTrace();
         }
