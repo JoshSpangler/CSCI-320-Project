@@ -6,6 +6,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 public class GUI{
     private JFrame jf;
@@ -313,7 +315,9 @@ public class GUI{
         for(int i=0; i<carData.length; i++){
             series[i+1]=carData[i][0];
         }
-        JComboBox<String> seriesCBox=new JComboBox<String>(series);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>( Arrays.asList(series) );
+        String[] seriesWithoutDuplicates = linkedHashSet.toArray(new String[] {});
+        JComboBox<String> seriesCBox=new JComboBox<String>(seriesWithoutDuplicates);
         //what to initially select the combo box as
         if(dboSeries.equals("*")){
             seriesCBox.setSelectedItem("Series");
@@ -359,7 +363,9 @@ public class GUI{
         for(int i=0; i<carData.length; i++){
             models[i+1]=carData[i][1];
         }
-        JComboBox<String> modelCBox=new JComboBox<String>(models);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>( Arrays.asList(models) );
+        String[] modelsWithoutDuplicates = linkedHashSet.toArray(new String[] {});
+        JComboBox<String> modelCBox=new JComboBox<String>(modelsWithoutDuplicates);
         //sets the selected item based on the sort-by data
         if(dboModel.equals("*")){
             modelCBox.setSelectedItem("Model");
@@ -405,7 +411,9 @@ public class GUI{
         for(int i=0; i<carData.length; i++){
             colors[i+1]=carData[i][2];
         }
-        JComboBox<String> colorsCBox=new JComboBox<String>(colors);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>( Arrays.asList(colors) );
+        String[] colorsWithoutDuplicates = linkedHashSet.toArray(new String[] {});
+        JComboBox<String> colorsCBox=new JComboBox<String>(colorsWithoutDuplicates);
         //sets the selected item based on the sort-by data
         if(dboColor.equals("*")){
             colorsCBox.setSelectedItem("Colors");
@@ -451,7 +459,9 @@ public class GUI{
         for(int i=0; i<carData.length; i++){
             wheels[i+1]=carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
         }
-        JComboBox<String> wheelsCBox=new JComboBox<String>(wheels);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>( Arrays.asList(wheels) );
+        String[] wheelsWithoutDuplicates = linkedHashSet.toArray(new String[] {});
+        JComboBox<String> wheelsCBox=new JComboBox<String>(wheelsWithoutDuplicates);
         //sets the default value for the combobox
         if(dboWheelName.equals("*")){
             wheelsCBox.setSelectedItem("Wheels");
@@ -501,7 +511,9 @@ public class GUI{
         for(int i=0; i<carData.length; i++){
             upholstries[i+1]=carData[i][4];
         }
-        JComboBox<String> upholstriesCBox=new JComboBox<String>(upholstries);
+        LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>( Arrays.asList(upholstries) );
+        String[] upholstriesWithoutDuplicates = linkedHashSet.toArray(new String[] {});
+        JComboBox<String> upholstriesCBox=new JComboBox<String>(upholstriesWithoutDuplicates);
         //what to set the selected item to based on the sort-by data
         if(dboUpholstry.equals("*")){
             upholstriesCBox.setSelectedItem("Upholstry");
