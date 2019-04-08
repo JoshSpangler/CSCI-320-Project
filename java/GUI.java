@@ -146,7 +146,7 @@ public class GUI{
     public void dealerMenuPane(){
         background.removeAll();
         //if the dealer wants to order a new car
-        JButton order=new JButton("Order");
+        JButton order=new JButton("Order From Manufacturer");
         JLabel questionLabel=new JLabel("<html><font color="+color+">Do you want to order a new car, look at your inventory, or check your sale history?</font></html>");
         GridBagConstraints gc=new GridBagConstraints();
         order.addActionListener(new ActionListener() {
@@ -156,7 +156,7 @@ public class GUI{
             }
         });
         //if the dealer wants to look at their inventory
-        JButton inventory=new JButton("Inventory");
+        JButton inventory=new JButton("Vehicle Locator Services");
         inventory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -164,7 +164,7 @@ public class GUI{
             }
         });
         //if the dealer wants to look at the sale history
-        JButton history=new JButton("History");
+        JButton history=new JButton("Sales History");
         history.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
