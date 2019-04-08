@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class accessDatabase {
 
@@ -55,6 +56,51 @@ public class accessDatabase {
             r.add(s);
         }
         return r.toArray(String[][]::new);
+    }
+
+    public static int[] getDate(){
+        Date date=new Date();
+        int[] d=new int[3];
+        String monthString=date.toString().split(" ")[1];
+        if(monthString.equals("January")){
+            d[0]=1;
+        }
+        else if(monthString.equals("February")){
+            d[0]=2;
+        }
+        else if(monthString.equals("March")){
+            d[0]=3;
+        }
+        else if(monthString.equals("April")){
+            d[0]=4;
+        }
+        else if(monthString.equals("May")){
+            d[0]=5;
+        }
+        else if(monthString.equals("June")){
+            d[0]=6;
+        }
+        else if(monthString.equals("July")){
+            d[0]=7;
+        }
+        else if(monthString.equals("August")){
+            d[0]=8;
+        }
+        else if(monthString.equals("September")){
+            d[0]=9;
+        }
+        else if(monthString.equals("October")){
+            d[0]=10;
+        }
+        else if(monthString.equals("November")){
+            d[0]=11;
+        }
+        else{
+            d[0]=12;
+        }
+        d[1]=Integer.parseInt(date.toString().split(" ")[2]);
+        d[2]=Integer.parseInt(date.toString().split(" ")[5]);
+        return d;
     }
 
     /**
@@ -113,18 +159,18 @@ public class accessDatabase {
         try {
             String query =
                     "SELECT MODEL.SERIES," +
-                    "MODEL, " +
-                    "COLOR, " +
-                    "DESIGN, " +
-                    "VEHICLE.STYLE, " +
-                    "PRICE, " +
-                    "WHEELS_DIAMETER, " +
-                    "WHEELS_NAME, " +
-                    "WHEELS_STYLE, " +
-                    "WHEELS_RUNFLAT " +
-                    "FROM ((VEHICLE JOIN WHEELS_OPTION AS " +
-                    "WHEELS_OPTION(WHEELS_ID, WHEELS_DIAMETER, WHEELS_NAME, WHEELS_STYLE, WHEELS_RUNFLAT) " +
-                    "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID) JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) WHERE SALE_ID='null'";
+                            "MODEL, " +
+                            "COLOR, " +
+                            "DESIGN, " +
+                            "VEHICLE.STYLE, " +
+                            "PRICE, " +
+                            "WHEELS_DIAMETER, " +
+                            "WHEELS_NAME, " +
+                            "WHEELS_STYLE, " +
+                            "WHEELS_RUNFLAT " +
+                            "FROM ((VEHICLE JOIN WHEELS_OPTION AS " +
+                            "WHEELS_OPTION(WHEELS_ID, WHEELS_DIAMETER, WHEELS_NAME, WHEELS_STYLE, WHEELS_RUNFLAT) " +
+                            "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID) JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) WHERE SALE_ID='null'";
             if(!series.equals("*")){
                 query+=(" AND SERIES='"+series+"'");
             }
@@ -213,11 +259,103 @@ public class accessDatabase {
                     "JOIN CUSTOMER ON SALE.CUSTOMER_ID=CUSTOMER.ID) " +
                     "WHERE VEHICLE.DEALER_ID=";
             query += (dealerID + " AND VEHICLE.SALE_ID!='null';");
+            System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             System.out.println(query);
             return combineLikeVINs(getResults(result, count), optUpgrade, addCost);
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * alters vehicle, sale,
+     */
+    public static void buyCar(Connection c, String dealerID, String series, String model, String colorChoice, String wheelChoice,
+                              String upholstery, String design, ArrayList<String> upgrades){
+
+        try {
+            String query = "SELECT MAX(VIN) FROM VEHICLE;";
+            Statement stmt = c.createStatement();
+            ResultSet result=stmt.executeQuery(query);
+            result.next();
+            String vin=result.getString(1);
+            int price=0;
+            int[] date=getDate();
+            String saleID="null";
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * alters vehicle sale and customer.
+     */
+    public static void sellCar(Connection c, String firstname, String lastName, String gender, String annualIncome, String street, String county,
+                               String state, String zip, String VIN){
+        try {
+            String[][] results;
+            String query = "SELECT * FROM CUSTOMER WHERE NAME='" + firstname + " " + lastName + "'  AND STREET='" +
+                    street + "' AND COUNTY='" + county + "' AND STATE='" + state + "' AND ZIP='" + zip + "';";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            results=getResults(result, 6);
+            int customerID;
+            if(results.length==0){
+                query="SELECT MAX(ID) FROM CUSTOMER;";
+                result=stmt.executeQuery(query);
+                result.next();
+                customerID=Integer.parseInt(result.getString(1))+1;
+                query="INSERT INTO CUSTOMER VALUES("+customerID+", '"+firstname+" "+lastName+"', '"+
+                        street+"', '"+county+"', '"+state+"', '"+zip+"');";
+                System.out.println(query);
+                stmt.execute(query);
+                query="INSERT INTO PERSON VALUES("+customerID+", '"+gender+"', "+Integer.parseInt(annualIncome)+");";
+                System.out.println(query);
+                stmt.execute(query);
+            }
+            else{
+                customerID=Integer.parseInt(results[0][0]);
+            }
+            query="SELECT MAX(SALE_ID) FROM SALE;";
+            System.out.println(query);
+            result=stmt.executeQuery(query);
+            result.next();
+            int sale_id=Integer.parseInt(result.getString(1))+1;
+            int[] date=getDate();
+            query="INSERT INTO SALE VALUES("+sale_id+", "+customerID+", "+date[0]+", "+date[1]+", "+date[2]+");";
+            System.out.println(query);
+            stmt.execute(query);
+            query="UPDATE VEHICLE SET SALE_ID="+sale_id+" WHERE VIN="+Integer.parseInt(VIN)+";";
+            System.out.println(query);
+            stmt.executeUpdate(query);
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public static String getVIN(Connection c,String car){
+        try {
+            String[] carData = car.split(", ");
+            String query = "SELECT VEHICLE.VIN FROM VEHICLE JOIN WHEELS_OPTION ON VEHICLE.WHEELS_ID=WHEELS_OPTION.ID WHERE " +
+                    "VEHICLE.MODEL='" + carData[1] +
+                    "' AND VEHICLE.COLOR='" + carData[2] +
+                    "' AND VEHICLE.DESIGN='" + carData[3] +
+                    "' AND VEHICLE.STYLE='" + carData[4] +
+                    "' AND VEHICLE.PRICE=" + carData[5] +
+                    " AND WHEELS_OPTION.DIAMETER=" + carData[6] +
+                    " AND WHEELS_OPTION.NAME='" + carData[7] +
+                    "' AND WHEELS_OPTION.STYLE='" + carData[8] +
+                    "' AND WHEELS_OPTION.RUNFLAT='" + carData[9] +
+                    "';";
+            System.out.println(query);
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            result.next();
+            return result.getString(1);
+        }
+        catch (SQLException e){
             e.printStackTrace();
         }
         return null;
