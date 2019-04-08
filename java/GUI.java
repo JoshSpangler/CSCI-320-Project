@@ -23,7 +23,7 @@ public class GUI{
      * @param c the connection
      */
     public GUI(Connection c){
-        jf=new JFrame();
+        jf=new JFrame("WMB Database Applications");
         //creates the background image
         ImageIcon bgi=(new ImageIcon("./images/logo.png"));
         //Gets the screen dimensions and resizes the image based on this
@@ -53,7 +53,8 @@ public class GUI{
         buttons.setLayout(new GridLayout(3,1));
         buttons.setPreferredSize(new Dimension(750,75));
         buttons.setOpaque(false);
-        JLabel welcomeLabel=new JLabel("<html><font color="+color+"> Welcome to BWM.\nAre you a dealer or customer? </font></html>");
+        JLabel welcomeLabel=new JLabel("<html><font color=" + color +
+                "> Welcome to BWM.\nAre you a dealer, customer, or administrator? </font></html>");
         welcomeLabel.setOpaque(true);
         welcomeLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
         JButton dealer=new JButton("Dealer");
@@ -97,12 +98,7 @@ public class GUI{
                 customerPaneInit();
             }
         });
-        admin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
+        admin.addActionListener(e -> setupAdmin());
         background.revalidate();
         background.repaint();
     }
@@ -872,6 +868,43 @@ public class GUI{
         background.add(fields,gc);
         gc.gridy++;
         background.add(cont, gc);
+        background.revalidate();
+        background.repaint();
+    }
+
+    private void setupAdmin() {
+        background.removeAll();
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+
+        JLabel instructions = new JLabel("<html><font color="+color+">"+ "Enter the SQL statement below:</font></html>");
+        instructions.setOpaque(true);
+        instructions.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+        background.add(instructions, gc);
+        gc.gridy++;
+
+        JTextArea sqlField = new JTextArea(10, 80);
+        sqlField.setLineWrap(true);
+        sqlField.setWrapStyleWord(true);
+        sqlField.setTabSize(4);
+        JScrollPane scrollSql = new JScrollPane(sqlField,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        background.add(scrollSql, gc);
+        gc.gridy++;
+
+
+
+        JButton submitButton = new JButton("Submit");
+        //submitButton.addActionListener();
+        background.add(submitButton, gc);
+        gc.gridx++;
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> menuPane());
+        background.add(backButton, gc);
+
         background.revalidate();
         background.repaint();
     }
