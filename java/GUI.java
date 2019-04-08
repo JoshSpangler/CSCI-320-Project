@@ -7,7 +7,7 @@ import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-public class gui{
+public class GUI{
     private JFrame jf;
     private JLabel background;
     //for sorting based on any conjunction of these
@@ -21,7 +21,7 @@ public class gui{
      * Constructor for initializing the JFrame and setting the connection
      * @param c the connection
      */
-    public gui(Connection c){
+    public GUI(Connection c){
         jf=new JFrame();
         //creates the background image
         ImageIcon bgi=(new ImageIcon("./images/logo.png"));
@@ -219,7 +219,7 @@ public class gui{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String car="";
-                accessDatabase.buyCar(c, dboDealerID, Series.getItemAt(Series.getSelectedIndex()),
+                AccessDatabase.buyCar(c, dboDealerID, Series.getItemAt(Series.getSelectedIndex()),
                         Model.getItemAt(Model.getSelectedIndex()),
                         ColorChoice.getItemAt(ColorChoice.getSelectedIndex()),
                         WheelChoice.getItemAt(WheelChoice.getSelectedIndex()),
@@ -305,7 +305,7 @@ public class gui{
 
     public JComboBox<String> getSeries(String accessor){
         //gets the output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
                 ,dboWheelRF,dboUpholstry,dboDealerID);
         //creates and adds the strings to the combo box
         String[] series=new String[carData.length+1];
@@ -352,7 +352,7 @@ public class gui{
      */
     public JComboBox<String> getModel(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
                 ,dboWheelRF,dboUpholstry,dboDealerID);
         String[] models=new String[carData.length+1];
         models[0]="Model";
@@ -398,7 +398,7 @@ public class gui{
 
     public JComboBox<String> getColor(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry,dboDealerID);
         String[] colors=new String[carData.length+1];
         colors[0]="Colors";
@@ -443,7 +443,7 @@ public class gui{
      */
     public JComboBox<String> getWheels(String accessor){
         //gets the data to fill in the wheel combo box from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry, dboDealerID);
         //Creates the combo box
         String[] wheels=new String[carData.length+1];
@@ -494,7 +494,7 @@ public class gui{
      */
     public JComboBox<String> getUpholstry(String accessor){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
+        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
                 dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID);
         String[] upholstries=new String[carData.length+1];
         upholstries[0]="Upholstry";
@@ -599,7 +599,7 @@ public class gui{
      */
     public JTable getCarsByDealerID(){
         //gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
         JTable cars=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
         //string and JTable builder
@@ -653,7 +653,7 @@ public class gui{
                 for(int i=0; i<cba.length; i++){
                     isSelected[i]=cba[i].isSelected();
                 }
-                String[][] carData=accessDatabase.getCarHistoryByDealerID(c,dboDealerID, isSelected);
+                String[][] carData=AccessDatabase.getCarHistoryByDealerID(c,dboDealerID, isSelected);
                 JTable table=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
                 JScrollPane scrollPane=new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -778,7 +778,7 @@ public class gui{
 
     public JButton[] getUnsoldCars(){
         //Gets output from the database
-        String[][] carData=accessDatabase.getUnsoldCars(c, dboSeries,  dboModel,dboColor, dboWheelDiameter,
+        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,  dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
         JButton[] buttons=new JButton[carData.length];
         //builds the car buttons
@@ -831,10 +831,10 @@ public class gui{
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                accessDatabase.sellCar(c, firstname.getText(), lastname.getText(), gender.getText(),
+                AccessDatabase.sellCar(c, firstname.getText(), lastname.getText(), gender.getText(),
                         annualIncome.getText(), street.getText(), county.getText(), state.getText(), zip.getText(),
-                        accessDatabase.getVIN(c, selectedCar));
-                accessDatabase.getVIN(c, selectedCar);
+                        AccessDatabase.getVIN(c, selectedCar));
+                AccessDatabase.getVIN(c, selectedCar);
                 menuPane();
             }
         });
@@ -865,9 +865,9 @@ public class gui{
      * @param args command line args
      */
     public static void main(String[] args){
-        Connection c=accessDatabase.connect("./database/database","me","password");
+        Connection c=AccessDatabase.connect("./database/database","me","password");
         if(c!=null) {
-            gui g = new gui(c);
+            GUI g = new GUI(c);
         }
     }
 }
