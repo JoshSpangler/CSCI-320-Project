@@ -110,14 +110,14 @@ public class AdminPage extends JPanel {
         JLabel resultHeader = new JLabel(RESULT_PAGE_HEADER);
         resultHeader.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
         resultPage.add(resultHeader, constraints);
-        constraints.gridy++;
-
-        resultPage.add(new JLabel(), constraints); // placeholder
-        constraints.gridy++;
+        constraints.gridy += 2;
 
         JButton toAdmin = new JButton(BACK_BUTTON_TEXT);
         toAdmin.addActionListener(e -> refresh());
         resultPage.add(toAdmin, constraints);
+        constraints.gridy++;
+
+        resultPage.add(new JLabel(), constraints); // placeholder
 
     }
 
@@ -194,7 +194,7 @@ public class AdminPage extends JPanel {
             // Set current card to the result page after adding results
             GridBagConstraints constraints = getDefaultConstraints();
             constraints.gridy = 1;
-            resultPage.remove(1);
+            resultPage.remove(2);
             resultPage.add(resultScroll, constraints);
             setCard(resultPage);
         }
