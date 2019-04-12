@@ -60,7 +60,7 @@ public class GUI{
         buttons.setPreferredSize(new Dimension(750,75));
         buttons.setOpaque(false);
         JLabel welcomeLabel=new JLabel("<html><font color=" + color +
-                "> Welcome to BWM.\nAre you a dealer, customer, or administrator? </font></html>");
+                "> Welcome to WMB.\nAre you a dealer, customer, or administrator? </font></html>");
         welcomeLabel.setOpaque(true);
         welcomeLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
         JButton dealer=new JButton("Dealer");
