@@ -3,37 +3,61 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
+/**
+ * Class to hold all the administrator's actions. Can execute arbitrary SQL statements.
+ *
+ * @author Tim Johnson
+ */
 public class AdminPage extends JPanel {
+
+    //
+    // CONSTANTS
+    //
 
     private static final String BACK_BUTTON_TEXT = "Back";
     private static final String QUERY_BUTTON_TEXT = "Submit Query";
     private static final String EXECUTE_BUTTON_TEXT = "Execute";
+    private static final String RESULT_PAGE_HEADER = GUI.getHeader("Results of your SQL Query:");
+    private static final String INPUT_PAGE_HEADER = GUI.getHeader("Enter the SQL statement below:");
+
+    //
+    // ATTRIBUTES
+    //
 
     private final Connection con;
-    private JPanel adminPage;
+    private JPanel inputPage;
     private JPanel resultPage;
     private JTextArea errorField;
     private JScrollPane errorScroll;
 
+    /**
+     * Creates a new administrator page component. Can execute arbitrary SQL statements.
+     *
+     * @param con connection to the SQL server
+     * @param backListener callback that should be called when returning from this page
+     */
     public AdminPage(Connection con, ActionListener backListener) {
         this.con = con;
 
-        this.setOpaque(false);
-
         initPages(backListener);
-        this.add(adminPage);
-        this.revalidate();
-        this.repaint();
+        setCard(resultPage);
     }
 
+    /**
+     * Initializes the pages, those being the input page and the results page
+     *
+     * @param backListener callback that should be called when returning from this page
+     */
     private void initPages(ActionListener backListener) {
         // Initialize the admin page. Has everything in it besides results
-        adminPage = new JPanel(new GridLayout(0, 1, 0, 5));
+        inputPage = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = getDefaultConstraints();
 
-        JLabel instructions = new JLabel("<html><font color="+GUI.color+">"+ "Enter the SQL statement below:</font></html>");
-        instructions.setOpaque(true);
+        // Instructions, errorField setup, and sql statement entry area
+        JLabel instructions = new JLabel(INPUT_PAGE_HEADER);
         instructions.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-        adminPage.add(instructions);
+        inputPage.add(instructions, constraints);
+        constraints.gridy++;
 
         errorField = new JTextArea(10, 80);
         errorField.setEditable(false);
@@ -43,7 +67,7 @@ public class AdminPage extends JPanel {
         errorField.setTabSize(4);
         errorScroll = new JScrollPane(errorField,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        //adminPage.add(errorScroll);
+        constraints.gridy++;
 
         JTextArea sqlField = new JTextArea(10, 80);
         sqlField.setLineWrap(true);
@@ -51,9 +75,11 @@ public class AdminPage extends JPanel {
         sqlField.setTabSize(4);
         JScrollPane scrollSql = new JScrollPane(sqlField,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        adminPage.add(scrollSql);
+        inputPage.add(scrollSql, constraints);
+        constraints.gridy++;
 
-        JPanel buttons = new JPanel(new GridLayout(3, 1, 0, 5));
+        // Buttons for actions
+        JPanel buttons = new JPanel(new GridLayout(1, 3, 10, 0));
 
         JButton queryButton = new JButton(QUERY_BUTTON_TEXT);
         queryButton.addActionListener(e -> {
@@ -70,48 +96,86 @@ public class AdminPage extends JPanel {
         buttons.add(executeButton);
 
         JButton backButton = new JButton(BACK_BUTTON_TEXT);
+        backButton.addActionListener(e -> refresh());
         backButton.addActionListener(backListener);
         buttons.add(backButton);
-        adminPage.add(buttons);
+
+        inputPage.add(buttons, constraints);
 
         // Result page setup
-        resultPage = new JPanel(new GridLayout(2, 1));
-        resultPage.add(new JLabel());
+        resultPage = new JPanel(new GridBagLayout());
+        constraints.gridy = 0;
+        constraints.gridx = 0;
+
+        JLabel resultHeader = new JLabel(RESULT_PAGE_HEADER);
+        resultHeader.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+        resultPage.add(resultHeader, constraints);
+        constraints.gridy++;
+
+        resultPage.add(new JLabel(), constraints); // placeholder
+        constraints.gridy++;
 
         JButton toAdmin = new JButton(BACK_BUTTON_TEXT);
         toAdmin.addActionListener(e -> refresh());
-        resultPage.add(toAdmin);
+        resultPage.add(toAdmin, constraints);
 
     }
 
-    public void refresh() {
+    /**
+     * Sets the current panel to the given card
+     *
+     * @param card panel to switch to
+     */
+    private void setCard(JPanel card) {
         this.removeAll();
 
-        errorField.setText("");
-        adminPage.remove(errorScroll);
+        this.add(card);
 
-        this.add(adminPage, 0);
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * Adds the specified error to the sql input page.
+     *
+     * @param error string of error message
+     */
     private void addError(String error) {
         errorField.setText(error);
-        adminPage.remove(errorScroll);
-        adminPage.add(errorScroll,1);
+        inputPage.remove(errorScroll);
+
+        GridBagConstraints constraints = getDefaultConstraints();
+        constraints.gridy = 1;
+        inputPage.add(errorScroll, constraints);
+
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * Function that refreshes the admin page, clearing errors and resetting to the start page
+     */
+    public void refresh() {
+        errorField.setText("");
+        inputPage.remove(errorScroll);
+
+        setCard(inputPage);
+    }
+
+    /**
+     * Executes an arbitrary SQL query and displays the results on the results page.
+     *
+     * @param query arbitrary SQL query to execute
+     */
     private void makeQuery(String query) {
         Statement statement = null;
         try {
             statement = con.createStatement();
             ResultSet results = statement.executeQuery(query);
 
+            // Extract the results into a table
             ResultSetMetaData metaData = results.getMetaData();
             int numCols = metaData.getColumnCount();
-
             JPanel resultPanel = new JPanel(new GridLayout(0, numCols));
             for (int i = 0; i < numCols; i++) {
                 resultPanel.add(new JLabel(metaData.getColumnName(i+1)));
@@ -122,18 +186,17 @@ public class AdminPage extends JPanel {
                 }
             }
 
-            JScrollPane resultScroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            // Make the results able to fit on the page by adding it to a scroll pane
+            JScrollPane resultScroll = new JScrollPane(resultPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            //resultScroll.setMaximumSize(new Dimension(10000, 400));
-            resultScroll.add(resultPanel);
+            resultScroll.setPreferredSize(new Dimension(1000, 600));
 
-            resultPage.remove(0);
-            resultPage.add(resultScroll, 0);
-
-            this.removeAll();
-            this.add(resultPage);
-            this.revalidate();
-            this.repaint();
+            // Set current card to the result page after adding results
+            GridBagConstraints constraints = getDefaultConstraints();
+            constraints.gridy = 1;
+            resultPage.remove(1);
+            resultPage.add(resultScroll, constraints);
+            setCard(resultPage);
         }
         catch (SQLException e) {
             addError(e.getMessage());
@@ -150,6 +213,11 @@ public class AdminPage extends JPanel {
         }
     }
 
+    /**
+     * Executes arbitrary sql code found in the input. Adds error to page if there was an error.
+     *
+     * @param executable SQL statement to execute.
+     */
     private void execute(String executable) {
         Statement statement = null;
         try {
@@ -169,5 +237,13 @@ public class AdminPage extends JPanel {
                 }
             }
         }
+    }
+
+    private static GridBagConstraints getDefaultConstraints() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = new Insets(5, 5, 5, 5);
+        return constraints;
     }
 }

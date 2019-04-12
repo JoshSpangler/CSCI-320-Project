@@ -892,6 +892,10 @@ public class GUI{
         background.repaint();
     }
 
+    public static String getHeader(String text) {
+        return String.format("<html><font color=%s>%s</font></html>", color, text);
+    }
+
     /**
      * Main method
      * @param args command line args
