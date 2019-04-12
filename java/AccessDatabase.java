@@ -58,10 +58,16 @@ public class AccessDatabase {
         return r.toArray(String[][]::new);
     }
 
+
+    /**
+     * Gets an integer version of the date
+     * @return an integer version of the date
+     */
     public static int[] getDate(){
         Date date=new Date();
         int[] d=new int[3];
         String monthString=date.toString().split(" ")[1];
+        //Sets the month int
         if(monthString.equals("Jan")){
             d[0]=1;
         }
@@ -98,7 +104,9 @@ public class AccessDatabase {
         else{
             d[0]=12;
         }
+        //Sets the day integer
         d[1]=Integer.parseInt(date.toString().split(" ")[2]);
+        //Sets the year integer
         d[2]=Integer.parseInt(date.toString().split(" ")[5]);
         return d;
     }
@@ -271,6 +279,8 @@ public class AccessDatabase {
     }
 
     /**
+     * Inserts a new vehicle into the dealer's database
+     *
      * Alters:
      * BODY_DESIGN_OPTION
      * COLOR_OPTION

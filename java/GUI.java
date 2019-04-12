@@ -230,6 +230,7 @@ public class GUI{
                         Design.getItemAt(Design.getSelectedIndex()),
                         baseprice, optUpgradeList);
                 System.out.println(car);
+                menuPane();
             }
         });
         //set layouts
