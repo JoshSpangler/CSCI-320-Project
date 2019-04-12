@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GetData {
 
@@ -42,6 +43,7 @@ public class GetData {
                 }
             }
         }
+        Collections.sort(attribute);
         return attribute.toArray(String[]::new);
     }
 

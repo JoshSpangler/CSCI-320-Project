@@ -149,6 +149,86 @@ public class AccessDatabase {
         return carList.toArray(String[][]::new);
     }
 
+    public static String[][] getModels(Connection c, String series) {
+        try{
+            String query =
+                    "SELECT MODEL " +
+                            "FROM (VEHICLE JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME)";
+            if(!series.equals("*")){
+                query+=(" WHERE SERIES='"+series+"'");
+            }
+            query += ";";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            System.out.println(query);
+            return getResults(result, 1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String[][] getColors(Connection c, String model) {
+        try{
+            String query =
+                    "SELECT COLOR " +
+                            "FROM MODEL_COLOR_OPTION";
+            if(!model.equals("*")){
+                query+=(" WHERE MODEL_NAME='"+model+"'");
+            }
+            query += ";";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            System.out.println(query);
+            return getResults(result, 1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String[][] getWheels(Connection c, String model) {
+        try{
+            String query =
+                    "SELECT DIAMETER, " +
+                            "NAME, " +
+                            "STYLE, " +
+                            "RUNFLAT " +
+                            "FROM (MODEL_WHEELS_OPTION JOIN WHEELS_OPTION " +
+                            "ON MODEL_WHEELS_OPTION.WHEELS_ID=WHEELS_OPTION.ID)";
+            if(!model.equals("*")){
+                query+=(" WHERE MODEL_NAME='"+model+"'");
+            }
+            query += ";";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            System.out.println(query);
+            return getResults(result, 4);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String[][] getUpholstry(Connection c, String model) {
+        try{
+            String query =
+                    "SELECT UPHOLSTERY " +
+                            "FROM MODEL_UPHOLSTERY_OPTION";
+            if(!model.equals("*")){
+                query+=(" WHERE MODEL_NAME='"+model+"'");
+            }
+            query += ";";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            System.out.println(query);
+            return getResults(result, 1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * Gets the cars for the customer to choose from based on the data
      *

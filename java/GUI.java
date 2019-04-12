@@ -340,18 +340,27 @@ public class GUI{
 
     public JComboBox<String> getSeries(String accessor){
         //gets the output from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
-                ,dboWheelRF, dboUpholstery,dboDealerID);
-        //creates and adds the strings to the combo box
-        String[] series = new String[carData.length+1];
-        series[0] = "Series";
-        for(int i = 0; i < carData.length; i++){
-            series[i+1] = carData[i][0];
+        JComboBox<String> seriesCBox;
+        if(accessor.toLowerCase().equals("alldealers")) {
+            String[] fileContents = GetData.readFile(CAR_FILE_PATH);
+            //The dealers option
+            seriesCBox = getDealerSeries(fileContents);
         }
-        List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(series)) );
-        Collections.sort(hashSet);
-        String[] seriesWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> seriesCBox = new JComboBox<String>(seriesWithoutDuplicates);
+        else {
+            String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle
+                    , dboWheelRF, dboUpholstery, dboDealerID);
+            //creates and adds the strings to the combo box
+            String[] series = new String[carData.length + 1];
+            series[0] = "Series";
+            for (int i = 0; i < carData.length; i++) {
+                series[i + 1] = carData[i][0];
+            }
+
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(series)));
+            Collections.sort(hashSet);
+            String[] seriesWithoutDuplicates = hashSet.toArray(new String[]{});
+            seriesCBox = new JComboBox<String>(seriesWithoutDuplicates);
+        }
         //what to initially select the combo box as
         if(dboSeries.equals("*")){
             seriesCBox.setSelectedItem("Series");
@@ -374,6 +383,9 @@ public class GUI{
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
                 }
+                else if (accessor.toLowerCase().equals("alldealers")) {
+                    inventoryPane();
+                }
                 else{
                     customerPaneInit();
                 }
@@ -390,17 +402,32 @@ public class GUI{
      */
     public JComboBox<String> getModel(String accessor){
         //gets output from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
-                ,dboWheelRF, dboUpholstery,dboDealerID);
-        String[] models = new String[carData.length+1];
-        models[0] = "Model";
-        for(int i = 0; i < carData.length; i++){
-            models[i+1] = carData[i][1];
+        JComboBox<String> modelCBox;
+        if(accessor.toLowerCase().equals("alldealers") && !dboSeries.equals("*")) {
+            String[][] modelData = AccessDatabase.getModels(connection, dboSeries);
+            String[] models = new String[modelData.length + 1];
+            models[0] = "Model";
+            for (int i = 0; i < modelData.length; i++) {
+                models[i + 1] = modelData[i][0];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(models)));
+            Collections.sort(hashSet);
+            String[] modelsWithoutDuplicates = hashSet.toArray(new String[]{});
+            modelCBox = new JComboBox<String>(modelsWithoutDuplicates);
         }
-        List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(models)) );
-        Collections.sort(hashSet);
-        String[] modelsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> modelCBox = new JComboBox<String>(modelsWithoutDuplicates);
+        else {
+            String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle
+                    , dboWheelRF, dboUpholstery, dboDealerID);
+            String[] models = new String[carData.length + 1];
+            models[0] = "Model";
+            for (int i = 0; i < carData.length; i++) {
+                models[i + 1] = carData[i][1];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(models)));
+            Collections.sort(hashSet);
+            String[] modelsWithoutDuplicates = hashSet.toArray(new String[]{});
+            modelCBox = new JComboBox<String>(modelsWithoutDuplicates);
+        }
         //sets the selected item based on the sort-by data
         if(dboModel.equals("*")){
             modelCBox.setSelectedItem("Model");
@@ -423,6 +450,9 @@ public class GUI{
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
                 }
+                else if (accessor.toLowerCase().equals("alldealers")) {
+                    inventoryPane();
+                }
                 else{
                     customerPaneInit();
                 }
@@ -439,17 +469,32 @@ public class GUI{
 
     public JComboBox<String> getColor(String accessor){
         //gets output from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
-        String[] colors = new String[carData.length+1];
-        colors[0] = "Colors";
-        for(int i = 0; i < carData.length; i++){
-            colors[i+1] = carData[i][2];
+        JComboBox<String> colorsCBox;
+        if(accessor.toLowerCase().equals("alldealers") && !dboModel.equals("*")) {
+            String[][] colorData = AccessDatabase.getColors(connection, dboModel);
+            String[] colors = new String[colorData.length + 1];
+            colors[0] = "Colors";
+            for (int i = 0; i < colorData.length; i++) {
+                colors[i + 1] = colorData[i][0];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(colors)));
+            Collections.sort(hashSet);
+            String[] colorsWithoutDuplicates = hashSet.toArray(new String[]{});
+            colorsCBox = new JComboBox<String>(colorsWithoutDuplicates);
         }
-        List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(colors)) );
-        Collections.sort(hashSet);
-        String[] colorsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> colorsCBox = new JComboBox<String>(colorsWithoutDuplicates);
+        else {
+            String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter,
+                    dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
+            String[] colors = new String[carData.length + 1];
+            colors[0] = "Colors";
+            for (int i = 0; i < carData.length; i++) {
+                colors[i + 1] = carData[i][2];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(colors)));
+            Collections.sort(hashSet);
+            String[] colorsWithoutDuplicates = hashSet.toArray(new String[]{});
+            colorsCBox = new JComboBox<String>(colorsWithoutDuplicates);
+        }
         //sets the selected item based on the sort-by data
         if(dboColor.equals("*")){
             colorsCBox.setSelectedItem("Colors");
@@ -472,6 +517,9 @@ public class GUI{
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
                 }
+                else if (accessor.toLowerCase().equals("alldealers")) {
+                    inventoryPane();
+                }
                 else{
                     customerPaneInit();
                 }
@@ -487,18 +535,33 @@ public class GUI{
      */
     public JComboBox<String> getWheels(String accessor){
         //gets the data to fill in the wheel combo box from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery, dboDealerID);
-        //Creates the combo box
-        String[] wheels = new String[carData.length+1];
-        wheels[0] = "Wheels";
-        for(int i = 0; i < carData.length; i++){
-            wheels[i+1] = carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
+        JComboBox<String> wheelsCBox;
+        if(accessor.toLowerCase().equals("alldealers") && !dboModel.equals("*")) {
+            String[][] wheelsData = AccessDatabase.getWheels(connection, dboModel);
+            String[] wheels = new String[wheelsData.length + 1];
+            wheels[0] = "Wheels";
+            for (int i = 0; i < wheelsData.length; i++) {
+                wheels[i + 1] = wheelsData[i][0] + ", " + wheelsData[i][1] + ", " + wheelsData[i][2] + ", " + wheelsData[i][3];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(wheels)));
+            Collections.sort(hashSet);
+            String[] wheelsWithoutDuplicates = hashSet.toArray(new String[]{});
+            wheelsCBox = new JComboBox<String>(wheelsWithoutDuplicates);
         }
-        List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(wheels)) );
-        Collections.sort(hashSet);
-        String[] wheelsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> wheelsCBox = new JComboBox<String>(wheelsWithoutDuplicates);
+        else {
+            String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter,
+                    dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
+            //Creates the combo box
+            String[] wheels = new String[carData.length + 1];
+            wheels[0] = "Wheels";
+            for (int i = 0; i < carData.length; i++) {
+                wheels[i + 1] = carData[i][6] + ", " + carData[i][7] + ", " + carData[i][8] + ", " + carData[i][9];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(wheels)));
+            Collections.sort(hashSet);
+            String[] wheelsWithoutDuplicates = hashSet.toArray(new String[]{});
+            wheelsCBox = new JComboBox<String>(wheelsWithoutDuplicates);
+        }
         //sets the default value for the combobox
         if(dboWheelName.equals("*")){
             wheelsCBox.setSelectedItem("Wheels");
@@ -525,6 +588,9 @@ public class GUI{
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
                 }
+                else if (accessor.toLowerCase().equals("alldealers")) {
+                    inventoryPane();
+                }
                 else{
                     customerPaneInit();
                 }
@@ -541,17 +607,32 @@ public class GUI{
      */
     public JComboBox<String> getUpholstry(String accessor){
         //gets output from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
-                dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
-        String[] upholstries = new String[carData.length+1];
-        upholstries[0] = "Upholstry";
-        for(int i = 0; i < carData.length; i++){
-            upholstries[i+1] = carData[i][4];
+        JComboBox<String> upholstriesCBox;
+        if(accessor.toLowerCase().equals("alldealers") && !dboModel.equals("*")) {
+            String[][] upholstryData = AccessDatabase.getUpholstry(connection, dboModel);
+            String[] upholsteries = new String[upholstryData.length + 1];
+            upholsteries[0] = "Upholstery";
+            for (int i = 0; i < upholstryData.length; i++) {
+                upholsteries[i + 1] = upholstryData[i][0];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(upholsteries)));
+            Collections.sort(hashSet);
+            String[] upholsteriesWithoutDuplicates = hashSet.toArray(new String[]{});
+            upholstriesCBox = new JComboBox<String>(upholsteriesWithoutDuplicates);
         }
-        List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(upholstries)) );
-        Collections.sort(hashSet);
-        String[] upholstriesWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> upholstriesCBox = new JComboBox<String>(upholstriesWithoutDuplicates);
+        else {
+            String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
+                    dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
+            String[] upholstries = new String[carData.length + 1];
+            upholstries[0] = "Upholstry";
+            for (int i = 0; i < carData.length; i++) {
+                upholstries[i + 1] = carData[i][4];
+            }
+            List<String> hashSet = new ArrayList<>(new HashSet<>(Arrays.asList(upholstries)));
+            Collections.sort(hashSet);
+            String[] upholstriesWithoutDuplicates = hashSet.toArray(new String[]{});
+            upholstriesCBox = new JComboBox<String>(upholstriesWithoutDuplicates);
+        }
         //what to set the selected item to based on the sort-by data
         if(dboUpholstery.equals("*")){
             upholstriesCBox.setSelectedItem("Upholstry");
@@ -571,6 +652,9 @@ public class GUI{
                 //refreshes the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
+                }
+                else if (accessor.toLowerCase().equals("alldealers")) {
+                    inventoryPane();
                 }
                 else{
                     customerPaneInit();
@@ -622,23 +706,50 @@ public class GUI{
      */
     public void inventoryPane(){
         body.removeAll();
-        //creates the scroll pane
-        JButton cont = new JButton("Continue");
-        JTable table = getCarsByDealerID();
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(750,325));
-        //when the user tries to continue
-        cont.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dboDealerID = "*";
-                welcomePane();
-            }
-        });
-        cont.setPreferredSize(new Dimension(100,50));
-        body.add(scrollPane);
-        body.add(cont);
+        GridBagConstraints gc=new GridBagConstraints();
+        JButton cont=new JButton("Continue");
+        //when continue is pressed
+//        cont.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                chooseCar();
+//            }
+//        });
+        JLabel seriesPane=new JLabel("<html><font color="+COLOR+">Series</font></html>");
+        JLabel modelPane=new JLabel("<html><font color="+COLOR+">Model</font></html>");
+        JLabel colorPane=new JLabel("<html><font color="+COLOR+">Color</font></html>");
+        JLabel upholstryPane=new JLabel("<html><font color="+COLOR+">Upholstry</font><html>");
+        JLabel wheelPane=new JLabel("<html><font color="+COLOR+">Wheels</font></html>");
+
+        //gets all JComboBoxes based on the sort-by data
+        gc.gridx=0;
+        gc.gridy=0;
+        body.add(seriesPane, gc);
+        gc.gridx++;
+        body.add(getSeries("AllDealers"), gc);
+        gc.gridx=0;
+        gc.gridy++;
+        body.add(modelPane, gc);
+        gc.gridx++;
+        body.add(getModel("AllDealers"), gc);
+        gc.gridx=0;
+        gc.gridy++;
+        body.add(colorPane, gc);
+        gc.gridx++;
+        body.add(getColor("AllDealers"), gc);
+        gc.gridx=0;
+        gc.gridy++;
+        body.add(upholstryPane, gc);
+        gc.gridx++;
+        body.add(getUpholstry("AllDealers"), gc);
+        gc.gridx=0;
+        gc.gridy++;
+        body.add(wheelPane, gc);
+        gc.gridx++;
+        body.add(getWheels("AllDealers"), gc);
+        gc.gridx=0;
+        gc.gridy++;
+        body.add(cont, gc);
         body.revalidate();
         body.repaint();
     }
