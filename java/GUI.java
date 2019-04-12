@@ -5,168 +5,185 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.util.List;
 
 public class GUI{
-    private JFrame jf;
-    private JLabel background;
-    //for sorting based on any conjunction of these
-    private String dboSeries, dboModel,dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID, selectedCar;
-    //Constants for style
-    public static final String carFilePath="./data/input/Cars.csv", color="#00b6ff";
-    private ArrayList<String> optUpgradeList;
-    private Connection c;
+
+    //
+    // CONSTANTS
+    //
+
+    private static final String CAR_FILE_PATH = "./data/input/Cars.csv";
+    private static final String COLOR = "#00b6ff";
+    private static final String SELECT_ALL = "*";
+
+    private static final String WELCOME_PAGE_HEADER =
+            getHeader("Welcome to WMB.\nAre you a dealer, customer, or administrator?");
+    private static final String DEALER_LOGIN_HEADER =
+            getHeader("Hello Dealer! Please login with your dealer ID to access the database.");
+
+    //
+    // ATTRIBUTES
+    //
+
+    // SQL database connection
+    private Connection connection;
+
+    // GUI elements
+    private JLabel body;
     private AdminPage adminPage;
+
+    // For sorting based on any conjunction of these
+    private String dboSeries;
+    private String dboModel;
+    private String dboColor;
+    private String dboWheelDiameter;
+    private String dboWheelName;
+    private String dboWheelStyle;
+    private String dboWheelRF;
+    private String dboUpholstery;
+    private String dboDealerID;
+    private String selectedCar;
+    private ArrayList<String> optUpgradeList;
 
     /**
      * Constructor for initializing the JFrame and setting the connection
-     * @param c the connection
+     * @param connection the connection
      */
-    public GUI(Connection c){
-        adminPage = new AdminPage(c, e -> menuPane());
+    public GUI(Connection connection){
+        this.connection = connection;
 
+        // Initialize the window
+        JFrame window = new JFrame("WMB Database Applications");
+        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        window.setVisible(true);
 
-        jf=new JFrame("WMB Database Applications");
-        //creates the background image
-        ImageIcon bgi=(new ImageIcon("./images/logo.png"));
-        //Gets the screen dimensions and resizes the image based on this
-        Dimension dim=Toolkit.getDefaultToolkit().getScreenSize();
-        int bgSize=(dim.width<dim.height)?(dim.width):(dim.height);
-        bgi=new ImageIcon(bgi.getImage().getScaledInstance(bgSize, bgSize, Image.SCALE_SMOOTH));
-        background=new JLabel(bgi);
-        //Sets the background  Layout
-        background.setLayout(new GridBagLayout());
-        //Sets the connection
-        this.c=c;
-        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        menuPane();
+        // Create the background image
+        ImageIcon bgi = (new ImageIcon("./images/logo.png"));
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int bgSize = (dim.width < dim.height) ? dim.width : dim.height;
+        bgi = new ImageIcon(bgi.getImage().getScaledInstance(bgSize, bgSize, Image.SCALE_SMOOTH));
+
+        // Create the body
+        body = new JLabel(bgi);
+        body.setLayout(new GridBagLayout());
+        window.add(body);
+
+        adminPage = new AdminPage(connection, e -> welcomePane());
+        welcomePane();
     }
 
     /**
      * Creates the initial menu pane for distinguishing customers vs. dealers
      * Sets all sorting options to *
      */
+    private void welcomePane(){
+        // Get ready to add things to the body
+        body.removeAll();
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
 
-    public void menuPane(){
-        jf.setVisible(true);
-        background.removeAll();
-        //Sets the JFrame to fullscreen
-        jf.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        JPanel buttons=new JPanel();
+        // Initialize all sorting options to SELECT_ALL
+        dboSeries = SELECT_ALL;
+        dboModel = SELECT_ALL;
+        dboColor = SELECT_ALL;
+        dboWheelDiameter = SELECT_ALL;
+        dboWheelName = SELECT_ALL;
+        dboWheelStyle = SELECT_ALL;
+        dboWheelRF = SELECT_ALL;
+        dboUpholstery = SELECT_ALL;
+        dboDealerID = SELECT_ALL;
+        optUpgradeList = new ArrayList<>();
+
+        // Welcome page header
+        JLabel welcomeLabel = new JLabel(WELCOME_PAGE_HEADER);
+        welcomeLabel.setOpaque(true);
+        welcomeLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+        body.add(welcomeLabel, gc);
+        gc.gridy++;
+
+        // Create the buttons
+        JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(3,1));
         buttons.setPreferredSize(new Dimension(750,75));
         buttons.setOpaque(false);
-        JLabel welcomeLabel=new JLabel("<html><font color=" + color +
-                "> Welcome to WMB.\nAre you a dealer, customer, or administrator? </font></html>");
-        welcomeLabel.setOpaque(true);
-        welcomeLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-        JButton dealer=new JButton("Dealer");
-        JButton customer=new JButton("Customer");
-        JButton admin=new JButton("Administrator");
-        //sets sorting options to *
-        dboSeries="*";
-        dboModel="*";
-        dboColor="*";
-        dboWheelDiameter="*";
-        dboWheelName="*";
-        dboWheelStyle="*";
-        dboWheelRF="*";
-        dboUpholstry="*";
-        dboDealerID="*";
-        optUpgradeList=new ArrayList<String>();
-        //adds background panel to the jframe
-        jf.add(background);
-        //adds the elements to the background panel
-        GridBagConstraints gc=new GridBagConstraints();
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(welcomeLabel, gc);
+
+        JButton dealer = new JButton("Dealer");
+        dealer.addActionListener(e -> getDealerName());
         buttons.add(dealer);
+
+        JButton customer = new JButton("Customer");
+        customer.addActionListener(e -> customerPaneInit());
         buttons.add(customer);
-        buttons.add(admin);
-        gc.gridx=0;
-        gc.gridy=1;
-        background.add(buttons, gc);
-        //if dealer is chosen
-        dealer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getDealerName();
-            }
-        });
-        //if customer is chosen
-        customer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                customerPaneInit();
-            }
-        });
+
+        JButton admin = new JButton("Administrator");
         admin.addActionListener(e -> setupAdmin());
-        background.revalidate();
-        background.repaint();
+        buttons.add(admin);
+
+        body.add(buttons, gc);
+
+        // Refresh the window
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * pane to get the dealerID and add it to the sort-by data
      */
-    public void getDealerName(){
-        background.removeAll();
-        GridBagConstraints gc=new GridBagConstraints();
-        JPanel insert=new JPanel();
-        JLabel label=new JLabel("<html><font color="+color+">Hello Dealer! Please enter your dealer ID to access the database.</font></html>");
-        label.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-        JTextField dealerField=new JTextField(5);
-        JButton cont=new JButton("Continue");
-        insert.setLayout(new GridLayout(1,2));
-        insert.setOpaque(false);
-        cont.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(dealerField.getText().length()==0 || !isNumber(dealerField.getText())){
-                    getDealerName();
-                }
-                else if(!AccessDatabase.dealerInData(c, dealerField.getText())){
-                    getDealerName();
-                }
-                else {
-                    dboDealerID = dealerField.getText();
-                    dealerMenuPane();
-                }
+    private void getDealerName(){
+        // Get ready to add things to the body
+        body.removeAll();
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+
+        // Login page header
+        JLabel loginLabel = new JLabel(DEALER_LOGIN_HEADER);
+        loginLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+        loginLabel.setOpaque(true);
+        body.add(loginLabel, gc);
+        gc.gridy++;
+
+        // Login form
+        JPanel loginForm = new JPanel();
+        loginForm.setLayout(new GridLayout(1,2));
+
+        JTextField dealerField = new JTextField(5);
+        loginForm.add(dealerField);
+
+        JButton continueButton = new JButton("Continue");
+        continueButton.addActionListener(e -> {
+            if(dealerField.getText().length() == 0 || !dealerField.getText().matches("\\d+")){
+                dealerField.setText("");
+            }
+            else if (!AccessDatabase.dealerInData(connection, dealerField.getText())){
+                dealerField.setText("");
+            }
+            else {
+                dboDealerID = dealerField.getText();
+                dealerMenuPane();
             }
         });
-        insert.add(dealerField);
-        insert.add(cont);
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(label, gc);
-        gc.gridx=0;
-        gc.gridy=1;
-        background.add(insert, gc);
-        background.revalidate();
-        background.repaint();
-    }
+        loginForm.add(continueButton);
+        body.add(loginForm, gc);
 
-    public boolean isNumber(String str){
-        for(int i=0; i<str.length(); i++){
-            if("0123456789".indexOf(str.charAt(i))==-1){
-                return false;
-            }
-        }
-        return true;
+        // Refresh the window
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * The initial dealer pane displaying possible actions that the dealer can take
      */
     public void dealerMenuPane(){
-        background.removeAll();
+        body.removeAll();
         //if the dealer wants to order a new car
-        JButton order=new JButton("Order From Manufacturer");
-        JLabel questionLabel=new JLabel("<html><font color="+color+">Do you want to order a new car, look at your inventory, or check your sale history?</font></html>");
-        GridBagConstraints gc=new GridBagConstraints();
+        JButton order = new JButton("Order From Manufacturer");
+        JLabel questionLabel = new JLabel("<html><font COLOR="+ COLOR +">Do you want to order a new car, look at your inventory, or check your sale history?</font></html>");
+        GridBagConstraints gc = new GridBagConstraints();
         order.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -175,73 +192,63 @@ public class GUI{
         });
         order.setPreferredSize(new Dimension(500, 25));
         //if the dealer wants to look at their inventory
-        JButton inventory=new JButton("Vehicle Locator Services");
-        inventory.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                inventoryPane();
-            }
-        });
+        JButton inventory = new JButton("Vehicle Locator Services");
+        inventory.addActionListener(e -> inventoryPane());
         inventory.setPreferredSize(new Dimension(500, 25));
         //if the dealer wants to look at the sale history
-        JButton history=new JButton("Sales History");
-        history.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getDealerHistory(new JPanel());
-            }
-        });
+        JButton history = new JButton("Sales History");
+        history.addActionListener(e -> getDealerHistory(new JPanel()));
         history.setPreferredSize(new Dimension(500, 25));
-        gc.gridx=0;
-        gc.gridy=0;
+        gc.gridx = 0;
+        gc.gridy = 0;
         questionLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-        background.add(questionLabel, gc);
+        body.add(questionLabel, gc);
         gc.gridy++;
-        background.add(order, gc);
+        body.add(order, gc);
         gc.gridy++;
-        background.add(inventory, gc);
+        body.add(inventory, gc);
         gc.gridy++;
-        background.add(history, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(history, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * Creates the dealer gui for ordering
      */
     public void dealerOrderingPane(){
-        background.removeAll();
+        body.removeAll();
         //left pane containing some options
-        JPanel dealerLeft=new JPanel();
+        JPanel dealerLeft = new JPanel();
         //right pane containing the cars
-        JPanel dealerRight=new JPanel();
+        JPanel dealerRight = new JPanel();
         //the panel to put buttons on in the JScrollPane
-        String[] fileContents = GetData.readFile(carFilePath);
-        GridBagConstraints gc=new GridBagConstraints();
+        String[] fileContents = GetData.readFile(CAR_FILE_PATH);
+        GridBagConstraints gc = new GridBagConstraints();
         //The dealers option
-        JComboBox<String> Brand=getDealerBrand(fileContents);
+        JComboBox<String> Brand = getDealerBrand(fileContents);
         //The models option
-        JComboBox<String> Series=getDealerSeries(fileContents);
+        JComboBox<String> Series = getDealerSeries(fileContents);
         //The design option
-        JComboBox<String> Model=getDealerModel(fileContents);
+        JComboBox<String> Model = getDealerModel(fileContents);
         //The design option
-        JComboBox<String> Design=getDealerDesign(fileContents);
-        //The color option
-        JComboBox<String> ColorChoice=getDealerColor(fileContents);
+        JComboBox<String> Design = getDealerDesign(fileContents);
+        //The COLOR option
+        JComboBox<String> ColorChoice = getDealerColor(fileContents);
         //The wheel option
-        JComboBox<String> WheelChoice=getDealerWheels(fileContents);
+        JComboBox<String> WheelChoice = getDealerWheels(fileContents);
         //The upholstry option
-        JComboBox<String> Upholstry=getDealerUpholstery(fileContents);
+        JComboBox<String> Upholstry = getDealerUpholstery(fileContents);
         //The optional upgrades option
-        JScrollPane optUpgrades=getDealerUpgrades(fileContents);
+        JScrollPane optUpgrades = getDealerUpgrades(fileContents);
         //Creates the buttons for the scrollPane
-        JButton cont=new JButton("Continue");
+        JButton cont = new JButton("Continue");
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String car="";
-                int baseprice=0;
-                AccessDatabase.buyCar(c, dboDealerID, Brand.getItemAt(Brand.getSelectedIndex()),
+                String car = "";
+                int baseprice = 0;
+                AccessDatabase.buyCar(connection, dboDealerID, Brand.getItemAt(Brand.getSelectedIndex()),
                         Series.getItemAt(Series.getSelectedIndex()),
                         Model.getItemAt(Model.getSelectedIndex()),
                         ColorChoice.getItemAt(ColorChoice.getSelectedIndex()),
@@ -250,7 +257,7 @@ public class GUI{
                         Design.getItemAt(Design.getSelectedIndex()),
                         baseprice, optUpgradeList);
                 System.out.println(car);
-                menuPane();
+                welcomePane();
             }
         });
         //set layouts
@@ -266,19 +273,19 @@ public class GUI{
         dealerLeft.add(WheelChoice);
         dealerLeft.add(Upholstry);
         //adding the panels
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(dealerLeft, gc);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        body.add(dealerLeft, gc);
         gc.gridx++;
-        background.add(optUpgrades, gc);
+        body.add(optUpgrades, gc);
         gc.gridy++;
-        background.add(dealerRight, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(dealerRight, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     public JComboBox<String> getDealerBrand(String[] filecontents){
-        JComboBox<String> series=new JComboBox<String>(GetData.getAttribute(filecontents, 0));
+        JComboBox<String> series = new JComboBox<String>(GetData.getAttribute(filecontents, 0));
         return series;
     }
 
@@ -307,12 +314,12 @@ public class GUI{
     }
 
     public JScrollPane getDealerUpgrades(String[] filecontents){
-        String[] attributes=GetData.getAttribute(filecontents, 10);
-        JPanel scroll=new JPanel();
+        String[] attributes = GetData.getAttribute(filecontents, 10);
+        JPanel scroll = new JPanel();
         scroll.setLayout(new GridLayout(attributes.length, 1));
-        JCheckBox[] checkBoxes=new JCheckBox[attributes.length];
-        for(int i=0; i<attributes.length; i++){
-            checkBoxes[i]=new JCheckBox(attributes[i]);
+        JCheckBox[] checkBoxes = new JCheckBox[attributes.length];
+        for(int i = 0; i < attributes.length; i++){
+            checkBoxes[i] = new JCheckBox(attributes[i]);
             checkBoxes[i].addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
@@ -326,25 +333,25 @@ public class GUI{
             });
             scroll.add(checkBoxes[i]);
         }
-        JScrollPane scrollPane=new JScrollPane(scroll,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane scrollPane = new JScrollPane(scroll,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(750,325));
         return scrollPane;
     }
 
     public JComboBox<String> getSeries(String accessor){
         //gets the output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
-                ,dboWheelRF,dboUpholstry,dboDealerID);
+        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries,dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+                ,dboWheelRF, dboUpholstery,dboDealerID);
         //creates and adds the strings to the combo box
-        String[] series=new String[carData.length+1];
-        series[0]="Series";
-        for(int i=0; i<carData.length; i++){
-            series[i+1]=carData[i][0];
+        String[] series = new String[carData.length+1];
+        series[0] = "Series";
+        for(int i = 0; i < carData.length; i++){
+            series[i+1] = carData[i][0];
         }
         List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(series)) );
         Collections.sort(hashSet);
         String[] seriesWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> seriesCBox=new JComboBox<String>(seriesWithoutDuplicates);
+        JComboBox<String> seriesCBox = new JComboBox<String>(seriesWithoutDuplicates);
         //what to initially select the combo box as
         if(dboSeries.equals("*")){
             seriesCBox.setSelectedItem("Series");
@@ -356,13 +363,13 @@ public class GUI{
         seriesCBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String series2=e.toString();
-                series2=series2.substring(series2.indexOf("selectedItemReminder=")+21,series2.length()-1);
+                String series2 = e.toString();
+                series2 = series2.substring(series2.indexOf("selectedItemReminder=")+21,series2.length()-1);
                 if(series2.equals("Series")){
-                    series2="*";
+                    series2 = "*";
                 }
                 System.out.println(series2);
-                dboSeries=series2;
+                dboSeries = series2;
                 //refreshes the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
@@ -383,17 +390,17 @@ public class GUI{
      */
     public JComboBox<String> getModel(String accessor){
         //gets output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
-                ,dboWheelRF,dboUpholstry,dboDealerID);
-        String[] models=new String[carData.length+1];
-        models[0]="Model";
-        for(int i=0; i<carData.length; i++){
-            models[i+1]=carData[i][1];
+        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries, dboModel,dboColor, dboWheelDiameter,dboWheelName,dboWheelStyle
+                ,dboWheelRF, dboUpholstery,dboDealerID);
+        String[] models = new String[carData.length+1];
+        models[0] = "Model";
+        for(int i = 0; i < carData.length; i++){
+            models[i+1] = carData[i][1];
         }
         List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(models)) );
         Collections.sort(hashSet);
         String[] modelsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> modelCBox=new JComboBox<String>(modelsWithoutDuplicates);
+        JComboBox<String> modelCBox = new JComboBox<String>(modelsWithoutDuplicates);
         //sets the selected item based on the sort-by data
         if(dboModel.equals("*")){
             modelCBox.setSelectedItem("Model");
@@ -405,13 +412,13 @@ public class GUI{
         modelCBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String model=e.toString();
-                model=model.substring(model.indexOf("selectedItemReminder=")+21,model.length()-1);
+                String model = e.toString();
+                model = model.substring(model.indexOf("selectedItemReminder=")+21,model.length()-1);
                 if(model.equals("Model")){
-                    model="*";
+                    model = "*";
                 }
                 System.out.println(model);
-                dboModel=model;
+                dboModel = model;
                 //refreshes the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
@@ -426,23 +433,23 @@ public class GUI{
     }
 
     /**
-     * Uses the model, series, wheels, and upholstry to sort out the color combo box
+     * Uses the model, series, wheels, and upholstry to sort out the COLOR combo box
      * @return a JComboBox based on model, series, wheels, and upholstry
      */
 
     public JComboBox<String> getColor(String accessor){
         //gets output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry,dboDealerID);
-        String[] colors=new String[carData.length+1];
-        colors[0]="Colors";
-        for(int i=0; i<carData.length; i++){
-            colors[i+1]=carData[i][2];
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,dboModel,dboColor, dboWheelDiameter,
+                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
+        String[] colors = new String[carData.length+1];
+        colors[0] = "Colors";
+        for(int i = 0; i < carData.length; i++){
+            colors[i+1] = carData[i][2];
         }
         List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(colors)) );
         Collections.sort(hashSet);
         String[] colorsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> colorsCBox=new JComboBox<String>(colorsWithoutDuplicates);
+        JComboBox<String> colorsCBox = new JComboBox<String>(colorsWithoutDuplicates);
         //sets the selected item based on the sort-by data
         if(dboColor.equals("*")){
             colorsCBox.setSelectedItem("Colors");
@@ -454,13 +461,13 @@ public class GUI{
         colorsCBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String color=e.toString();
-                color=color.substring(color.indexOf("selectedItemReminder=")+21,color.length()-1);
+                String color = e.toString();
+                color = color.substring(color.indexOf("selectedItemReminder=")+21,color.length()-1);
                 if(color.equals("Colors")){
-                    color="*";
+                    color = "*";
                 }
                 System.out.println(color);
-                dboColor=color;
+                dboColor = color;
                 //refreshes the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
@@ -475,23 +482,23 @@ public class GUI{
     }
 
     /**
-     * Uses the model, series, color, and upholstry to sort out the wheels combo box
-     * @return a JComboBox based on model, series, color, and upholstry
+     * Uses the model, series, COLOR, and upholstry to sort out the wheels combo box
+     * @return a JComboBox based on model, series, COLOR, and upholstry
      */
     public JComboBox<String> getWheels(String accessor){
         //gets the data to fill in the wheel combo box from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c,dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstry, dboDealerID);
+        String[][] carData = AccessDatabase.getUnsoldCars(connection,dboSeries,dboModel,dboColor, dboWheelDiameter,
+                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery, dboDealerID);
         //Creates the combo box
-        String[] wheels=new String[carData.length+1];
-        wheels[0]="Wheels";
-        for(int i=0; i<carData.length; i++){
-            wheels[i+1]=carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
+        String[] wheels = new String[carData.length+1];
+        wheels[0] = "Wheels";
+        for(int i = 0; i < carData.length; i++){
+            wheels[i+1] = carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
         }
         List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(wheels)) );
         Collections.sort(hashSet);
         String[] wheelsWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> wheelsCBox=new JComboBox<String>(wheelsWithoutDuplicates);
+        JComboBox<String> wheelsCBox = new JComboBox<String>(wheelsWithoutDuplicates);
         //sets the default value for the combobox
         if(dboWheelName.equals("*")){
             wheelsCBox.setSelectedItem("Wheels");
@@ -503,17 +510,17 @@ public class GUI{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //gets the selected string
-                String wheels=e.toString();
-                wheels=wheels.substring(wheels.indexOf("selectedItemReminder=")+21,wheels.length()-1);
+                String wheels = e.toString();
+                wheels = wheels.substring(wheels.indexOf("selectedItemReminder=")+21,wheels.length()-1);
                 if(wheels.equals("Wheels")){
-                    wheels="*";
+                    wheels = "*";
                 }
                 //Changes the values for the database to be queried on
-                String[] wheelAttribs=wheels.split(", ");
-                dboWheelDiameter=wheelAttribs[0];
-                dboWheelName=wheelAttribs[1];
-                dboWheelStyle=wheelAttribs[2];
-                dboWheelRF=wheelAttribs[3];
+                String[] wheelAttribs = wheels.split(", ");
+                dboWheelDiameter = wheelAttribs[0];
+                dboWheelName = wheelAttribs[1];
+                dboWheelStyle = wheelAttribs[2];
+                dboWheelRF = wheelAttribs[3];
                 //reloads the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
@@ -528,39 +535,39 @@ public class GUI{
     }
 
     /**
-     * Uses the model, series, color, and wheels to sort out the wheels combo box
+     * Uses the model, series, COLOR, and wheels to sort out the wheels combo box
      * @param accessor the person accessing the database
-     * @return a JComboBox based on model, series, color, and wheels
+     * @return a JComboBox based on model, series, COLOR, and wheels
      */
     public JComboBox<String> getUpholstry(String accessor){
         //gets output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
-                dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID);
-        String[] upholstries=new String[carData.length+1];
-        upholstries[0]="Upholstry";
-        for(int i=0; i<carData.length; i++){
-            upholstries[i+1]=carData[i][4];
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor, dboWheelDiameter, dboWheelName,
+                dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
+        String[] upholstries = new String[carData.length+1];
+        upholstries[0] = "Upholstry";
+        for(int i = 0; i < carData.length; i++){
+            upholstries[i+1] = carData[i][4];
         }
         List<String> hashSet = new ArrayList<>( new HashSet<>(Arrays.asList(upholstries)) );
         Collections.sort(hashSet);
         String[] upholstriesWithoutDuplicates = hashSet.toArray(new String[] {});
-        JComboBox<String> upholstriesCBox=new JComboBox<String>(upholstriesWithoutDuplicates);
+        JComboBox<String> upholstriesCBox = new JComboBox<String>(upholstriesWithoutDuplicates);
         //what to set the selected item to based on the sort-by data
-        if(dboUpholstry.equals("*")){
+        if(dboUpholstery.equals("*")){
             upholstriesCBox.setSelectedItem("Upholstry");
         }
         else{
-            upholstriesCBox.setSelectedItem(dboUpholstry);
+            upholstriesCBox.setSelectedItem(dboUpholstery);
         }
         upholstriesCBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String upholstry=e.toString();
-                upholstry=upholstry.substring(upholstry.indexOf("selectedItemReminder=")+21,upholstry.length()-1);
+                String upholstry = e.toString();
+                upholstry = upholstry.substring(upholstry.indexOf("selectedItemReminder=")+21,upholstry.length()-1);
                 if(upholstry.equals("Upholstry")){
-                    upholstry="*";
+                    upholstry = "*";
                 }
-                dboUpholstry=upholstry;
+                dboUpholstery = upholstry;
                 //refreshes the pane
                 if(accessor.toLowerCase().equals("dealer")) {
                     dealerOrderingPane();
@@ -579,12 +586,12 @@ public class GUI{
      * @return a list of JButtons for cars
      */
     public JButton[] getDealerCars(){
-        JButton[] cars=new JButton[]{new JButton("Car")};
+        JButton[] cars = new JButton[]{new JButton("Car")};
         for(JButton b:cars){
             b.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    selectedCar=b.getText();
+                    selectedCar = b.getText();
                     dealerReciept();
                 }
             });
@@ -596,44 +603,44 @@ public class GUI{
      * Shows the dealer a reciept of their purchase and returns the dealer to the menu
      */
     public void dealerReciept(){
-        background.removeAll();
-        background.add(new JLabel("You purchased: "+selectedCar));
-        JButton cont=new JButton("Continue");
+        body.removeAll();
+        body.add(new JLabel("You purchased: "+selectedCar));
+        JButton cont = new JButton("Continue");
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuPane();
+                welcomePane();
             }
         });
-        background.add(cont);
-        background.revalidate();
-        background.repaint();
+        body.add(cont);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * Shows the dealer's inventory
      */
     public void inventoryPane(){
-        background.removeAll();
+        body.removeAll();
         //creates the scroll pane
-        JButton cont=new JButton("Continue");
-        JTable table=getCarsByDealerID();
-        JScrollPane scrollPane=new JScrollPane(table);
+        JButton cont = new JButton("Continue");
+        JTable table = getCarsByDealerID();
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(750,325));
         //when the user tries to continue
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dboDealerID="*";
-                menuPane();
+                dboDealerID = "*";
+                welcomePane();
             }
         });
         cont.setPreferredSize(new Dimension(100,50));
-        background.add(scrollPane);
-        background.add(cont);
-        background.revalidate();
-        background.repaint();
+        body.add(scrollPane);
+        body.add(cont);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
@@ -642,19 +649,19 @@ public class GUI{
      */
     public JTable getCarsByDealerID(){
         //gets output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
-        JTable cars=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,dboModel,dboColor, dboWheelDiameter,
+                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
+        JTable cars = new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
         //string and JTable builder
-        for(int i=0; i<carData.length; i++){
-            for(int j=0; j<carData[i].length; j++){
+        for(int i = 0; i < carData.length; i++){
+            for(int j = 0; j < carData[i].length; j++){
                 cars.setValueAt(carData[i][j],i,j);
             }
         }
         //Creates the header for the columns
-        String[] header=new String[]{"Series","Model","Color","Design","Upholstery", "Price", "Wheel Diameter","Wheel Name",
+        String[] header = new String[]{"Series","Model","Color","Design","Upholstery", "Price", "Wheel Diameter","Wheel Name",
                 "Wheel Style", "Wheel Runflat"};
-        for(int i=0; i<cars.getColumnCount(); i++) {
+        for(int i = 0; i<cars.getColumnCount(); i++) {
             cars.getColumnModel().getColumn(i).setMinWidth(200);
             cars.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(header[i]);
         }
@@ -668,12 +675,12 @@ public class GUI{
      */
 
     public void getDealerHistory(JPanel scrollPanel){
-        background.removeAll();
-        JPanel checkBoxes=new JPanel();
-        JButton show=new JButton("Show data");
-        JButton cont=new JButton("Continue");
-        GridBagConstraints gc=new GridBagConstraints();
-        JCheckBox[] cba=new JCheckBox[]{
+        body.removeAll();
+        JPanel checkBoxes = new JPanel();
+        JButton show = new JButton("Show data");
+        JButton cont = new JButton("Continue");
+        GridBagConstraints gc = new GridBagConstraints();
+        JCheckBox[] cba = new JCheckBox[]{
                 new JCheckBox("VIN"), new JCheckBox("Model"), new JCheckBox("Series"),
                 new JCheckBox("Color"),new JCheckBox("Design"),new JCheckBox("Upholstery"),
                 new JCheckBox("Manufactured Day"), new JCheckBox("Manufacture Month"),
@@ -692,20 +699,20 @@ public class GUI{
         show.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean[] isSelected=new boolean[cba.length];
-                for(int i=0; i<cba.length; i++){
-                    isSelected[i]=cba[i].isSelected();
+                boolean[] isSelected = new boolean[cba.length];
+                for(int i = 0; i < cba.length; i++){
+                    isSelected[i] = cba[i].isSelected();
                 }
-                String[][] carData=AccessDatabase.getCarHistoryByDealerID(c,dboDealerID, isSelected);
-                JTable table=new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
-                JScrollPane scrollPane=new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                String[][] carData = AccessDatabase.getCarHistoryByDealerID(connection,dboDealerID, isSelected);
+                JTable table = new JTable(carData.length, (carData.length>0)?(carData[0].length):(0));
+                JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                for(int i=0; i<carData.length; i++){
-                    for(int j=0; j<carData[i].length; j++){
+                for(int i = 0; i < carData.length; i++){
+                    for(int j = 0; j < carData[i].length; j++){
                         table.setValueAt(carData[i][j],i,j);
                     }
                 }
-                for(int i=0; i<table.getColumnCount(); i++){
+                for(int i = 0; i<table.getColumnCount(); i++){
                     table.getColumnModel().getColumn(i).setMinWidth(200);
                     table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(cba[i].getText());
                 }
@@ -717,31 +724,31 @@ public class GUI{
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuPane();
+                welcomePane();
             }
         });
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(checkBoxes,gc);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        body.add(checkBoxes,gc);
         gc.gridx++;
         scrollPanel.setOpaque(false);
-        background.add(scrollPanel, gc);
-        gc.gridx=0;
+        body.add(scrollPanel, gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(show,gc);
+        body.add(show,gc);
         gc.gridy++;
-        background.add(cont, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(cont, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * The first customer pane where the specifics are specified
      */
     public void customerPaneInit(){
-        background.removeAll();
-        GridBagConstraints gc=new GridBagConstraints();
-        JButton cont=new JButton("Continue");
+        body.removeAll();
+        GridBagConstraints gc = new GridBagConstraints();
+        JButton cont = new JButton("Continue");
         //when continue is pressed
         cont.addActionListener(new ActionListener() {
             @Override
@@ -749,69 +756,69 @@ public class GUI{
                 chooseCar();
             }
         });
-        JLabel seriesPane=new JLabel("<html><font color="+color+">Series</font></html>");
-        JLabel modelPane=new JLabel("<html><font color="+color+">Model</font></html>");
-        JLabel colorPane=new JLabel("<html><font color="+color+">Color</font></html>");
-        JLabel upholstryPane=new JLabel("<html><font color="+color+">Upholstry</font><html>");
-        JLabel wheelPane=new JLabel("<html><font color="+color+">Wheels</font></html>");
+        JLabel seriesPane = new JLabel("<html><font COLOR="+ COLOR +">Series</font></html>");
+        JLabel modelPane = new JLabel("<html><font COLOR="+ COLOR +">Model</font></html>");
+        JLabel colorPane = new JLabel("<html><font COLOR="+ COLOR +">Color</font></html>");
+        JLabel upholstryPane = new JLabel("<html><font COLOR="+ COLOR +">Upholstry</font><html>");
+        JLabel wheelPane = new JLabel("<html><font COLOR="+ COLOR +">Wheels</font></html>");
         //gets all JComboBoxes based on the sort-by data
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(seriesPane, gc);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        body.add(seriesPane, gc);
         gc.gridx++;
-        background.add(getSeries("Customer"), gc);
-        gc.gridx=0;
+        body.add(getSeries("Customer"), gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(modelPane, gc);
+        body.add(modelPane, gc);
         gc.gridx++;
-        background.add(getModel("Customer"), gc);
-        gc.gridx=0;
+        body.add(getModel("Customer"), gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(colorPane, gc);
+        body.add(colorPane, gc);
         gc.gridx++;
-        background.add(getColor("Customer"), gc);
-        gc.gridx=0;
+        body.add(getColor("Customer"), gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(upholstryPane, gc);
+        body.add(upholstryPane, gc);
         gc.gridx++;
-        background.add(getWheels("Customer"), gc);
-        gc.gridx=0;
+        body.add(getWheels("Customer"), gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(wheelPane, gc);
+        body.add(wheelPane, gc);
         gc.gridx++;
-        background.add(getUpholstry("Customer"), gc);
-        gc.gridx=0;
+        body.add(getUpholstry("Customer"), gc);
+        gc.gridx = 0;
         gc.gridy++;
-        background.add(cont, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(cont, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
      * UI to actually choose the car based on their preferences
      */
     public void chooseCar(){
-        background.removeAll();
-        JPanel scroll=new JPanel();
+        body.removeAll();
+        JPanel scroll = new JPanel();
         //gets the car information from the database and puts it into the scrollpane buttons
-        JButton[] buttons=getUnsoldCars();
-        JLabel questionLabel=new JLabel("<html><font color="+color+">Choose the car you want</font></html>");
-        GridBagConstraints gc=new GridBagConstraints();
+        JButton[] buttons = getUnsoldCars();
+        JLabel questionLabel = new JLabel("<html><font COLOR="+ COLOR +">Choose the car you want</font></html>");
+        GridBagConstraints gc = new GridBagConstraints();
         scroll.setLayout(new GridLayout(buttons.length, 1));
         for(JButton b:buttons){
             scroll.add(b);
         }
         questionLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
         //creates the scrollpane
-        JScrollPane scrollPane=new JScrollPane(scroll,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane scrollPane = new JScrollPane(scroll,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(750,325));
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(questionLabel, gc);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        body.add(questionLabel, gc);
         gc.gridy++;
-        background.add(scrollPane, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(scrollPane, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     /**
@@ -821,14 +828,14 @@ public class GUI{
 
     public JButton[] getUnsoldCars(){
         //Gets output from the database
-        String[][] carData=AccessDatabase.getUnsoldCars(c, dboSeries,  dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF,dboUpholstry,dboDealerID);
-        JButton[] buttons=new JButton[carData.length];
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,  dboModel,dboColor, dboWheelDiameter,
+                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
+        JButton[] buttons = new JButton[carData.length];
         //builds the car buttons
-        for(int i=0; i<carData.length; i++){
-            String car=carData[i][0]+", "+carData[i][1]+", "+carData[i][2]+", "+carData[i][3]+", "+carData[i][4]+", "+
+        for(int i = 0; i<carData.length; i++){
+            String car = carData[i][0]+", "+carData[i][1]+", "+carData[i][2]+", "+carData[i][3]+", "+carData[i][4]+", "+
                     carData[i][5]+", "+carData[i][6]+", "+carData[i][7]+", "+carData[i][8]+", "+carData[i][9];
-            buttons[i]=new JButton(car);
+            buttons[i] = new JButton(car);
         }
         //what to do when the car is chosen
         for(JButton b:buttons){
@@ -836,7 +843,7 @@ public class GUI{
             b.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    selectedCar=b.getText();
+                    selectedCar = b.getText();
                     customerReceipt();
                 }
             });
@@ -848,37 +855,37 @@ public class GUI{
      * A reciept of the transaction for the customer
      */
     public void customerReceipt(){
-        background.removeAll();
-        JButton cont=new JButton("Continue");
-        JLabel reciept=new JLabel("<html><font color="+color+">"+selectedCar+"</font></html>");
-        JPanel fields=new JPanel();
-        GridBagConstraints gc=new GridBagConstraints();
-        JTextField firstname=new JTextField(30);
+        body.removeAll();
+        JButton cont = new JButton("Continue");
+        JLabel reciept = new JLabel("<html><font COLOR="+ COLOR +">"+selectedCar+"</font></html>");
+        JPanel fields = new JPanel();
+        GridBagConstraints gc = new GridBagConstraints();
+        JTextField firstname = new JTextField(30);
         firstname.setText("First Name");
-        JTextField lastname=new JTextField(30);
+        JTextField lastname = new JTextField(30);
         lastname.setText("Last Name");
-        JTextField gender=new JTextField(30);
+        JTextField gender = new JTextField(30);
         gender.setText("Gender");
-        JTextField annualIncome=new JTextField(30);
+        JTextField annualIncome = new JTextField(30);
         annualIncome.setText("Annual Income");
-        JTextField street=new JTextField(30);
+        JTextField street = new JTextField(30);
         street.setText("Street");
-        JTextField county=new JTextField(30);
+        JTextField county = new JTextField(30);
         county.setText("County");
-        JTextField state=new JTextField(30);
+        JTextField state = new JTextField(30);
         state.setText("State");
-        JTextField zip=new JTextField(30);
+        JTextField zip = new JTextField(30);
         zip.setText("Zip");
         fields.setLayout(new GridLayout(4,2));
         //what to do when continue is chosen
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AccessDatabase.sellCar(c, firstname.getText(), lastname.getText(), gender.getText(),
+                AccessDatabase.sellCar(connection, firstname.getText(), lastname.getText(), gender.getText(),
                         annualIncome.getText(), street.getText(), county.getText(), state.getText(), zip.getText(),
-                        AccessDatabase.getVIN(c, selectedCar));
-                AccessDatabase.getVIN(c, selectedCar);
-                menuPane();
+                        AccessDatabase.getVIN(connection, selectedCar));
+                AccessDatabase.getVIN(connection, selectedCar);
+                welcomePane();
             }
         });
         reciept.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
@@ -892,29 +899,29 @@ public class GUI{
         fields.add(state);
         fields.add(zip);
 
-        gc.gridx=0;
-        gc.gridy=0;
-        background.add(reciept, gc);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        body.add(reciept, gc);
         gc.gridy++;
-        background.add(fields,gc);
+        body.add(fields,gc);
         gc.gridy++;
-        background.add(cont, gc);
-        background.revalidate();
-        background.repaint();
+        body.add(cont, gc);
+        body.revalidate();
+        body.repaint();
     }
 
     private void setupAdmin() {
-        background.removeAll();
+        body.removeAll();
 
         adminPage.refresh();
-        background.add(adminPage);
+        body.add(adminPage);
 
-        background.revalidate();
-        background.repaint();
+        body.revalidate();
+        body.repaint();
     }
 
     public static String getHeader(String text) {
-        return String.format("<html><font color=%s>%s</font></html>", color, text);
+        return String.format("<html><font COLOR=%s>%s</font></html>", COLOR, text);
     }
 
     /**
@@ -922,8 +929,8 @@ public class GUI{
      * @param args command line args
      */
     public static void main(String[] args){
-        Connection c=AccessDatabase.connect("./database/database","me","password");
-        if(c!=null) {
+        Connection c = AccessDatabase.connect("./database/database","me","password");
+        if(c != null) {
             GUI g = new GUI(c);
         }
     }
