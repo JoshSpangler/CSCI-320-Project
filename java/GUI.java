@@ -125,8 +125,16 @@ public class GUI{
         cont.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dboDealerID=dealerField.getText();
-                dealerMenuPane();
+                if(dealerField.getText().length()==0 || !isNumber(dealerField.getText())){
+                    getDealerName();
+                }
+                else if(!AccessDatabase.dealerInData(c, dealerField.getText())){
+                    getDealerName();
+                }
+                else {
+                    dboDealerID = dealerField.getText();
+                    dealerMenuPane();
+                }
             }
         });
         insert.add(dealerField);
@@ -139,6 +147,15 @@ public class GUI{
         background.add(insert, gc);
         background.revalidate();
         background.repaint();
+    }
+
+    public boolean isNumber(String str){
+        for(int i=0; i<str.length(); i++){
+            if("0123456789".indexOf(str.charAt(i))==-1){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -156,6 +173,7 @@ public class GUI{
                 dealerOrderingPane();
             }
         });
+        order.setPreferredSize(new Dimension(500, 25));
         //if the dealer wants to look at their inventory
         JButton inventory=new JButton("Vehicle Locator Services");
         inventory.addActionListener(new ActionListener() {
@@ -164,6 +182,7 @@ public class GUI{
                 inventoryPane();
             }
         });
+        inventory.setPreferredSize(new Dimension(500, 25));
         //if the dealer wants to look at the sale history
         JButton history=new JButton("Sales History");
         history.addActionListener(new ActionListener() {
@@ -172,6 +191,7 @@ public class GUI{
                 getDealerHistory(new JPanel());
             }
         });
+        history.setPreferredSize(new Dimension(500, 25));
         gc.gridx=0;
         gc.gridy=0;
         questionLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));

@@ -211,6 +211,22 @@ public class AccessDatabase {
         return null;
     }
 
+    public static boolean dealerInData(Connection c,String dealerID){
+        try {
+            String query = "SELECT COUNT(ID) FROM DEALER WHERE ID=" + dealerID + ";";
+            System.out.println(query);
+            Statement stmt = c.createStatement();
+            ResultSet result=stmt.executeQuery(query);
+            result.next();
+            if(!result.getString(1).equals("0")){
+                return true;
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * Gets the sale history for the dealer based on user input
      *
