@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.List;
 
@@ -14,15 +16,19 @@ public class GUI{
     //for sorting based on any conjunction of these
     private String dboSeries, dboModel,dboColor, dboWheelDiameter, dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstry, dboDealerID, selectedCar;
     //Constants for style
-    private final String carFilePath="./data/input/Cars.csv", color="#00b6ff";
+    public static final String carFilePath="./data/input/Cars.csv", color="#00b6ff";
     private ArrayList<String> optUpgradeList;
     private Connection c;
+    private AdminPage adminPage;
 
     /**
      * Constructor for initializing the JFrame and setting the connection
      * @param c the connection
      */
     public GUI(Connection c){
+        adminPage = new AdminPage(c, e -> menuPane());
+
+
         jf=new JFrame("WMB Database Applications");
         //creates the background image
         ImageIcon bgi=(new ImageIcon("./images/logo.png"));
@@ -875,35 +881,8 @@ public class GUI{
     private void setupAdmin() {
         background.removeAll();
 
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 0;
-        gc.gridy = 0;
-
-        JLabel instructions = new JLabel("<html><font color="+color+">"+ "Enter the SQL statement below:</font></html>");
-        instructions.setOpaque(true);
-        instructions.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-        background.add(instructions, gc);
-        gc.gridy++;
-
-        JTextArea sqlField = new JTextArea(10, 80);
-        sqlField.setLineWrap(true);
-        sqlField.setWrapStyleWord(true);
-        sqlField.setTabSize(4);
-        JScrollPane scrollSql = new JScrollPane(sqlField,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        background.add(scrollSql, gc);
-        gc.gridy++;
-
-
-
-        JButton submitButton = new JButton("Submit");
-        //submitButton.addActionListener();
-        background.add(submitButton, gc);
-        gc.gridx++;
-
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> menuPane());
-        background.add(backButton, gc);
+        adminPage.refresh();
+        background.add(adminPage);
 
         background.revalidate();
         background.repaint();
