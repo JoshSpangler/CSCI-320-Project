@@ -196,24 +196,22 @@ public class GUI{
         //right pane containing the cars
         JPanel dealerRight=new JPanel();
         //the panel to put buttons on in the JScrollPane
-        dboDealerID="*";
         String[] fileContents = GetData.readFile(carFilePath);
         GridBagConstraints gc=new GridBagConstraints();
-        for(String s:fileContents){
-            System.out.println(s);
-        }
         //The dealers option
-        JComboBox<String> Series=getDealerSeries(fileContents);
+        JComboBox<String> Brand=getDealerBrand(fileContents);
         //The models option
+        JComboBox<String> Series=getDealerSeries(fileContents);
+        //The design option
         JComboBox<String> Model=getDealerModel(fileContents);
+        //The design option
+        JComboBox<String> Design=getDealerDesign(fileContents);
         //The color option
         JComboBox<String> ColorChoice=getDealerColor(fileContents);
         //The wheel option
         JComboBox<String> WheelChoice=getDealerWheels(fileContents);
         //The upholstry option
         JComboBox<String> Upholstry=getDealerUpholstery(fileContents);
-        //The design option
-        JComboBox<String> getDesign=getDealerDesign(fileContents);
         //The optional upgrades option
         JScrollPane optUpgrades=getDealerUpgrades(fileContents);
         //Creates the buttons for the scrollPane
@@ -222,13 +220,15 @@ public class GUI{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String car="";
-                AccessDatabase.buyCar(c, dboDealerID, Series.getItemAt(Series.getSelectedIndex()),
+                int baseprice=0;
+                AccessDatabase.buyCar(c, dboDealerID, Brand.getItemAt(Brand.getSelectedIndex()),
+                        Series.getItemAt(Series.getSelectedIndex()),
                         Model.getItemAt(Model.getSelectedIndex()),
                         ColorChoice.getItemAt(ColorChoice.getSelectedIndex()),
                         WheelChoice.getItemAt(WheelChoice.getSelectedIndex()),
                         Upholstry.getItemAt(Upholstry.getSelectedIndex()),
-                        getDesign.getItemAt(getDesign.getSelectedIndex()),
-                        optUpgradeList);
+                        Design.getItemAt(Design.getSelectedIndex()),
+                        baseprice, optUpgradeList);
                 System.out.println(car);
             }
         });
@@ -238,12 +238,12 @@ public class GUI{
         dealerRight.setOpaque(false);
         //Add all the choices
         dealerRight.add(cont);
+        dealerLeft.add(Brand);
         dealerLeft.add(Series);
-        dealerLeft.add(Model);
+        dealerLeft.add(Design);
         dealerLeft.add(ColorChoice);
         dealerLeft.add(WheelChoice);
         dealerLeft.add(Upholstry);
-        dealerLeft.add(getDesign);
         //adding the panels
         gc.gridx=0;
         gc.gridy=0;
@@ -256,33 +256,37 @@ public class GUI{
         background.repaint();
     }
 
-    public JComboBox<String> getDealerSeries(String[] filecontents){
-        JComboBox<String> series=new JComboBox<String>(GetData.getAttribute(filecontents, "Series", 0));
+    public JComboBox<String> getDealerBrand(String[] filecontents){
+        JComboBox<String> series=new JComboBox<String>(GetData.getAttribute(filecontents, 0));
         return series;
     }
 
+    public JComboBox<String> getDealerSeries(String[] filecontents){
+        return new JComboBox<String>(GetData.getAttribute(filecontents, 1));
+    }
+
     public JComboBox<String> getDealerModel(String[] filecontents){
-        return new JComboBox<String>(GetData.getAttribute(filecontents, "Model", 1));
+        return new JComboBox<String>(GetData.getAttribute(filecontents, 2));
     }
 
     public JComboBox<String> getDealerDesign(String[] filecontents){
-        return new JComboBox<String>(GetData.getAttribute(filecontents, "Design", 2));
+        return new JComboBox<String>(GetData.getAttribute(filecontents, 4));
     }
 
     public JComboBox<String> getDealerColor(String[] filecontents){
-        return new JComboBox<String>(GetData.getAttribute(filecontents, "Color", 9));
+        return new JComboBox<String>(GetData.getAttribute(filecontents, 9));
     }
 
     public JComboBox<String> getDealerUpholstery(String[] filecontents){
-        return new JComboBox<String>(GetData.getAttribute(filecontents, "Upholstery",8));
+        return new JComboBox<String>(GetData.getAttribute(filecontents,8));
     }
 
     public JComboBox<String> getDealerWheels(String[] filecontents){
-        return new JComboBox<String>(GetData.getAttribute(filecontents, "Wheels", 7));
+        return new JComboBox<String>(GetData.getWheels(GetData.getAttribute(filecontents, 7)));
     }
 
     public JScrollPane getDealerUpgrades(String[] filecontents){
-        String[] attributes=GetData.getAttribute(filecontents, "Optional Upgrades", 10);
+        String[] attributes=GetData.getAttribute(filecontents, 10);
         JPanel scroll=new JPanel();
         scroll.setLayout(new GridLayout(attributes.length, 1));
         JCheckBox[] checkBoxes=new JCheckBox[attributes.length];
