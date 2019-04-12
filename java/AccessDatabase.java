@@ -62,37 +62,37 @@ public class AccessDatabase {
         Date date=new Date();
         int[] d=new int[3];
         String monthString=date.toString().split(" ")[1];
-        if(monthString.equals("January")){
+        if(monthString.equals("Jan")){
             d[0]=1;
         }
-        else if(monthString.equals("February")){
+        else if(monthString.equals("Feb")){
             d[0]=2;
         }
-        else if(monthString.equals("March")){
+        else if(monthString.equals("Mar")){
             d[0]=3;
         }
-        else if(monthString.equals("April")){
+        else if(monthString.equals("Apr")){
             d[0]=4;
         }
         else if(monthString.equals("May")){
             d[0]=5;
         }
-        else if(monthString.equals("June")){
+        else if(monthString.equals("Jun")){
             d[0]=6;
         }
-        else if(monthString.equals("July")){
+        else if(monthString.equals("Jul")){
             d[0]=7;
         }
-        else if(monthString.equals("August")){
+        else if(monthString.equals("Aug")){
             d[0]=8;
         }
-        else if(monthString.equals("September")){
+        else if(monthString.equals("Sep")){
             d[0]=9;
         }
-        else if(monthString.equals("October")){
+        else if(monthString.equals("Oct")){
             d[0]=10;
         }
-        else if(monthString.equals("November")){
+        else if(monthString.equals("Nov")){
             d[0]=11;
         }
         else{
