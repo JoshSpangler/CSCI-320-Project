@@ -404,7 +404,8 @@ public class GUI{
         wheelsCBox = new JComboBox<>(Arrays.stream(wheels).distinct().toArray(String[]::new));
 
         //sets the default value for the combobox
-        wheelsCBox.setSelectedItem(dboWheelName.equals(SELECT_ALL) ? "Wheels" : dboWheelName);
+        wheelsCBox.setSelectedItem(dboWheelName.equals(SELECT_ALL) ? "Wheels" :
+                dboWheelDiameter + ", " + dboWheelName + ", " + dboWheelStyle + ", " + dboWheelRF);
         wheelsCBox.setPreferredSize(new Dimension(500, 25));
 
         wheelsCBox.addActionListener(e -> {
@@ -412,15 +413,18 @@ public class GUI{
             String wheel = e.toString();
             wheel = wheel.substring(wheel.indexOf("selectedItemReminder=")+21, wheel.length()-1);
             if(wheel.equals("Wheels")){
-                wheel = SELECT_ALL;
+                dboWheelDiameter = SELECT_ALL;
+                dboWheelName = SELECT_ALL;
+                dboWheelStyle = SELECT_ALL;
+                dboWheelRF = SELECT_ALL;
             }
-
-            //Changes the values for the database to be queried on
-            String[] wheelAttributes = wheel.split(", ");
-            dboWheelDiameter = wheelAttributes[0];
-            dboWheelName = wheelAttributes[1];
-            dboWheelStyle = wheelAttributes[2];
-            dboWheelRF = wheelAttributes[3];
+            else {
+                String[] wheelAttributes = wheel.split(", ");
+                dboWheelDiameter = wheelAttributes[0];
+                dboWheelName = wheelAttributes[1];
+                dboWheelStyle = wheelAttributes[2];
+                dboWheelRF = wheelAttributes[3];
+            }
 
             //reloads the pane
             refreshInventory(accessor);
