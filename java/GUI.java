@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Handles the entire GUI...
  *
- * @author Tim Johnson
+ * @author Tim Johnson and Samuel Adams
  */
 public class GUI{
 
