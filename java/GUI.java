@@ -52,8 +52,11 @@ public class GUI{
 
     // For sorting based on any conjunction of these
     private String dboSeries;
+    private String dboBrand;
     private String dboModel;
+    private String dboDesign;
     private String dboColor;
+    private String dboWheel;
     private String dboWheelDiameter;
     private String dboWheelName;
     private String dboWheelStyle;
@@ -134,8 +137,11 @@ public class GUI{
     private void welcomePane(){
         // Initialize all sorting options to SELECT_ALL
         dboSeries = SELECT_ALL;
+        dboBrand = SELECT_ALL;
         dboModel = SELECT_ALL;
+        dboDesign = SELECT_ALL;
         dboColor = SELECT_ALL;
+        dboWheel = SELECT_ALL;
         dboWheelDiameter = SELECT_ALL;
         dboWheelName = SELECT_ALL;
         dboWheelStyle = SELECT_ALL;
@@ -233,7 +239,8 @@ public class GUI{
         if(accessor.toLowerCase().equals("alldealers")) {
             String[] fileContents = GetData.readFile(CAR_FILE_PATH);
             // The dealers option
-            seriesCBox = new JComboBox<>(GetData.getAttribute(fileContents,"Series", 1, true));
+            seriesCBox = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                    dboSeries, dboDesign,"Series", 1, true));
         }
         else {
             String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor,
@@ -588,26 +595,125 @@ public class GUI{
         // Left pane containing some options
         JPanel requiredOptions = new JPanel(new GridLayout(7,1));
 
-        JComboBox<String> brandOption = new JComboBox<>(GetData.getAttribute(fileContents, "Brand", 0, true));
+        JComboBox<String> brandOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign, "Brand", 0, true));
         requiredOptions.add(brandOption);
 
-        JComboBox<String> modelOption = new JComboBox<>(GetData.getAttribute(fileContents, "Model", 2, true));
+        JComboBox<String> modelOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign,"Model", 2, true));
         requiredOptions.add(modelOption);
 
-        JComboBox<String> seriesOption = new JComboBox<>(GetData.getAttribute(fileContents, "Series",1, true));
+        JComboBox<String> seriesOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign,"Series",1, true));
         requiredOptions.add(seriesOption);
 
-        JComboBox<String> designOption = new JComboBox<>(GetData.getAttribute(fileContents, "Design", 4, true));
+        JComboBox<String> designOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign,"Design", 4, true));
         requiredOptions.add(designOption);
 
-        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, "Color", 9, true));
+        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, SELECT_ALL, SELECT_ALL,
+                SELECT_ALL, SELECT_ALL, "Color", 9, true));
         requiredOptions.add(colorOption);
 
-        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents));
+        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents, SELECT_ALL, SELECT_ALL,
+                SELECT_ALL, SELECT_ALL));
         requiredOptions.add(wheelOption);
 
-        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, "Upholstery",8, true));
+        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, SELECT_ALL, SELECT_ALL,
+                SELECT_ALL, SELECT_ALL, "Upholstery",8, true));
         requiredOptions.add(upholsteryOption);
+
+        //Sets the selected item
+
+        if(!dboBrand.equals(SELECT_ALL)){
+            brandOption.setSelectedItem(dboBrand);
+        }
+        if(!dboModel.equals(SELECT_ALL)){
+            modelOption.setSelectedItem(dboModel);
+        }
+        if(!dboSeries.equals(SELECT_ALL)){
+            seriesOption.setSelectedItem(dboSeries);
+        }
+        if(!dboDesign.equals(SELECT_ALL)){
+            designOption.setSelectedItem(dboDesign);
+        }
+        if(!dboColor.equals(SELECT_ALL)){
+            colorOption.setSelectedItem(dboColor);
+        }
+        if(!dboWheel.equals(SELECT_ALL)){
+            wheelOption.setSelectedItem(dboWheel);
+        }
+        if(!dboUpholstery.equals(SELECT_ALL)){
+            upholsteryOption.setSelectedItem(dboUpholstery);
+        }
+
+        //Action listeners for sorting
+        brandOption.addActionListener(e->{
+            if(!brandOption.getSelectedItem().equals("Brand")){
+                dboBrand=(String)(brandOption.getSelectedItem());
+            }
+            else{
+                dboBrand=SELECT_ALL;
+            }
+            dealerOrderingPane();
+        });
+
+        modelOption.addActionListener(e->{
+            if(!modelOption.getSelectedItem().equals("Model")){
+                dboModel=(String)(modelOption.getSelectedItem());
+            }
+            else{
+                dboModel=SELECT_ALL;
+            }
+            dealerOrderingPane();
+        });
+
+        seriesOption.addActionListener(e->{
+            if(!seriesOption.getSelectedItem().equals("Series")){
+                dboSeries=(String)(seriesOption.getSelectedItem());
+            }
+            else{
+                dboSeries=SELECT_ALL;
+            }
+            dealerOrderingPane();
+        });
+
+        designOption.addActionListener(e->{
+            if(!designOption.getSelectedItem().equals("Design")){
+                dboDesign=(String)(designOption.getSelectedItem());
+            }
+            else{
+                dboDesign=SELECT_ALL;
+            }
+            dealerOrderingPane();
+        });
+
+        colorOption.addActionListener(e->{
+            if(!colorOption.getSelectedItem().equals("Color")) {
+                dboColor = (String) (colorOption.getSelectedItem());
+            }
+            else{
+                dboColor = SELECT_ALL;
+            }
+        });
+
+        wheelOption.addActionListener(e->{
+            if(wheelOption.getSelectedItem().equals("Wheels")){
+                dboWheel=(String)(wheelOption.getSelectedItem());
+            }
+            else{
+                dboWheel=SELECT_ALL;
+            }
+        });
+
+        upholsteryOption.addActionListener(e->{
+            if(!upholsteryOption.equals("Upholstery")){
+                dboUpholstery = (String)(upholsteryOption.getSelectedItem());
+            }
+            else{
+                dboUpholstery = SELECT_ALL;
+            }
+        });
 
         constraints.gridy = 0;
         carSelection.add(requiredOptions, constraints);
@@ -664,7 +770,8 @@ public class GUI{
      * @return scrollpane containing the checkboxes
      */
     private JScrollPane getDealerUpgrades(String[] filecontents){
-        String[] attributes = GetData.getAttribute(filecontents, "Upgrade", 10, true);
+        String[] attributes = GetData.getAttribute(filecontents, SELECT_ALL, SELECT_ALL, SELECT_ALL, SELECT_ALL,
+                "Upgrade", 10, true);
         JPanel scroll = new JPanel();
         scroll.setLayout(new GridLayout(attributes.length, 1));
 

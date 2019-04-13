@@ -4,6 +4,8 @@ import java.util.Collections;
 
 public class GetData {
 
+    private static final String SELECT_ALL = "*";
+
     /**
      * Reads a file for the dealer's orfer
      * @param filename the file to read from
@@ -33,9 +35,15 @@ public class GetData {
      * @param index the index of the content that we want
      * @return an array of string attributes from the file
      */
-    public static String[] getAttribute(String[] contents, String attrib, int index, boolean sort){
+    public static String[] getAttribute(String[] contents, String brand, String model, String series, String design,
+                                        String attrib, int index, boolean sort){
         ArrayList<String> attribute=new ArrayList<>();
         for(String line:contents){
+            if((!brand.equals(SELECT_ALL) && !line.contains(brand)) || (!model.equals(SELECT_ALL) &&
+                    !line.contains(model)) || (!series.equals(SELECT_ALL) && !line.contains(series)) ||
+                    (!design.equals(SELECT_ALL) && !line.contains(design))){
+                continue;
+            }
             String[] parsedLine=line.split(",")[index].split("/");
             for(String parsed:parsedLine) {
                 if (!attribute.contains(parsed)) {
@@ -59,8 +67,9 @@ public class GetData {
      * @param fileContents the file contents
      * @return the parsed contents of the file
      */
-    public static String[] getWheels(String[] fileContents){
-        String[] contents=GetData.getAttribute(fileContents, "Wheels", 7, false);
+    public static String[] getWheels(String[] fileContents, String brand, String model, String series, String design){
+        String[] contents=GetData.getAttribute(fileContents, brand, model, series, design,
+                "Wheels", 7, false);
         ArrayList<String> wheelList=new ArrayList<String>();
         wheelList.add("Wheels");
         String currentWheel="";
