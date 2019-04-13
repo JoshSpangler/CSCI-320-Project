@@ -317,7 +317,6 @@ public class AccessDatabase {
                             "WHEELS_OPTION(WHEELS_ID, WHEELS_DIAMETER, WHEELS_NAME, WHEELS_STYLE, WHEELS_RUNFLAT) " +
                             "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID) " +
                             "JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) " +
-                            "ORDER BY DEALER_ID " +
                             "WHERE SALE_ID='null'";
             if (!model.equals("*")) {
                 query += (" AND MODEL='" + model + "'");
@@ -334,11 +333,10 @@ public class AccessDatabase {
             if (!upholstry.equals("*")) {
                 query += (" AND STYLE='" + upholstry + "'");
             }
-            query += ";";
+            query += " ORDER BY DEALER_ID;";
             Statement stmt = c.createStatement();
-            System.out.println(query);
             ResultSet result = stmt.executeQuery(query);
-            //System.out.println(query);
+            System.out.println(query);
             return getResults(result, 5);
         } catch (SQLException e) {
             e.printStackTrace();
