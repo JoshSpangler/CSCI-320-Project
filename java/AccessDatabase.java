@@ -301,11 +301,23 @@ public class AccessDatabase {
                             "STREET, " +
                             "COUNTY, " +
                             "STATE, " +
-                            "ZIP " +
-                            "FROM ((VEHICLE JOIN DEALER ON VEHICLE.DEALER_ID=DEALER.ID) " +
+                            "ZIP, " +
+                            "MODEL.SERIES, " +
+                            "MODEL, " +
+                            "COLOR, " +
+                            "DESIGN, " +
+                            "VEHICLE.STYLE, " +
+                            "PRICE, " +
+                            "WHEELS_DIAMETER, " +
+                            "WHEELS_NAME, " +
+                            "WHEELS_STYLE, " +
+                            "WHEELS_RUNFLAT " +
+                            "FROM (((VEHICLE JOIN DEALER ON VEHICLE.DEALER_ID=DEALER.ID) " +
                             "JOIN WHEELS_OPTION AS " +
                             "WHEELS_OPTION(WHEELS_ID, WHEELS_DIAMETER, WHEELS_NAME, WHEELS_STYLE, WHEELS_RUNFLAT) " +
-                            "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID)" +
+                            "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID) " +
+                            "JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) " +
+                            "ORDER BY DEALER_ID " +
                             "WHERE SALE_ID='null'";
             if (!model.equals("*")) {
                 query += (" AND MODEL='" + model + "'");
@@ -324,8 +336,9 @@ public class AccessDatabase {
             }
             query += ";";
             Statement stmt = c.createStatement();
-            ResultSet result = stmt.executeQuery(query);
             System.out.println(query);
+            ResultSet result = stmt.executeQuery(query);
+            //System.out.println(query);
             return getResults(result, 5);
         } catch (SQLException e) {
             e.printStackTrace();
