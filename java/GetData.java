@@ -57,6 +57,15 @@ public class GetData {
         if(!attrib.equals("Upgrade")){
             attribute.add(0, attrib);
         }
+        else{
+            for(int i=attribute.size()-1; i>=0; i--){
+                if(i>0){
+                    if(attribute.get(i).split(":")[0].equals(attribute.get(i-1).split(":")[0])){
+                        attribute.remove(i);
+                    }
+                }
+            }
+        }
         //System.out.println(attribute);
         return attribute.toArray(String[]::new);
     }
