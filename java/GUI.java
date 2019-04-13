@@ -978,10 +978,12 @@ public class GUI{
                 new JCheckBox("Total Cost"), new JCheckBox("Optional upgrades"),
                 new JCheckBox("Additional Cost"), new JCheckBox("Wheel Diameter"),
                 new JCheckBox("Wheel Name"),new JCheckBox("Wheel Style"),new JCheckBox("Wheel Runflat"),
-                new JCheckBox("Drivetrain"),new JCheckBox("Transmission"),new JCheckBox("Sale Day"),
+                new JCheckBox("Drivetrain"),new JCheckBox("Transmission"), new JCheckBox("Engine Name"),
+                new JCheckBox("Num Liters"), new JCheckBox("Num Cylinders"), new JCheckBox("Sale Day"),
                 new JCheckBox("Sale Month"), new JCheckBox("Sale Year"), new JCheckBox("Customer Name"),
                 new JCheckBox("Customer Street"), new JCheckBox("Customer County"),
-                new JCheckBox("Customer State"), new JCheckBox("Customer ZIP")};
+                new JCheckBox("Customer State"), new JCheckBox("Customer ZIP"),
+                new JCheckBox("Customer Phone Numbers")};
         searchChecks.setLayout(new GridLayout(checkBoxes.length,1));
         for(JCheckBox c:checkBoxes){
             searchChecks.add(c);
@@ -999,12 +1001,17 @@ public class GUI{
         // Buttons
         JButton show = new JButton("Show data");
         show.addActionListener(e -> {
+
+            //Gets the selected checkboxes to display
             boolean[] isSelected = new boolean[checkBoxes.length];
             for(int i = 0; i < checkBoxes.length; i++){
                 isSelected[i] = checkBoxes[i].isSelected();
             }
 
+            //Gets the data from the database
             String[][] carData = AccessDatabase.getCarHistoryByDealerID(connection,dboDealerID, isSelected);
+
+            //Adds the data to a table
             JTable table = new JTable(carData.length, (carData.length > 0) ? carData[0].length : 0);
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             for (int i = 0; i < carData.length; i++){
