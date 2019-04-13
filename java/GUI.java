@@ -37,6 +37,8 @@ public class GUI{
             getHeader("Choose the car you want");
     private static final String CUSTOMER_RECIEPT_HEADER =
             getHeader("Your reciept:");
+    private static final String VEHICLE_LOCATOR_HEADER =
+            getHeader("Vehicle Locator");
 
 
     //
@@ -824,7 +826,66 @@ public class GUI{
     }
 
     private void dealerInventoryPane() {
-        inventoryPane(DEALER_INVENTORY_HEADER, "AllDealers", e -> welcomePane());
+        inventoryPane(DEALER_INVENTORY_HEADER, "AllDealers", e -> vehicleLocatorPane());
+    }
+
+    private void vehicleLocatorPane() {
+        body.removeAll();
+
+        GridBagConstraints constraints = setupNewPage(VEHICLE_LOCATOR_HEADER);
+        JPanel scroll = new JPanel(new GridLayout(0, 1));
+
+        // Gets the car information from the database and puts it into the buttons
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,  dboModel,dboColor, dboWheelDiameter,
+                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
+
+        if(carData.length != 0){
+            // Build the car buttons
+            for (String[] carRow : carData){
+                String car = carRow[0]+", "+carRow[1]+", "+carRow[2]+", "+carRow[3]+", "+carRow[4]+", "+
+                        carRow[5]+", "+carRow[6]+", "+carRow[7]+", "+carRow[8]+", "+carRow[9];
+                JButton carButton = new JButton(car);
+                carButton.setPreferredSize(new Dimension(750, 50));
+                carButton.addActionListener(e -> customerReceipt(car));
+                scroll.add(carButton);
+            }
+
+            // Make the buttons scrollable
+            JScrollPane scrollPane = new JScrollPane(scroll,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scrollPane.setPreferredSize(new Dimension(1000,600));
+
+            body.add(scrollPane, constraints);
+
+            // Refresh the window
+            body.revalidate();
+            body.repaint();
+        }
+        else {
+            carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboModel, dboColor, dboWheelDiameter,
+                    dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery);
+
+            // Build the car buttons
+            for (String[] carRow : carData){
+                String car = carRow[0]+", "+carRow[1]+", "+carRow[2]+", "+carRow[3]+", "+carRow[4];
+                JButton carButton = new JButton(car);
+                carButton.setPreferredSize(new Dimension(750, 50));
+                carButton.addActionListener(e -> customerReceipt(car));
+                scroll.add(carButton);
+            }
+
+            // Make the buttons scrollable
+            JScrollPane scrollPane = new JScrollPane(scroll,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scrollPane.setPreferredSize(new Dimension(1000,600));
+
+            body.add(scrollPane, constraints);
+
+            // Refresh the window
+            body.revalidate();
+            body.repaint();
+        }
+
     }
 
     /**

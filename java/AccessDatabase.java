@@ -291,6 +291,48 @@ public class AccessDatabase {
         return null;
     }
 
+    public static String[][] getUnsoldCarsAllDealer(Connection c, String model, String color,
+                                           String wheelDiameter, String wheelName, String wheelStyle, String wheelRF,
+                                           String upholstry) {
+        try {
+            String query =
+                    "SELECT DEALER_ID, " +
+                            "NAME, " +
+                            "STREET, " +
+                            "COUNTY, " +
+                            "STATE, " +
+                            "ZIP " +
+                            "FROM ((VEHICLE JOIN DEALER ON VEHICLE.DEALER_ID=DEALER.ID) " +
+                            "JOIN WHEELS_OPTION AS " +
+                            "WHEELS_OPTION(WHEELS_ID, WHEELS_DIAMETER, WHEELS_NAME, WHEELS_STYLE, WHEELS_RUNFLAT) " +
+                            "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID)" +
+                            "WHERE SALE_ID='null'";
+            if (!model.equals("*")) {
+                query += (" AND MODEL='" + model + "'");
+            }
+            if (!color.equals("*")) {
+                query += ("AND COLOR='" + color + "'");
+            }
+            if (!wheelName.equals("*")) {
+                query += (" AND WHEELS_DIAMETER=" + wheelDiameter +
+                        " AND WHEELS_NAME='" + wheelName + "'" +
+                        " AND WHEELS_STYLE='" + wheelStyle + "'" +
+                        " AND WHEELS_RUNFLAT='" + wheelRF + "'");
+            }
+            if (!upholstry.equals("*")) {
+                query += (" AND STYLE='" + upholstry + "'");
+            }
+            query += ";";
+            Statement stmt = c.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            System.out.println(query);
+            return getResults(result, 5);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static boolean dealerInData(Connection c,String dealerID){
         try {
             String query = "SELECT COUNT(ID) FROM DEALER WHERE ID=" + dealerID + ";";
