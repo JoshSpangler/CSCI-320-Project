@@ -39,6 +39,7 @@ public class AdminPage extends JPanel {
      */
     public AdminPage(Connection con, ActionListener backListener) {
         this.con = con;
+        this.setBorder(GUI.BORDER);
 
         initPages(backListener);
         setCard(resultPage);

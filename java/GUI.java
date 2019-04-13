@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -16,29 +17,30 @@ public class GUI{
     //
 
     private static final String CAR_FILE_PATH = "./data/input/Cars.csv";
-    private static final String COLOR = "#00b6ff";
+    private static final String FONT_COLOR = "#00b6ff";
+    public static final Border BORDER = BorderFactory.createLineBorder(new Color(71, 67, 64), 2);
     private static final String SELECT_ALL = "*";
 
     private static final String WELCOME_PAGE_HEADER =
-            getHeader("Welcome to WMB. Are you a dealer, customer, or administrator?");
+            getHeader("&nbsp;Welcome to WMB. Are you a dealer, customer, or administrator? ");
     private static final String DEALER_LOGIN_HEADER =
-            getHeader("Hello Dealer! Please login with your dealer ID to access the database.");
+            getHeader("&nbsp;Hello Dealer! Please login with your dealer ID to access the database. ");
     private static final String DEALER_ACTION_HEADER =
-            getHeader("Do you want to order a new car, look at your inventory, or check your sale history?");
+            getHeader("&nbsp;Do you want to order a new car, look at your inventory, or check your sale history? ");
     private static final String DEALER_ORDER_HEADER =
-            getHeader("What car do you want to order?");
-    private static final String DEALER_INVENTORY_HEADER =
-            getHeader("Your Inventory");
+            getHeader("&nbsp;What car do you want to order? ");
+    private static final String DEALER_LOCATOR_HEADER =
+            getHeader("&nbsp;Locator Services ");
     private static final String DEALER_HISTORY_HEADER =
-            getHeader("Your History");
+            getHeader("&nbsp;Your History ");
     private static final String CUSTOMER_ORDER_HEADER =
-            getHeader("Order a new car!");
+            getHeader("&nbsp;Order a new car! ");
     private static final String CUSTOMER_CHOOSE_HEADER =
-            getHeader("Choose the car you want");
-    private static final String CUSTOMER_RECIEPT_HEADER =
-            getHeader("Your reciept:");
+            getHeader("&nbsp;Choose the car you want: ");
+    private static final String CUSTOMER_RECEIPT_HEADER =
+            getHeader("&nbsp;Your receipt: ");
     private static final String VEHICLE_LOCATOR_HEADER =
-            getHeader("Vehicle Locator");
+            getHeader("&nbsp;Vehicle Locator ");
 
 
     //
@@ -106,7 +108,7 @@ public class GUI{
      * @return new header string
      */
     public static String getHeader(String text) {
-        return String.format("<html><font COLOR=%s>%s</font></html>", COLOR, text);
+        return String.format("<html><font color=%s>%s</font></html>", FONT_COLOR, text);
     }
 
     /**
@@ -185,39 +187,56 @@ public class GUI{
     private void inventoryPane(String header, String accessor, ActionListener listener){
         // Initialize the page
         GridBagConstraints constraints = setupNewPage(header);
+        constraints.gridy = 0;
 
         // Add all of the selectors
-        JLabel seriesLabel = new JLabel(getHeader("Series"));
+        JPanel inventoryPanel = new JPanel(new GridBagLayout());
+        inventoryPanel.setBorder(BORDER);
+
+        JLabel seriesLabel = new JLabel("Series");
         seriesLabel.setOpaque(true);
-        body.add(seriesLabel, constraints);
+        inventoryPanel.add(seriesLabel);
         constraints.gridx++;
-        body.add(getSeries(accessor), constraints);
-        constraints.gridx=0;
+        inventoryPanel.add(getSeries(accessor), constraints);
+        constraints.gridx = 0;
         constraints.gridy++;
 
-        body.add(new JLabel(getHeader("Model")), constraints);
+        JLabel modelLabel = new JLabel("Model");
+        modelLabel.setOpaque(true);
+        inventoryPanel.add(modelLabel, constraints);
         constraints.gridx++;
-        body.add(getModel(accessor), constraints );
-        constraints.gridx=0;
+        inventoryPanel.add(getModel(accessor), constraints);
+        constraints.gridx = 0;
         constraints.gridy++;
 
-        body.add(new JLabel(getHeader("Color")), constraints);
+        JLabel colorLabel = new JLabel("Color");
+        colorLabel.setOpaque(true);
+        inventoryPanel.add(colorLabel, constraints);
         constraints.gridx++;
-        body.add(getColor(accessor), constraints);
-        constraints.gridx=0;
+        inventoryPanel.add(getColor(accessor), constraints);
+        constraints.gridx = 0;
         constraints.gridy++;
 
-        body.add(new JLabel(getHeader("Upholstery")), constraints);
+        JLabel upholsteryLabel = new JLabel("Upholstery");
+        upholsteryLabel.setOpaque(true);
+        inventoryPanel.add(upholsteryLabel, constraints);
         constraints.gridx++;
-        body.add(getUpholstry(accessor), constraints);
-        constraints.gridx=0;
+        inventoryPanel.add(getUpholstry(accessor), constraints);
+        constraints.gridx = 0;
         constraints.gridy++;
 
-        body.add(new JLabel(getHeader("Wheels")), constraints);
+        JLabel wheelsLabel = new JLabel("Wheels");
+        wheelsLabel.setOpaque(true);
+        inventoryPanel.add(wheelsLabel, constraints);
         constraints.gridx++;
-        body.add(getWheels(accessor), constraints);
-        constraints.gridx=0;
+        inventoryPanel.add(getWheels(accessor), constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+
+        body.add(inventoryPanel, constraints);
         constraints.gridy++;
+
+        //
 
         JButton nextButton = new JButton("Continue");
         nextButton.addActionListener(listener);
@@ -333,7 +352,7 @@ public class GUI{
     }
 
     /**
-     * Uses the model, series, wheels, and upholstry to sort out the COLOR combo box
+     * Uses the model, series, wheels, and upholstry to sort out the FONT_COLOR combo box
      * @return a JComboBox based on model, series, wheels, and upholstry
      */
     private JComboBox<String> getColor(String accessor){
@@ -386,7 +405,7 @@ public class GUI{
     /**
      * Uses the model, series, color, and upholstry to sort out the wheels combo box
      *
-     * @return a JComboBox based on model, series, COLOR, and upholstry
+     * @return a JComboBox based on model, series, FONT_COLOR, and upholstry
      */
     private JComboBox<String> getWheels(String accessor){
         //gets the data to fill in the wheel combo box from the database
@@ -443,10 +462,10 @@ public class GUI{
     }
 
     /**
-     * Uses the model, series, COLOR, and wheels to sort out the wheels combo box
+     * Uses the model, series, FONT_COLOR, and wheels to sort out the wheels combo box
      *
      * @param accessor the person accessing the database
-     * @return a JComboBox based on model, series, COLOR, and wheels
+     * @return a JComboBox based on model, series, FONT_COLOR, and wheels
      */
     public JComboBox<String> getUpholstry(String accessor){
         //gets output from the database
@@ -593,6 +612,7 @@ public class GUI{
 
         // The middle has all of the options
         JPanel carSelection = new JPanel(new GridBagLayout());
+        carSelection.setBorder(BORDER);
 
         // Left pane containing some options
         JPanel requiredOptions = new JPanel(new GridLayout(7,1));
@@ -826,7 +846,7 @@ public class GUI{
     }
 
     private void dealerInventoryPane() {
-        inventoryPane(DEALER_INVENTORY_HEADER, "AllDealers", e -> vehicleLocatorPane());
+        inventoryPane(DEALER_LOCATOR_HEADER, "AllDealers", e -> vehicleLocatorPane());
     }
 
     private void vehicleLocatorPane() {
@@ -1027,6 +1047,7 @@ public class GUI{
         JScrollPane scrollPane = new JScrollPane(scroll,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(1000,600));
+        scrollPane.setBorder(BORDER);
 
         body.add(scrollPane, constraints);
 
@@ -1040,7 +1061,7 @@ public class GUI{
      */
     private void customerReceipt(String selectedCar){
         // Initialize the page
-        GridBagConstraints constraints = setupNewPage(CUSTOMER_RECIEPT_HEADER);
+        GridBagConstraints constraints = setupNewPage(CUSTOMER_RECEIPT_HEADER);
 
         // Actual reciept label
         JLabel reciept = new JLabel(getHeader(selectedCar));
@@ -1051,6 +1072,7 @@ public class GUI{
 
         // Fields for customer information
         JPanel fields = new JPanel(new GridLayout(4,2));
+        fields.setBorder(BORDER);
 
         JTextField firstname = new JTextField(30);
         firstname.setText("First Name");
