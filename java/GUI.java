@@ -273,7 +273,7 @@ public class GUI{
                 series[i + 1] = carData[i][0];
             }
 
-            seriesCBox = new JComboBox<>(Arrays.stream(series).distinct().toArray(String[]::new));
+            seriesCBox = new JComboBox<>(Arrays.stream(series).distinct().sorted().toArray(String[]::new));
         }
 
         //what to initially select the combo box as
@@ -330,7 +330,7 @@ public class GUI{
                 models[i + 1] = carData[i][1];
             }
         }
-        modelCBox = new JComboBox<>(Arrays.stream(models).distinct().toArray(String[]::new));
+        modelCBox = new JComboBox<>(Arrays.stream(models).distinct().sorted().toArray(String[]::new));
 
         //sets the selected item based on the sort-by data
         modelCBox.setSelectedItem(dboModel.equals(SELECT_ALL) ? "Model" : dboModel);
@@ -376,7 +376,7 @@ public class GUI{
                 colors[i + 1] = carData[i][2];
             }
         }
-        colorsCBox = new JComboBox<>(Arrays.stream(colors).distinct().toArray(String[]::new));
+        colorsCBox = new JComboBox<>(Arrays.stream(colors).distinct().sorted().toArray(String[]::new));
 
         //sets the selected item based on the sort-by data
         if(dboColor.equals(SELECT_ALL)){
@@ -429,7 +429,7 @@ public class GUI{
                 wheels[i + 1] = carData[i][6] + ", " + carData[i][7] + ", " + carData[i][8] + ", " + carData[i][9];
             }
         }
-        wheelsCBox = new JComboBox<>(Arrays.stream(wheels).distinct().toArray(String[]::new));
+        wheelsCBox = new JComboBox<>(Arrays.stream(wheels).distinct().sorted().toArray(String[]::new));
 
         //sets the default value for the combobox
         wheelsCBox.setSelectedItem(dboWheelName.equals(SELECT_ALL) ? "Wheels" :
@@ -488,7 +488,7 @@ public class GUI{
                 upholsteries[i + 1] = carData[i][4];
             }
         }
-        upholstriesCBox = new JComboBox<>(Arrays.stream(upholsteries).distinct().toArray(String[]::new));
+        upholstriesCBox = new JComboBox<>(Arrays.stream(upholsteries).distinct().sorted().toArray(String[]::new));
 
         //what to set the selected item to based on the sort-by data
         upholstriesCBox.setSelectedItem(dboUpholstery.equals(SELECT_ALL) ? "Upholstry" : dboUpholstery);
@@ -850,115 +850,69 @@ public class GUI{
     }
 
     private void vehicleLocatorPane() {
-        body.removeAll();
-
         GridBagConstraints constraints = setupNewPage(VEHICLE_LOCATOR_HEADER);
-        JPanel scroll = new JPanel(new GridBagLayout());
+        constraints.gridy = 0;
+
+        JPanel locatorPanel = new JPanel(new GridBagLayout());
+
+        JLabel whoHasCarLabel = new JLabel();
+        locatorPanel.add(whoHasCarLabel, constraints);
+        constraints.gridy++;
 
         // Gets the car information from the database and puts it into the buttons
-        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,  dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
+        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,  dboModel, dboColor, dboWheelDiameter,
+                dboWheelName, dboWheelStyle, dboWheelRF, dboUpholstery, dboDealerID);
 
-        if(carData.length != 0){
-            JLabel dealerUnsold = new JLabel("Your dealership has the requested car!");
-            scroll.add(dealerUnsold);
-            constraints.gridy ++;
+        if (carData.length != 0) {
+            whoHasCarLabel.setText("Your dealership has the requested car!");
 
-            // Build the car buttons
-            for (String[] carRow : carData){
-                String car = carRow[0]+", "+carRow[1]+", "+carRow[2]+", "+carRow[3]+", "+carRow[4]+", "+
-                        carRow[5]+", "+carRow[6]+", "+carRow[7]+", "+carRow[8]+", "+carRow[9];
-                JButton carButton = new JButton(car);
-                carButton.setPreferredSize(new Dimension(750, 50));
-                scroll.add(carButton, constraints);
-                constraints.gridy ++;
-            }
-
-            // Make the buttons scrollable
-            JScrollPane scrollPane = new JScrollPane(scroll,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-            scrollPane.setPreferredSize(new Dimension(1000,600));
-
-            body.add(scrollPane, constraints);
-            constraints.gridy ++;
-
-            JButton homePage = new JButton("Home Page");
-            homePage.addActionListener(e -> welcomePane());
-
-            body.add(homePage, constraints);
-
-            // Refresh the window
-            body.revalidate();
-            body.repaint();
+            locatorPanel.add(getCarTableFromData(carData), constraints);
         }
         else {
             carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboModel, dboColor, dboWheelDiameter,
                     dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery);
-
             if (carData.length != 0) {
+                whoHasCarLabel.setText(
+                        "Your dealership does not has the requested car! Here are dealerships that do:");
 
-                JLabel dealerUnsold = new JLabel("Your dealership does not has the requested car! Here are dealerships that do:");
-                scroll.add(dealerUnsold);
-                constraints.gridy ++;
 
-                // Build the car buttons
-                for (String[] carRow : carData) {
-                    String car = carRow[0] + ", " + carRow[1] + ", " + carRow[2] + ", " + carRow[3] + ", " + carRow[4];
-                    JButton carButton = new JButton(car);
-                    carButton.setPreferredSize(new Dimension(750, 50));
-                    scroll.add(carButton, constraints);
-                    constraints.gridy ++;
-                }
+
             }
             else {
-                JLabel dealerUnsold = new JLabel("No dealerships have this car available.");
-                scroll.add(dealerUnsold);
+                whoHasCarLabel.setText("No dealerships have this car available.");
             }
-
-            // Make the buttons scrollable
-            JScrollPane scrollPane = new JScrollPane(scroll,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-            scrollPane.setPreferredSize(new Dimension(1000,600));
-
-            body.add(scrollPane, constraints);
-            constraints.gridy ++;
-
-            JButton homePage = new JButton("Home Page");
-            homePage.addActionListener(e -> welcomePane());
-
-            body.add(homePage, constraints);
-
-            // Refresh the window
-            body.revalidate();
-            body.repaint();
         }
+        constraints.gridy = 1;
+        body.add(locatorPanel, constraints);
 
+        JButton homeButton = new JButton("Home Page");
+        homeButton.addActionListener(e -> welcomePane());
+        body.add(homeButton, constraints);
+
+        //
+        body.revalidate();
+        body.repaint();
     }
 
-    /**
-     * Gets a JTable with each car that fits the sort-by data
-     * @return a JTable with each car that fits the sort-by data
-     */
-    private JTable getCarsByDealerID(){
-        // gets output from the database
-        String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,dboModel,dboColor, dboWheelDiameter,
-                dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
-        JTable cars = new JTable(carData.length, (carData.length > 0) ? carData[0].length: 0);
-        // string and JTable builder
-        for(int i = 0; i < carData.length; i++){
-            for(int j = 0; j < carData[i].length; j++){
-                cars.setValueAt(carData[i][j], i, j);
+    private JScrollPane getCarTableFromData(String[][] carData) {
+        JTable resultsTable = new JTable(carData.length, (carData.length > 0) ? carData[0].length : 0);
+        String[] headers = {"Series", "Model", "Color", "Design", "Upholstery", "Price",
+                "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
+        for (int i = 0; i < carData[0].length; i++) {
+            resultsTable.getColumnModel().getColumn(i).setMinWidth(200);
+            resultsTable.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(headers[i]);
+        }
+        for (int i = 0; i < carData.length; i++) {
+            for (int j = 0; j < carData[0].length; j++) {
+                resultsTable.setValueAt(carData[i][j], i, j);
             }
         }
-        // Creates the header for the columns
-        String[] header = new String[]{"Series", "Model", "Color", "Design", "Upholstery", "Price",
-                "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
-        for(int i = 0; i < cars.getColumnCount(); i++) {
-            cars.getColumnModel().getColumn(i).setMinWidth(200);
-            cars.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(header[i]);
-        }
-        cars.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return cars;
+        resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        resultsTable.setPreferredScrollableViewportSize(new Dimension(1000, 600));
+
+        // Make the results able to fit on the page by adding it to a scroll pane
+        return new JScrollPane(resultsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
     /**
