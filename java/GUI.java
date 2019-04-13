@@ -880,6 +880,12 @@ public class GUI{
             scrollPane.setPreferredSize(new Dimension(1000,600));
 
             body.add(scrollPane, constraints);
+            constraints.gridy ++;
+
+            JButton homePage = new JButton("Home Page");
+            homePage.addActionListener(e -> welcomePane());
+
+            body.add(homePage, constraints);
 
             // Refresh the window
             body.revalidate();
@@ -915,6 +921,12 @@ public class GUI{
             scrollPane.setPreferredSize(new Dimension(1000,600));
 
             body.add(scrollPane, constraints);
+            constraints.gridy ++;
+
+            JButton homePage = new JButton("Home Page");
+            homePage.addActionListener(e -> welcomePane());
+
+            body.add(homePage, constraints);
 
             // Refresh the window
             body.revalidate();
