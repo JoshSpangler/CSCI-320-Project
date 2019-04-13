@@ -880,19 +880,21 @@ public class GUI{
                 while (row < carData.length) {
                     currentDealer = carData[row][0];
                     JLabel dealerLocationLabel = new JLabel("ID: " + carData[row][0] +
-                            "Name: " + carData[row][1] +
-                            "County: " + carData[row][2] +
-                            "State: " + carData[row][3] +
-                            "ZIP: " + carData[row][4]);
+                            " Name: " + carData[row][1] +
+                            " Street: " + carData[row][2] +
+                            " County: " + carData[row][3] +
+                            " State: " + carData[row][4] +
+                            " ZIP: " + carData[row][5]);
                     locatorPanel.add(dealerLocationLabel, constraints);
                     constraints.gridy++;
 
                     List<String[]> dealerData = new ArrayList<>();
                     while (row < carData.length && carData[row][0].equals(currentDealer)) {
-                        dealerData.add(Arrays.copyOfRange(carData[row], 5, carData[row].length));
+                        dealerData.add(Arrays.copyOfRange(carData[row], 6, carData[row].length));
                         row++;
                     }
-                    locatorPanel.add(getCarTableFromData((String[][])dealerData.toArray()), constraints);
+                    JScrollPane table = getCarTableFromData(ListTo2D(dealerData));
+                    locatorPanel.add(table, constraints);
                     constraints.gridy++;
                 }
 
@@ -912,6 +914,15 @@ public class GUI{
         //
         body.revalidate();
         body.repaint();
+    }
+
+    private String[][] ListTo2D(List<String[]> data){
+        String[][] carData = new String[data.size()][];
+        for (int i = 0; i < data.size(); i++) {
+            String[] row = data.get(i);
+            carData[i] = row;
+        }
+        return carData;
     }
 
     private JScrollPane getCarTableFromData(String[][] carData) {

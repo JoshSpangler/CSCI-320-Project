@@ -337,7 +337,7 @@ public class AccessDatabase {
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             System.out.println(query);
-            return getResults(result, 14);
+            return getResults(result, 16);
         } catch (SQLException e) {
             e.printStackTrace();
         }
