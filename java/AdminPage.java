@@ -17,6 +17,7 @@ public class AdminPage extends JPanel {
     private static final String BACK_BUTTON_TEXT = "Back";
     private static final String QUERY_BUTTON_TEXT = "Submit Query";
     private static final String EXECUTE_BUTTON_TEXT = "Execute";
+
     private static final String RESULT_PAGE_HEADER = GUI.getHeader("Results of your SQL Query:");
     private static final String INPUT_PAGE_HEADER = GUI.getHeader("Enter the SQL statement below:");
 
@@ -170,26 +171,35 @@ public class AdminPage extends JPanel {
     private void makeQuery(String query) {
         Statement statement = null;
         try {
-            statement = con.createStatement();
+            statement = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet results = statement.executeQuery(query);
 
             // Extract the results into a table
             ResultSetMetaData metaData = results.getMetaData();
             int numCols = metaData.getColumnCount();
-            JPanel resultPanel = new JPanel(new GridLayout(0, numCols));
-            for (int i = 0; i < numCols; i++) {
-                resultPanel.add(new JLabel(metaData.getColumnName(i+1)));
+            if (!results.last()) {
+                return;
             }
+            int numRows = results.getRow();
+            results.beforeFirst();
+            JTable resultsTable = new JTable(numRows, numCols);
+            for (int i = 0; i < numCols; i++) {
+                resultsTable.getColumnModel().getColumn(i).setMinWidth(200);
+                resultsTable.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(metaData.getColumnName(i+1));
+            }
+            int row = 0;
             while (results.next()) {
                 for (int i = 0; i < numCols; i++) {
-                    resultPanel.add(new JLabel(results.getString(i+1)));
+                    resultsTable.setValueAt(results.getString(i+1), row, i);
                 }
+                row++;
             }
+            resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            resultsTable.setPreferredScrollableViewportSize(new Dimension(1000, 600));
 
             // Make the results able to fit on the page by adding it to a scroll pane
-            JScrollPane resultScroll = new JScrollPane(resultPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane resultScroll = new JScrollPane(resultsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                     JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            resultScroll.setPreferredSize(new Dimension(1000, 600));
 
             // Set current card to the result page after adding results
             GridBagConstraints constraints = getDefaultConstraints();
