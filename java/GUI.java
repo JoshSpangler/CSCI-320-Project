@@ -853,21 +853,25 @@ public class GUI{
         body.removeAll();
 
         GridBagConstraints constraints = setupNewPage(VEHICLE_LOCATOR_HEADER);
-        JPanel scroll = new JPanel(new GridLayout(0, 1));
+        JPanel scroll = new JPanel(new GridBagLayout());
 
         // Gets the car information from the database and puts it into the buttons
         String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries,  dboModel,dboColor, dboWheelDiameter,
                 dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery,dboDealerID);
 
         if(carData.length != 0){
+            JLabel dealerUnsold = new JLabel("Your dealership has the requested car!");
+            scroll.add(dealerUnsold);
+            constraints.gridy ++;
+
             // Build the car buttons
             for (String[] carRow : carData){
                 String car = carRow[0]+", "+carRow[1]+", "+carRow[2]+", "+carRow[3]+", "+carRow[4]+", "+
                         carRow[5]+", "+carRow[6]+", "+carRow[7]+", "+carRow[8]+", "+carRow[9];
                 JButton carButton = new JButton(car);
                 carButton.setPreferredSize(new Dimension(750, 50));
-                carButton.addActionListener(e -> customerReceipt(car));
-                scroll.add(carButton);
+                scroll.add(carButton, constraints);
+                constraints.gridy ++;
             }
 
             // Make the buttons scrollable
@@ -885,13 +889,24 @@ public class GUI{
             carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboModel, dboColor, dboWheelDiameter,
                     dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery);
 
-            // Build the car buttons
-            for (String[] carRow : carData){
-                String car = carRow[0]+", "+carRow[1]+", "+carRow[2]+", "+carRow[3]+", "+carRow[4];
-                JButton carButton = new JButton(car);
-                carButton.setPreferredSize(new Dimension(750, 50));
-                carButton.addActionListener(e -> customerReceipt(car));
-                scroll.add(carButton);
+            if (carData.length != 0) {
+
+                JLabel dealerUnsold = new JLabel("Your dealership does not has the requested car! Here are dealerships that do:");
+                scroll.add(dealerUnsold);
+                constraints.gridy ++;
+
+                // Build the car buttons
+                for (String[] carRow : carData) {
+                    String car = carRow[0] + ", " + carRow[1] + ", " + carRow[2] + ", " + carRow[3] + ", " + carRow[4];
+                    JButton carButton = new JButton(car);
+                    carButton.setPreferredSize(new Dimension(750, 50));
+                    scroll.add(carButton, constraints);
+                    constraints.gridy ++;
+                }
+            }
+            else {
+                JLabel dealerUnsold = new JLabel("No dealerships have this car available.");
+                scroll.add(dealerUnsold);
             }
 
             // Make the buttons scrollable
