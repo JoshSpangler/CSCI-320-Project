@@ -233,7 +233,7 @@ public class GUI{
         if(accessor.toLowerCase().equals("alldealers")) {
             String[] fileContents = GetData.readFile(CAR_FILE_PATH);
             // The dealers option
-            seriesCBox = new JComboBox<>(GetData.getAttribute(fileContents, 1));
+            seriesCBox = new JComboBox<>(GetData.getAttribute(fileContents,"Series", 1, true));
         }
         else {
             String[][] carData = AccessDatabase.getUnsoldCars(connection, dboSeries, dboModel, dboColor,
@@ -584,25 +584,25 @@ public class GUI{
         // Left pane containing some options
         JPanel requiredOptions = new JPanel(new GridLayout(7,1));
 
-        JComboBox<String> brandOption = new JComboBox<>(GetData.getAttribute(fileContents, 0));
+        JComboBox<String> brandOption = new JComboBox<>(GetData.getAttribute(fileContents, "Brand", 0, true));
         requiredOptions.add(brandOption);
 
-        JComboBox<String> modelOption = new JComboBox<>(GetData.getAttribute(fileContents, 2));
+        JComboBox<String> modelOption = new JComboBox<>(GetData.getAttribute(fileContents, "Model", 2, true));
         requiredOptions.add(modelOption);
 
-        JComboBox<String> seriesOption = new JComboBox<>(GetData.getAttribute(fileContents, 1));
+        JComboBox<String> seriesOption = new JComboBox<>(GetData.getAttribute(fileContents, "Series",1, true));
         requiredOptions.add(seriesOption);
 
-        JComboBox<String> designOption = new JComboBox<>(GetData.getAttribute(fileContents, 4));
+        JComboBox<String> designOption = new JComboBox<>(GetData.getAttribute(fileContents, "Design", 4, true));
         requiredOptions.add(designOption);
 
-        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, 9));
+        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, "Color", 9, true));
         requiredOptions.add(colorOption);
 
-        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(GetData.getAttribute(fileContents, 7)));
+        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents));
         requiredOptions.add(wheelOption);
 
-        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents,8));
+        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, "Upholstery",8, true));
         requiredOptions.add(upholsteryOption);
 
         constraints.gridy = 0;
@@ -622,15 +622,29 @@ public class GUI{
         JButton cont = new JButton("Continue");
         cont.addActionListener(e -> {
             int baseprice = 0;
-            AccessDatabase.buyCar(connection, dboDealerID, brandOption.getItemAt(brandOption.getSelectedIndex()),
-                    seriesOption.getItemAt(seriesOption.getSelectedIndex()),
-                    modelOption.getItemAt(modelOption.getSelectedIndex()),
-                    colorOption.getItemAt(colorOption.getSelectedIndex()),
-                    wheelOption.getItemAt(wheelOption.getSelectedIndex()),
-                    upholsteryOption.getItemAt(upholsteryOption.getSelectedIndex()),
-                    designOption.getItemAt(designOption.getSelectedIndex()),
-                    baseprice, optUpgradeList);
-            welcomePane();
+            //If one of them is not chosen
+            if(brandOption.getItemAt(brandOption.getSelectedIndex()).equals("Brand") ||
+                    seriesOption.getItemAt(seriesOption.getSelectedIndex()).equals("Series") ||
+                    modelOption.getItemAt(modelOption.getSelectedIndex()).equals("Model") ||
+                    colorOption.getItemAt(colorOption.getSelectedIndex()).equals("Color") ||
+                    wheelOption.getItemAt(wheelOption.getSelectedIndex()).equals("Wheels") ||
+                    upholsteryOption.getItemAt(upholsteryOption.getSelectedIndex()).equals("Upholstery") ||
+                    designOption.getItemAt(designOption.getSelectedIndex()).equals("Design")
+            ){
+                dealerOrderingPane();
+            }
+            //Otherwise add the car to the database
+            else {
+                AccessDatabase.buyCar(connection, dboDealerID, brandOption.getItemAt(brandOption.getSelectedIndex()),
+                        seriesOption.getItemAt(seriesOption.getSelectedIndex()),
+                        modelOption.getItemAt(modelOption.getSelectedIndex()),
+                        colorOption.getItemAt(colorOption.getSelectedIndex()),
+                        wheelOption.getItemAt(wheelOption.getSelectedIndex()),
+                        upholsteryOption.getItemAt(upholsteryOption.getSelectedIndex()),
+                        designOption.getItemAt(designOption.getSelectedIndex()),
+                        baseprice, optUpgradeList);
+                welcomePane();
+            }
         });
         body.add(cont, constraints);
 
@@ -646,7 +660,7 @@ public class GUI{
      * @return scrollpane containing the checkboxes
      */
     private JScrollPane getDealerUpgrades(String[] filecontents){
-        String[] attributes = GetData.getAttribute(filecontents, 10);
+        String[] attributes = GetData.getAttribute(filecontents, "Upgrade", 10, true);
         JPanel scroll = new JPanel();
         scroll.setLayout(new GridLayout(attributes.length, 1));
 
