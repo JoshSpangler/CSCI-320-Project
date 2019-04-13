@@ -22,6 +22,12 @@ public class GUI{
     public static final Border BORDER = BorderFactory.createLineBorder(new Color(71, 67, 64), 2);
     private static final String SELECT_ALL = "*";
 
+    private static final String[] CAR_HEADERS = {"Series", "Model", "Color", "Design", "Upholstery", "Price",
+            "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
+    private static final String[] DEALER_CAR_HEADERS = {"Dealer ID", "Name", "Street", "County", "State", "ZIP",
+            "Series", "Model", "Color", "Design", "Upholstery", "Price",
+            "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
+
     private static final String WELCOME_PAGE_HEADER =
             getHeader("&nbsp;Welcome to WMB. Are you a dealer, customer, or administrator? ");
     private static final String DEALER_LOGIN_HEADER =
@@ -867,7 +873,7 @@ public class GUI{
         if (carData.length != 0) {
             whoHasCarLabel.setText("Your dealership has the requested car!");
 
-            locatorPanel.add(getCarTableFromData(carData), constraints);
+            locatorPanel.add(getCarTableFromData(carData, CAR_HEADERS), constraints);
         }
         else {
             carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboModel, dboColor, dboWheelDiameter,
@@ -875,29 +881,8 @@ public class GUI{
             if (carData.length != 0) {
                 whoHasCarLabel.setText(
                         "Your dealership does not has the requested car! Here are dealerships that do:");
-                int row = 0;
-                String currentDealer;
-                while (row < carData.length) {
-                    currentDealer = carData[row][0];
-                    JLabel dealerLocationLabel = new JLabel("ID: " + carData[row][0] +
-                            " Name: " + carData[row][1] +
-                            " Street: " + carData[row][2] +
-                            " County: " + carData[row][3] +
-                            " State: " + carData[row][4] +
-                            " ZIP: " + carData[row][5]);
-                    locatorPanel.add(dealerLocationLabel, constraints);
-                    constraints.gridy++;
 
-                    List<String[]> dealerData = new ArrayList<>();
-                    while (row < carData.length && carData[row][0].equals(currentDealer)) {
-                        dealerData.add(Arrays.copyOfRange(carData[row], 6, carData[row].length));
-                        row++;
-                    }
-                    JScrollPane table = getCarTableFromData(ListTo2D(dealerData));
-                    locatorPanel.add(table, constraints);
-                    constraints.gridy++;
-                }
-
+                locatorPanel.add(getCarTableFromData(carData, DEALER_CAR_HEADERS), constraints);
             }
             else {
                 whoHasCarLabel.setText("No dealerships have this car available.");
@@ -916,19 +901,8 @@ public class GUI{
         body.repaint();
     }
 
-    private String[][] ListTo2D(List<String[]> data){
-        String[][] carData = new String[data.size()][];
-        for (int i = 0; i < data.size(); i++) {
-            String[] row = data.get(i);
-            carData[i] = row;
-        }
-        return carData;
-    }
-
-    private JScrollPane getCarTableFromData(String[][] carData) {
+    private JScrollPane getCarTableFromData(String[][] carData, String[] headers) {
         JTable resultsTable = new JTable(carData.length, (carData.length > 0) ? carData[0].length : 0);
-        String[] headers = {"Series", "Model", "Color", "Design", "Upholstery", "Price",
-                "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
         for (int i = 0; i < carData[0].length; i++) {
             resultsTable.getColumnModel().getColumn(i).setMinWidth(200);
             resultsTable.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(headers[i]);
