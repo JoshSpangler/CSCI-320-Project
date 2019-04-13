@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.*;
+import java.util.List;
 
 /**
  * Handles the entire GUI...
@@ -874,8 +875,26 @@ public class GUI{
             if (carData.length != 0) {
                 whoHasCarLabel.setText(
                         "Your dealership does not has the requested car! Here are dealerships that do:");
+                int row = 0;
+                String currentDealer;
+                while (row < carData.length) {
+                    currentDealer = carData[row][0];
+                    JLabel dealerLocationLabel = new JLabel("ID: " + carData[row][0] +
+                            "Name: " + carData[row][1] +
+                            "County: " + carData[row][2] +
+                            "State: " + carData[row][3] +
+                            "ZIP: " + carData[row][4]);
+                    locatorPanel.add(dealerLocationLabel, constraints);
+                    constraints.gridy++;
 
-
+                    List<String[]> dealerData = new ArrayList<>();
+                    while (row < carData.length && carData[row][0].equals(currentDealer)) {
+                        dealerData.add(Arrays.copyOfRange(carData[row], 5, carData[row].length));
+                        row++;
+                    }
+                    locatorPanel.add(getCarTableFromData((String[][])dealerData.toArray()), constraints);
+                    constraints.gridy++;
+                }
 
             }
             else {
@@ -884,6 +903,7 @@ public class GUI{
         }
         constraints.gridy = 1;
         body.add(locatorPanel, constraints);
+        constraints.gridy++;
 
         JButton homeButton = new JButton("Home Page");
         homeButton.addActionListener(e -> welcomePane());
