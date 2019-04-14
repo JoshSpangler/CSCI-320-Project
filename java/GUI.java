@@ -929,7 +929,7 @@ public class GUI{
         constraints.gridy = 1;
         JScrollPane locatorScroll = new JScrollPane(locatorPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        locatorScroll.setPreferredSize(new Dimension(1100, 800));
+        locatorScroll.setPreferredSize(new Dimension(1000, 700));
         body.add(locatorScroll, constraints);
         constraints.gridy++;
 
