@@ -500,10 +500,8 @@ public class AccessDatabase {
                     count++;
                 }
             }
+            //gerts the indices for the special attributes
             String[] parsedquery=query.split(",");
-            for(String s:parsedquery){
-                System.out.println(s);
-            }
             for(int i=0; i<parsedquery.length; i++){
                 if(parsedquery[i].contains("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")){
                     optUpgrade=i;
