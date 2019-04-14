@@ -94,8 +94,13 @@ public class GUI{
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.setVisible(true);
 
+        // Create the window icon
+        ImageIcon icon = new ImageIcon("./images/logo.png");
+        icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        window.setIconImage(icon.getImage());
+
         // Create the background image
-        ImageIcon bgi = (new ImageIcon("./images/logo.png"));
+        ImageIcon bgi = new ImageIcon("./images/logo.png");
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int bgSize = (dim.width < dim.height) ? dim.width : dim.height;
         bgi = new ImageIcon(bgi.getImage().getScaledInstance(bgSize, bgSize, Image.SCALE_SMOOTH));
