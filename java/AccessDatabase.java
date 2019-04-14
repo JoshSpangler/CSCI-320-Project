@@ -118,7 +118,8 @@ public class AccessDatabase {
      * @return a String[][] with the carData
      */
     public static String[][] combineLikeVINs(String[][] carData, int optUpgrade, int addCost, int customerPhone,
-                                             boolean includeVin, boolean includeOptUpgrade, boolean includeCustPhone) {
+                                             int supplier, boolean includeVin, boolean includeOptUpgrade,
+                                             boolean includeCustPhone, boolean includeSupplier) {
         ArrayList<String[]> carList = new ArrayList<String[]>();
         //loops through the carData looking for non-null values
         for (int i = 0; i < carData.length; i++) {
@@ -145,6 +146,11 @@ public class AccessDatabase {
                             carData[i][customerPhone] += (", " + carData[j][customerPhone]);
                         }
                     }
+                    if(supplier!=-1){
+                        if(!carData[i][supplier].contains(carData[j][supplier])){
+                            carData[i][supplier]+=(", "+carData[j][supplier]);
+                        }
+                    }
                     carData[j][0] = null;
                 }
             }
@@ -156,12 +162,17 @@ public class AccessDatabase {
             if(customerPhone!=-1 && includeCustPhone){
                 carData[i][customerPhone]="{"+carData[i][customerPhone]+"}";
             }
+            if(supplier!=-1){
+                carData[i][supplier]="{"+carData[i][supplier]+"}";
+            }
             carList.add(carData[i]);
         }
         //Goes through and divides by
         if(addCost!=-1 && customerPhone!=-1){
             for(int i=0; i<carList.size(); i++){
-                carList.get(i)[addCost] = (Integer.parseInt(carList.get(i)[addCost]) / carData[i][customerPhone].split(",").length) + "";
+                carList.get(i)[addCost] = (Integer.parseInt(carList.get(i)[addCost]) /
+                        carData[i][customerPhone].split(",").length /
+                        carData[i][supplier].split(",").length) + "";
             }
         }
         if(!includeVin) {
@@ -174,6 +185,7 @@ public class AccessDatabase {
             }
             optUpgrade--;
             customerPhone--;
+            supplier--;
         }
         if(!includeOptUpgrade){
             for(int i=0; i<carList.size(); i++){
@@ -189,6 +201,7 @@ public class AccessDatabase {
                 carList.set(i, correctedCarData);
             }
             customerPhone--;
+            supplier--;
         }
         if(!includeCustPhone){
             for(int i=0; i<carList.size(); i++){
@@ -196,6 +209,21 @@ public class AccessDatabase {
                 int current=0;
                 for (int j = 0; j < carList.get(i).length; j++) {
                     if(j==customerPhone){
+                        continue;
+                    }
+                    correctedCarData[current] = carList.get(i)[j];
+                    current++;
+                }
+                carList.set(i, correctedCarData);
+            }
+            supplier--;
+        }
+        if(!includeSupplier){
+            for(int i=0; i<carList.size(); i++){
+                String[] correctedCarData = new String[carList.get(i).length - 1];
+                int current=0;
+                for (int j = 0; j < carList.get(i).length; j++) {
+                    if(j==supplier){
                         continue;
                     }
                     correctedCarData[current] = carList.get(i)[j];
@@ -438,13 +466,15 @@ public class AccessDatabase {
             int optUpgrade = -1;
             int addCost = -1;
             int customerPhone=-1;
+            int supplier=-1;
             boolean showAll=false;
             String[] cQuery = new String[]{"VEHICLE.VIN", "MODEL.SERIES", "VEHICLE.MODEL", "VEHICLE.COLOR",
                     "VEHICLE.DESIGN", "VEHICLE.STYLE", "VEHICLE.DAY", "VEHICLE.MONTH", "VEHICLE.YEAR",
                     "MODEL.BASE_COST", "OPTIONAL_UPGRADES.OPTIONAL_UPGRADE", "OPTIONAL_UPGRADES.COST", "VEHICLE.PRICE",
                     "WHEELS_OPTION.DIAMETER", "WHEELS_OPTION.NAME", "WHEELS_OPTION.STYLE", "WHEELS_OPTION.RUNFLAT",
                     "MODEL.DRIVETRAIN", "MODEL.TRANSMISSION", "ENGINE_OPTION.ENGINE_NAME", "ENGINE_OPTION.NUM_LITRES",
-                    "ENGINE_OPTION.NUM_CYLINDERS", "SALE.DAY", "SALE.MONTH", "SALE.YEAR", "CUSTOMER.NAME",
+                    "ENGINE_OPTION.NUM_CYLINDERS", "MANUFACTURER.NAME", "SUPPLIER.NAME", "SALE.DAY",
+                    "SALE.MONTH", "SALE.YEAR", "CUSTOMER.NAME",
                     "CUSTOMER.STREET", "CUSTOMER.COUNTY", "CUSTOMER.STATE", "CUSTOMER.ZIP",
                     "CUSTOMER_PHONE.PHONE_NUMBER"};
             String query = "SELECT";
@@ -489,7 +519,7 @@ public class AccessDatabase {
                     }
                     count++;
                 }
-                if(!isSelected[30]){
+                if(!isSelected[32]){
                     if(count>2) {
                         query = query.substring(0, query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length()) + " CUSTOMER_PHONE.PHONE_NUMBER," + query.substring(query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length());
 
@@ -499,8 +529,18 @@ public class AccessDatabase {
                     }
                     count++;
                 }
+                if(!isSelected[23]){
+                    if(count>3) {
+                        query = query.substring(0, query.indexOf(" CUSTOMER_PHONE.PHONE_NUMBER,") + " CUSTOMER_PHONE.PHONE_NUMBER,".length()) + " SUPPLIER.NAME," + query.substring(query.indexOf(" CUSTOMER_PHONE.PHONE_NUMBER,") + " CUSTOMER_PHONE.PHONE_NUMBER,".length());
+
+                    }
+                    else{
+                        query = query.substring(0, query.indexOf("CUSTOMER_PHONE.PHONE_NUMBER") + "CUSTOMER_PHONE.PHONE_NUMBER".length()) + ", SUPPLIER.NAME" + query.substring(query.indexOf("CUSTOMER_PHONE.PHONE_NUMBER") + "CUSTOMER_PHONE.PHONE_NUMBER".length());
+                    }
+                    count++;
+                }
             }
-            //gerts the indices for the special attributes
+            //gets the indices for the special attributes
             String[] parsedquery=query.split(",");
             for(int i=0; i<parsedquery.length; i++){
                 if(parsedquery[i].contains("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")){
@@ -512,22 +552,30 @@ public class AccessDatabase {
                 else if(parsedquery[i].contains("OPTIONAL_UPGRADES.COST")){
                     addCost=i;
                 }
+                else if(parsedquery[i].contains("SUPPLIER.NAME")){
+                    supplier=i;
+                }
             }
-            query += " FROM ((((((((VEHICLE JOIN VEHICLE_OPTIONAL_UPGRADE ON VEHICLE.VIN=VEHICLE_OPTIONAL_UPGRADE.VIN) " +
+            query += " FROM (((((((((((VEHICLE JOIN VEHICLE_OPTIONAL_UPGRADE ON VEHICLE.VIN=VEHICLE_OPTIONAL_UPGRADE.VIN) " +
                     "JOIN OPTIONAL_UPGRADES ON VEHICLE_OPTIONAL_UPGRADE.NAME=OPTIONAL_UPGRADES.OPTIONAL_UPGRADE) " +
                     "JOIN WHEELS_OPTION ON VEHICLE.WHEELS_ID=WHEELS_OPTION.ID) " +
                     "JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) " +
-                    "JOIN ENGINE_OPTION ON ENGINE_OPTION.ID=MODEL.ENGINE_ID)"+
+                    "JOIN ENGINE_OPTION ON ENGINE_OPTION.ID=MODEL.ENGINE_ID) "+
+                    "JOIN MANUFACTURER ON VEHICLE.MANUFACTURER_ID=MANUFACTURER.ID)"+
                     "JOIN SALE ON VEHICLE.SALE_ID=SALE.SALE_ID) " +
                     "JOIN CUSTOMER ON SALE.CUSTOMER_ID=CUSTOMER.ID) " +
-                    "JOIN CUSTOMER_PHONE ON CUSTOMER.ID=CUSTOMER_PHONE.ID)"+
+                    "JOIN CUSTOMER_PHONE ON CUSTOMER.ID=CUSTOMER_PHONE.ID) "+
+                    "JOIN SUPPLIES ON MANUFACTURER.ID=SUPPLIES.MANUFACTURER_ID) "+
+                    "JOIN SUPPLIER ON SUPPLIES.SUPPLIER_ID=SUPPLIER.ID)"+
                     "WHERE VEHICLE.DEALER_ID=";
             query += (dealerID + " AND VEHICLE.SALE_ID!='null';");
             System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             System.out.println(query);
-            return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, isSelected[0]||showAll, isSelected[10]||showAll, isSelected[30]||showAll));
+            return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, supplier,
+                    isSelected[0]||showAll, isSelected[10]||showAll,
+                    isSelected[32]||showAll, isSelected[23]||showAll));
 
         } catch (SQLException e) {
             e.printStackTrace();

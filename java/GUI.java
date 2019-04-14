@@ -1003,11 +1003,12 @@ public class GUI{
                 new JCheckBox("Total Cost"), new JCheckBox("Wheel Diameter"),
                 new JCheckBox("Wheel Name"),new JCheckBox("Wheel Style"),new JCheckBox("Wheel Runflat"),
                 new JCheckBox("Drivetrain"),new JCheckBox("Transmission"), new JCheckBox("Engine Name"),
-                new JCheckBox("Num Liters"), new JCheckBox("Num Cylinders"), new JCheckBox("Sale Day"),
-                new JCheckBox("Sale Month"), new JCheckBox("Sale Year"), new JCheckBox("Customer Name"),
-                new JCheckBox("Customer Street"), new JCheckBox("Customer County"),
-                new JCheckBox("Customer State"), new JCheckBox("Customer ZIP"),
-                new JCheckBox("Customer Phone Numbers")};
+                new JCheckBox("Num Liters"), new JCheckBox("Num Cylinders"),
+                new JCheckBox("Manufacturer Name"), new JCheckBox("Supplier Name"),
+                new JCheckBox("Sale Day"), new JCheckBox("Sale Month"), new JCheckBox("Sale Year"),
+                new JCheckBox("Customer Name"), new JCheckBox("Customer Street"),
+                new JCheckBox("Customer County"), new JCheckBox("Customer State"),
+                new JCheckBox("Customer ZIP"), new JCheckBox("Customer Phone Numbers")};
         searchChecks.setLayout(new GridLayout(checkBoxes.length,1));
         for(JCheckBox c:checkBoxes){
             searchChecks.add(c);
