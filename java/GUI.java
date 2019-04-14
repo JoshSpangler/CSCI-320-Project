@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
 import java.sql.Connection;
 import java.util.*;
 import java.util.List;
@@ -863,7 +864,17 @@ public class GUI{
         JPanel locatorPanel = new JPanel(new GridBagLayout());
 
         JLabel whoHasCarLabel = new JLabel();
+        Font f = whoHasCarLabel.getFont();
+        whoHasCarLabel.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        Map attributes = f.getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        whoHasCarLabel.setFont(f.deriveFont(attributes));
+
         locatorPanel.add(whoHasCarLabel, constraints);
+        constraints.gridy++;
+
+        //Blank Line between label and start of data
+        locatorPanel.add(new JLabel(" "), constraints);
         constraints.gridy++;
 
         // Gets the car information from the database and puts it into the buttons
@@ -880,7 +891,7 @@ public class GUI{
                     dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery);
             if (carData.length != 0) {
                 whoHasCarLabel.setText(
-                        "Your dealership does not has the requested car! Here are dealerships that do:");
+                        "Your dealership does not have the requested car! Here are dealerships that do:");
                 int row = 0;
                 String currentDealer;
                 while (row < carData.length) {
@@ -891,6 +902,8 @@ public class GUI{
                             " County: " + carData[row][3] +
                             " State: " + carData[row][4] +
                             " ZIP: " + carData[row][5]);
+                    Font f2 = dealerLocationLabel.getFont();
+                    dealerLocationLabel.setFont(f2.deriveFont(f2.getStyle() | Font.BOLD));
                     locatorPanel.add(dealerLocationLabel, constraints);
                     constraints.gridy++;
 
