@@ -40,8 +40,8 @@ public class GetData {
         ArrayList<String> attribute=new ArrayList<>();
         for(String line:contents){
             if((!brand.equals(SELECT_ALL) && !line.contains(brand+",")) || (!model.equals(SELECT_ALL) &&
-                    !line.contains(model+",")) || (!series.equals(SELECT_ALL) && !line.contains(series+",")) ||
-                    (!design.equals(SELECT_ALL) && !line.contains(design+","))){
+                    !line.contains(model)) || (!series.equals(SELECT_ALL) && !line.contains(series)) ||
+                    (!design.equals(SELECT_ALL) && !line.contains(design))){
                 continue;
             }
             String[] parsedLine=line.split(",")[index].split("/");
