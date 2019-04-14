@@ -1012,7 +1012,7 @@ public class GUI{
                 new JCheckBox("Customer Name"), new JCheckBox("Customer Street"),
                 new JCheckBox("Customer County"), new JCheckBox("Customer State"),
                 new JCheckBox("Customer ZIP"), new JCheckBox("Customer Phone Numbers")};
-        searchChecks.setLayout(new GridLayout(checkBoxes.length,1));
+        searchChecks.setLayout(new GridLayout(checkBoxes.length/2,2));
         for(JCheckBox c:checkBoxes){
             searchChecks.add(c);
         }
