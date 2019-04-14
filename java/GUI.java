@@ -644,16 +644,16 @@ public class GUI{
                 dboSeries, dboDesign,"Design", 4, true));
         requiredOptions.add(designOption);
 
-        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, SELECT_ALL, SELECT_ALL,
-                SELECT_ALL, SELECT_ALL, "Color", 9, true));
+        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign, "Color", 9, true));
         requiredOptions.add(colorOption);
 
-        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents, SELECT_ALL, SELECT_ALL,
-                SELECT_ALL, SELECT_ALL));
+        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign));
         requiredOptions.add(wheelOption);
 
-        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, SELECT_ALL, SELECT_ALL,
-                SELECT_ALL, SELECT_ALL, "Upholstery",8, true));
+        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
+                dboSeries, dboDesign, "Upholstery",8, true));
         requiredOptions.add(upholsteryOption);
 
         //Sets the selected item
