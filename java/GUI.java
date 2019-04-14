@@ -1062,7 +1062,7 @@ public class GUI{
             JScrollPane scrollPane = new JScrollPane(table,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-            scrollPane.setPreferredSize(new Dimension(800, 500));
+            scrollPane.setPreferredSize(new Dimension(600, 400));
 
             resultsPanel.removeAll();
             resultsPanel.add(scrollPane);
