@@ -455,13 +455,6 @@ public class AccessDatabase {
                         query += ",";
                     }
                     query += (" " + cQuery[i]);
-                    if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                        optUpgrade = count;
-                    } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST")) {
-                        addCost = count;
-                    } else if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER")) {
-                        customerPhone = count;
-                    }
                     count++;
                 }
             }
@@ -471,13 +464,6 @@ public class AccessDatabase {
             if (count == 0) {
                 showAll=true;
                 for(int i=0; i<cQuery.length; i++){
-                    if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                        optUpgrade = count;
-                    } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST")) {
-                        addCost = count;
-                    } else if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER")) {
-                        customerPhone = count;
-                    }
                     if(i!=0){
                         query+=",";
                     }
@@ -488,33 +474,11 @@ public class AccessDatabase {
             //If there are some selected but VIN isn't selected
             else {
                 if(!isSelected[0]){
-                    for(int i=0; i<cQuery.length; i++){
-                        //Increases the needed count
-                        if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                            optUpgrade += 1;
-                        } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST") && addCost!=-1) {
-                            addCost += 1;
-                        }
-                        if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER") && customerPhone!=-1) {
-                            customerPhone += 1;
-                        }
-                    }
                     //Adds VIN temporarily
                     query=query.substring(0,6)+" VEHICLE.VIN,"+query.substring(6);
                     count++;
                 }
                 if(!isSelected[10]){
-                    for(int i=0; i<cQuery.length; i++){
-                        //Increases the needed count
-                        if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                            optUpgrade = 1;
-                        } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST") && addCost!=-1) {
-                            addCost += 1;
-                        }
-                    if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER") && customerPhone!=-1) {
-                            customerPhone += 1;
-                        }
-                    }
                     if(count>1) {
                         query = query.substring(0, query.indexOf("VEHICLE.VIN,") + "VEHICLE.VIN,".length()) + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE," + query.substring(query.indexOf("VEHICLE.VIN,") + "VEHICLE.VIN,".length());
 
@@ -526,13 +490,6 @@ public class AccessDatabase {
                     count++;
                 }
                 if(!isSelected[30]){
-                    for(int i=0; i<cQuery.length; i++){
-                        //Increases the needed count
-                        if (cQuery[i].equals("OPTIONAL_UPGRADES.COST") && addCost!=-1) {
-                            addCost += 1;
-                        }
-                    }
-                    customerPhone = 2;
                     if(count>2) {
                         query = query.substring(0, query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length()) + " CUSTOMER_PHONE.PHONE_NUMBER," + query.substring(query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length());
 
