@@ -910,11 +910,10 @@ public class GUI{
                 whoHasCarLabel.setText("No dealerships have this car available.");
             }
         }
-        locatorPanel.setPreferredSize(new Dimension(1200, 800));
         constraints.gridy = 1;
         JScrollPane locatorScroll = new JScrollPane(locatorPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        locatorScroll.setMinimumSize( locatorScroll.getPreferredSize() );
+        locatorScroll.setPreferredSize(new Dimension(1100, 800));
         body.add(locatorScroll, constraints);
         constraints.gridy++;
 
