@@ -934,8 +934,8 @@ public class GUI{
                 new JCheckBox("Color"),new JCheckBox("Design"),new JCheckBox("Upholstery"),
                 new JCheckBox("Manufactured Day"), new JCheckBox("Manufacture Month"),
                 new JCheckBox("Manufacture Year"), new JCheckBox("Base Cost"),
-                new JCheckBox("Total Cost"), new JCheckBox("Optional upgrades"),
-                new JCheckBox("Additional Cost"), new JCheckBox("Wheel Diameter"),
+                new JCheckBox("Optional upgrades"), new JCheckBox("Additional Cost"),
+                new JCheckBox("Total Cost"), new JCheckBox("Wheel Diameter"),
                 new JCheckBox("Wheel Name"),new JCheckBox("Wheel Style"),new JCheckBox("Wheel Runflat"),
                 new JCheckBox("Drivetrain"),new JCheckBox("Transmission"), new JCheckBox("Engine Name"),
                 new JCheckBox("Num Liters"), new JCheckBox("Num Cylinders"), new JCheckBox("Sale Day"),
@@ -960,7 +960,6 @@ public class GUI{
         // Buttons
         JButton show = new JButton("Show data");
         show.addActionListener(e -> {
-
             //Gets the selected checkboxes to display
             boolean[] isSelected = new boolean[checkBoxes.length];
             for(int i = 0; i < checkBoxes.length; i++){
@@ -978,9 +977,22 @@ public class GUI{
                     table.setValueAt(carData[i][j], i, j);
                 }
             }
+            //gets the header values
+            ArrayList<String> headers=new ArrayList<String>();
+            for(int i=0; i<checkBoxes.length; i++){
+                if(checkBoxes[i].isSelected()){
+                    headers.add(checkBoxes[i].getText());
+                }
+            }
+            //sets the header values
             for(int i = 0; i < table.getColumnCount(); i++){
                 table.getColumnModel().getColumn(i).setMinWidth(200);
-                table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(checkBoxes[i].getText());
+                if(headers.size()==0){
+                    table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(checkBoxes[i].getText());
+                }
+                else {
+                    table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(headers.get(i));
+                }
             }
 
             JScrollPane scrollPane = new JScrollPane(table,
