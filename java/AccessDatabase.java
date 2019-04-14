@@ -246,7 +246,6 @@ public class AccessDatabase {
             query += ";";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -265,7 +264,6 @@ public class AccessDatabase {
             query += ";";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -288,7 +286,6 @@ public class AccessDatabase {
             query += ";";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 4);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -307,7 +304,6 @@ public class AccessDatabase {
             query += ";";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -369,7 +365,6 @@ public class AccessDatabase {
             query += ";";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 10);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -425,7 +420,6 @@ public class AccessDatabase {
             query += " ORDER BY DEALER_ID;";
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return getResults(result, 16);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -436,7 +430,6 @@ public class AccessDatabase {
     public static boolean dealerInData(Connection c,String dealerID){
         try {
             String query = "SELECT COUNT(ID) FROM DEALER WHERE ID=" + dealerID + ";";
-            System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result=stmt.executeQuery(query);
             result.next();
@@ -569,10 +562,8 @@ public class AccessDatabase {
                     "JOIN SUPPLIER ON SUPPLIES.SUPPLIER_ID=SUPPLIER.ID)"+
                     "WHERE VEHICLE.DEALER_ID=";
             query += (dealerID + " AND VEHICLE.SALE_ID!='null';");
-            System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
-            System.out.println(query);
             return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, supplier,
                     isSelected[0]||showAll, isSelected[10]||showAll,
                     isSelected[32]||showAll, isSelected[23]||showAll));
@@ -610,71 +601,57 @@ public class AccessDatabase {
             //Add the brand if it is not already added
             String query="SELECT COUNT(BDNAME) FROM BODY_DESIGN_OPTION WHERE BDNAME='"+design+"';";
             Statement stmt=c.createStatement();
-            System.out.println(query);
             ResultSet result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO BODY_DESIGN_OPTION VALUES('"+design+"');";
                 stmt.execute(query);
-                System.out.println(query);
             }
             query="SELECT COUNT(DESIGN_NAME) FROM MODEL_BODY_DESIGN_OPTION WHERE MODEL_NAME='"+model+
                     "' AND DESIGN_NAME='"+design+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO MODEL_BODY_DESIGN_OPTION VALUES('"+model+"', '"+design+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             //Add the color if it is not already added
             query="SELECT COUNT(COLOR) FROM COLOR_OPTION WHERE COLOR='"+colorChoice+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO COLOR OPTION VALUES('"+colorChoice+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             query="SELECT COUNT(MODEL_NAME) FROM MODEL_COLOR_OPTION WHERE MODEL_NAME='"+model+"' AND COLOR='"+colorChoice+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO MODEL_COLOR_OPTION('"+model+"', '"+colorChoice+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             query="SELECT COUNT(NAME) FROM UPHOLSTERY_OPTION WHERE NAME='"+upholstery+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO UPHOLSTERY_OPTION WHERE MODEL_NAME='"+model+"' AND UPHOLSTERY='"+upholstery+"';";
-                System.out.println(query);
                 stmt.execute(query);
             }
             query="SELECT COUNT(MODEL_NAME) FROM MODEL_UPHOLSTERY_OPTION WHERE MODEL_NAME='"+
                     model+"' AND UPHOLSTERY='"+upholstery+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO MODEL_UPHOLSTERY OPTION VALUES('"+model+"', '"+upholstery+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             //Add the engine if it is not already added
             query="SELECT COUNT(ID) FROM ENGINE_OPTION;";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             String engineID=(int)(Math.random()*Integer.parseInt(result.getString(1)))+"";
             //Gets the manufacturer number
             query="SELECT COUNT(ID) FROM MANUFACTURER;";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             String manufacturerNumber=(int)(Math.random()*Integer.parseInt(result.getString(1)))+"";
@@ -692,19 +669,16 @@ public class AccessDatabase {
             }
             query="SELECT COUNT(MODEL_NAME) FROM MODEL WHERE MODEL_NAME='"+model+"' AND BRAND_NAME='"+brand+
                     "' AND SERIES='"+series+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             //Inserts into model if not already there
             if(result.getString(1).equals("0")) {
                 query = "INSERT INTO MODEL VALUES('" + model + "', '" + brand + "', '" + series + "', " + date[2] + ", '" + drivetrain +
                         "', 'Automatic', " + baseprice + ", " + engineID + ");";
-                System.out.println(query);
                 stmt.execute(query);
             }
             //Gets the next vin
             query = "SELECT MAX(VIN) FROM VEHICLE;";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             String vin=(Integer.parseInt(result.getString(1))+1)+"";
@@ -713,16 +687,13 @@ public class AccessDatabase {
                 String[] parsed=upgrades.get(i).split(":");
                 query="SELECT COUNT(OPTIONAL_UPGRADE) FROM OPTIONAL_UPGRADES WHERE OPTIONAL_UPGRADE='"+
                         parsed[0]+"' AND COST="+parsed[1]+";";
-                System.out.println(query);
                 result=stmt.executeQuery(query);
                 result.next();
                 if(result.getString(1).equals("0")){
                     query="INSERT INTO OPTIONAL_UPGRADES VALUES('"+parsed[0]+"', "+parsed[1]+");";
-                    System.out.println(query);
                     stmt.execute(query);
                 }
                 query="INSERT INTO VEHICLE_OPTIONAL_UPGRADE VALUES("+vin+", '"+parsed[0]+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             //Gets the total price
@@ -732,7 +703,6 @@ public class AccessDatabase {
                 price+=Integer.parseInt(parsedStr[1]);
             }
             query="SELECT COUNT(ID) FROM MANUFACTURER;";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             int manufacturerID=(int)(Math.random()*Integer.parseInt(result.getString(1)));
@@ -747,42 +717,35 @@ public class AccessDatabase {
             wheels[3]=parsedWheels[1];
             query = "SELECT COUNT(ID) FROM WHEELS_OPTION WHERE DIAMETER=" + wheels[0] + " AND NAME='" + wheels[1] + "' AND STYLE='" +
                     wheels[2] + "' AND RUNFLAT='" + wheels[3] + "';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(!result.getString(1).equals("0")) {
                 query = "SELECT ID FROM WHEELS_OPTION WHERE DIAMETER=" + wheels[0] + " AND NAME='" + wheels[1] + "' AND STYLE='" +
                         wheels[2] + "' AND RUNFLAT='" + wheels[3] + "';";
-                System.out.println(query);
                 result = stmt.executeQuery(query);
                 result.next();
                 wheelID = result.getString(1);
             }
             else {
                 query = "SELECT MAX(ID) FROM WHEELS_OPTION;";
-                System.out.println(query);
                 result = stmt.executeQuery(query);
                 result.next();
                 wheelID = (Integer.parseInt(result.getString(1)) + 1) + "";
                 //Inserts into wheels
                 query="INSERT INTO WHEELS_OPTION VALUES("+wheelID+", "+wheels[0]+", '"+wheels[1]+"', '"+wheels[2]+"', '"+wheels[3]+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             query="SELECT COUNT(WHEELS_ID) FROM MODEL_WHEELS_OPTION WHERE MODEL_NAME='"+model+"' AND WHEELS_ID='"+
                     wheelID+"';";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
                 query="INSERT INTO MODEL_WHEELS_OPTION VALUES('"+model+"', '"+wheelID+"');";
-                System.out.println(query);
                 stmt.execute(query);
             }
             query="INSERT INTO VEHICLE VALUES("+vin+", '"+model+"', "+wheelID+
                     ", '"+colorChoice+"', '"+design+"', '"+upholstery+"', "+date[0]+", "+date[1]+", "+date[2]+
                     ", "+price+", "+dealerID+", 'null', "+manufacturerID+");";
-            System.out.println(query);
             stmt.execute(query);
         }catch (SQLException e){
             e.printStackTrace();
@@ -809,26 +772,21 @@ public class AccessDatabase {
                 customerID=Integer.parseInt(result.getString(1))+1;
                 query="INSERT INTO CUSTOMER VALUES("+customerID+", '"+firstname+" "+lastName+"', '"+
                         street+"', '"+county+"', '"+state+"', '"+zip+"');";
-                System.out.println(query);
                 stmt.execute(query);
                 query="INSERT INTO PERSON VALUES("+customerID+", '"+gender+"', "+Integer.parseInt(annualIncome)+");";
-                System.out.println(query);
                 stmt.execute(query);
             }
             else{
                 customerID=Integer.parseInt(results[0][0]);
             }
             query="SELECT MAX(SALE_ID) FROM SALE;";
-            System.out.println(query);
             result=stmt.executeQuery(query);
             result.next();
             int sale_id=Integer.parseInt(result.getString(1))+1;
             int[] date=getDate();
             query="INSERT INTO SALE VALUES("+sale_id+", "+customerID+", "+date[0]+", "+date[1]+", "+date[2]+");";
-            System.out.println(query);
             stmt.execute(query);
             query="UPDATE VEHICLE SET SALE_ID="+sale_id+" WHERE VIN="+Integer.parseInt(VIN)+";";
-            System.out.println(query);
             stmt.executeUpdate(query);
         } catch(SQLException e){
             e.printStackTrace();
@@ -848,7 +806,6 @@ public class AccessDatabase {
                     "' AND WHEELS_OPTION.STYLE='" + carData[8] +
                     "' AND WHEELS_OPTION.RUNFLAT='" + carData[9] +
                     "';";
-            System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             result.next();

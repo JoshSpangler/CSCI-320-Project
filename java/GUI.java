@@ -294,7 +294,6 @@ public class GUI{
             if(series2.equals("Series")){
                 series2 = SELECT_ALL;
             }
-            System.out.println(series2);
             dboSeries = series2;
             //refreshes the pane
             if(accessor.toLowerCase().equals("dealer")) {
@@ -400,7 +399,6 @@ public class GUI{
             if(color.equals("Colors")){
                 color = SELECT_ALL;
             }
-            System.out.println(color);
             dboColor = color;
             //refreshes the pane
             refreshInventory(accessor);

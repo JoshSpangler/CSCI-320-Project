@@ -39,7 +39,6 @@ public class GetData {
                                         String attrib, int index, boolean sort){
         ArrayList<String> attribute=new ArrayList<>();
         for(String line:contents){
-            System.out.println(line);
             if((!brand.equals(SELECT_ALL) && !line.contains(brand+",")) || (!model.equals(SELECT_ALL) &&
                     !line.contains(model+",")) || (!series.equals(SELECT_ALL) && !line.contains(series+",")) ||
                     (!design.equals(SELECT_ALL) && !line.contains(design+","))){
@@ -67,7 +66,6 @@ public class GetData {
                 }
             }
         }
-        //System.out.println(attribute);
         return attribute.toArray(String[]::new);
     }
 
