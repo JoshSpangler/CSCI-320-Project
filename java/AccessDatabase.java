@@ -338,7 +338,7 @@ public class AccessDatabase {
         return null;
     }
 
-    public static String[][] getUnsoldCarsAllDealer(Connection c, String model, String color,
+    public static String[][] getUnsoldCarsAllDealer(Connection c, String series, String model, String color,
                                            String wheelDiameter, String wheelName, String wheelStyle, String wheelRF,
                                            String upholstry) {
         try {
@@ -365,6 +365,9 @@ public class AccessDatabase {
                             "ON VEHICLE.WHEELS_ID=WHEELS_OPTION.WHEELS_ID) " +
                             "JOIN MODEL ON VEHICLE.MODEL=MODEL.MODEL_NAME) " +
                             "WHERE SALE_ID='null'";
+            if(!series.equals("*")){
+                query+=(" AND SERIES='"+series+"'");
+            }
             if (!model.equals("*")) {
                 query += (" AND MODEL='" + model + "'");
             }

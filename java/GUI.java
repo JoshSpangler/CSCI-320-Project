@@ -876,20 +876,46 @@ public class GUI{
             locatorPanel.add(getCarTableFromData(carData, CAR_HEADERS), constraints);
         }
         else {
-            carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboModel, dboColor, dboWheelDiameter,
+            carData = AccessDatabase.getUnsoldCarsAllDealer(connection, dboSeries, dboModel, dboColor, dboWheelDiameter,
                     dboWheelName,dboWheelStyle,dboWheelRF, dboUpholstery);
             if (carData.length != 0) {
                 whoHasCarLabel.setText(
                         "Your dealership does not has the requested car! Here are dealerships that do:");
+                int row = 0;
+                String currentDealer;
+                while (row < carData.length) {
+                    currentDealer = carData[row][0];
+                    JLabel dealerLocationLabel = new JLabel("ID: " + carData[row][0] +
+                            " Name: " + carData[row][1] +
+                            " Street: " + carData[row][2] +
+                            " County: " + carData[row][3] +
+                            " State: " + carData[row][4] +
+                            " ZIP: " + carData[row][5]);
+                    locatorPanel.add(dealerLocationLabel, constraints);
+                    constraints.gridy++;
 
-                locatorPanel.add(getCarTableFromData(carData, DEALER_CAR_HEADERS), constraints);
+                    List<String[]> dealerData = new ArrayList<>();
+                    while (row < carData.length && carData[row][0].equals(currentDealer)) {
+                        dealerData.add(Arrays.copyOfRange(carData[row], 6, carData[row].length));
+                        row++;
+                    }
+                    JScrollPane table = getCarTableFromData(ListTo2D(dealerData), CAR_HEADERS);
+                    table.setMinimumSize( table.getPreferredSize() );
+                    locatorPanel.add(table, constraints);
+                    constraints.gridy++;
+                }
+
             }
             else {
                 whoHasCarLabel.setText("No dealerships have this car available.");
             }
         }
+        locatorPanel.setPreferredSize(new Dimension(1200, 800));
         constraints.gridy = 1;
-        body.add(locatorPanel, constraints);
+        JScrollPane locatorScroll = new JScrollPane(locatorPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        locatorScroll.setMinimumSize( locatorScroll.getPreferredSize() );
+        body.add(locatorScroll, constraints);
         constraints.gridy++;
 
         JButton homeButton = new JButton("Home Page");
@@ -899,6 +925,15 @@ public class GUI{
         //
         body.revalidate();
         body.repaint();
+    }
+
+    private String[][] ListTo2D(List<String[]> data){
+        String[][] carData = new String[data.size()][];
+        for (int i = 0; i < data.size(); i++) {
+            String[] row = data.get(i);
+            carData[i] = row;
+        }
+        return carData;
     }
 
     private JScrollPane getCarTableFromData(String[][] carData, String[] headers) {
@@ -913,11 +948,11 @@ public class GUI{
             }
         }
         resultsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        resultsTable.setPreferredScrollableViewportSize(new Dimension(1000, 600));
+        resultsTable.setPreferredScrollableViewportSize(new Dimension(1000, 100));
 
         // Make the results able to fit on the page by adding it to a scroll pane
         return new JScrollPane(resultsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     }
 
     /**
