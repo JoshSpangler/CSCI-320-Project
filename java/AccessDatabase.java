@@ -118,7 +118,7 @@ public class AccessDatabase {
      * @return a String[][] with the carData
      */
     public static String[][] combineLikeVINs(String[][] carData, int optUpgrade, int addCost, int customerPhone,
-                                             boolean includeVin, boolean includeOptUpgrade) {
+                                             boolean includeVin, boolean includeOptUpgrade, boolean includeCustPhone) {
         ArrayList<String[]> carList = new ArrayList<String[]>();
         //loops through the carData looking for non-null values
         for (int i = 0; i < carData.length; i++) {
@@ -153,22 +153,16 @@ public class AccessDatabase {
 
                 carData[i][optUpgrade] = "{" + carData[i][optUpgrade] + "}";
             }
-            if(customerPhone!=-1){
+            if(customerPhone!=-1 && includeCustPhone){
                 carData[i][customerPhone]="{"+carData[i][customerPhone]+"}";
             }
             carList.add(carData[i]);
         }
-        if(addCost!=-1){
+        //Goes through and divides by
+        if(addCost!=-1 && customerPhone!=-1){
             for(int i=0; i<carList.size(); i++){
-                carList.get(i)[addCost]=(Integer.parseInt(carList.get(i)[addCost])/2)+"";
+                carList.get(i)[addCost] = (Integer.parseInt(carList.get(i)[addCost]) / carData[i][customerPhone].split(",").length) + "";
             }
-        }
-        for(String[] car:carList){
-            System.out.print("| ");
-            for(String s: car){
-                System.out.print(s+" | ");
-            }
-            System.out.println();
         }
         if(!includeVin) {
             for (int i = 0; i < carList.size(); i++) {
@@ -178,13 +172,30 @@ public class AccessDatabase {
                 }
                 carList.set(i, correctedCarData);
             }
+            optUpgrade--;
+            customerPhone--;
         }
         if(!includeOptUpgrade){
             for(int i=0; i<carList.size(); i++){
                 String[] correctedCarData = new String[carList.get(i).length - 1];
                 int current=0;
                 for (int j = 0; j < carList.get(i).length; j++) {
-                    if(j==0){
+                    if(j==optUpgrade){
+                        continue;
+                    }
+                    correctedCarData[current] = carList.get(i)[j];
+                    current++;
+                }
+                carList.set(i, correctedCarData);
+            }
+            customerPhone--;
+        }
+        if(!includeCustPhone){
+            for(int i=0; i<carList.size(); i++){
+                String[] correctedCarData = new String[carList.get(i).length - 1];
+                int current=0;
+                for (int j = 0; j < carList.get(i).length; j++) {
+                    if(j==customerPhone){
                         continue;
                     }
                     correctedCarData[current] = carList.get(i)[j];
@@ -444,13 +455,6 @@ public class AccessDatabase {
                         query += ",";
                     }
                     query += (" " + cQuery[i]);
-                    if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                        optUpgrade = count;
-                    } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST")) {
-                        addCost = count;
-                    } else if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER")) {
-                        customerPhone = count;
-                    }
                     count++;
                 }
             }
@@ -460,13 +464,6 @@ public class AccessDatabase {
             if (count == 0) {
                 showAll=true;
                 for(int i=0; i<cQuery.length; i++){
-                    if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                        optUpgrade = count;
-                    } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST")) {
-                        addCost = count;
-                    } else if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER")) {
-                        customerPhone = count;
-                    }
                     if(i!=0){
                         query+=",";
                     }
@@ -477,33 +474,11 @@ public class AccessDatabase {
             //If there are some selected but VIN isn't selected
             else {
                 if(!isSelected[0]){
-                    for(int i=0; i<cQuery.length; i++){
-                        //Increases the needed count
-                        if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                            optUpgrade += 1;
-                        } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST") && addCost!=-1) {
-                            addCost += 1;
-                        }
-                        if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER") && customerPhone!=-1) {
-                            customerPhone += 1;
-                        }
-                    }
                     //Adds VIN temporarily
                     query=query.substring(0,6)+" VEHICLE.VIN,"+query.substring(6);
                     count++;
                 }
                 if(!isSelected[10]){
-                    for(int i=0; i<cQuery.length; i++){
-                        //Increases the needed count
-                        if (cQuery[i].equals("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")) {
-                            optUpgrade = 1;
-                        } else if (cQuery[i].equals("OPTIONAL_UPGRADES.COST") && addCost!=-1) {
-                            addCost += 1;
-                        }
-                    if (cQuery[i].equals("CUSTOMER_PHONE.PHONE_NUMBER") && customerPhone!=-1) {
-                            customerPhone += 1;
-                        }
-                    }
                     if(count>1) {
                         query = query.substring(0, query.indexOf("VEHICLE.VIN,") + "VEHICLE.VIN,".length()) + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE," + query.substring(query.indexOf("VEHICLE.VIN,") + "VEHICLE.VIN,".length());
 
@@ -513,6 +488,31 @@ public class AccessDatabase {
 
                     }
                     count++;
+                }
+                if(!isSelected[30]){
+                    if(count>2) {
+                        query = query.substring(0, query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length()) + " CUSTOMER_PHONE.PHONE_NUMBER," + query.substring(query.indexOf(" OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,") + " OPTIONAL_UPGRADES.OPTIONAL_UPGRADE,".length());
+
+                    }
+                    else{
+                        query = query.substring(0, query.indexOf("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE") + "OPTIONAL_UPGRADES.OPTIONAL_UPGRADE".length()) + ", CUSTOMER_PHONE.PHONE_NUMBER" + query.substring(query.indexOf("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE") + "OPTIONAL_UPGRADES.OPTIONAL_UPGRADE".length());
+                    }
+                    count++;
+                }
+            }
+            String[] parsedquery=query.split(",");
+            for(String s:parsedquery){
+                System.out.println(s);
+            }
+            for(int i=0; i<parsedquery.length; i++){
+                if(parsedquery[i].contains("OPTIONAL_UPGRADES.OPTIONAL_UPGRADE")){
+                    optUpgrade=i;
+                }
+                else if(parsedquery[i].contains("CUSTOMER_PHONE.PHONE_NUMBER")){
+                    customerPhone=i;
+                }
+                else if(parsedquery[i].contains("OPTIONAL_UPGRADES.COST")){
+                    addCost=i;
                 }
             }
             query += " FROM ((((((((VEHICLE JOIN VEHICLE_OPTIONAL_UPGRADE ON VEHICLE.VIN=VEHICLE_OPTIONAL_UPGRADE.VIN) " +
@@ -529,8 +529,7 @@ public class AccessDatabase {
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             System.out.println(query);
-            System.out.println(customerPhone);
-            return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, isSelected[0]||showAll, isSelected[10]||showAll));
+            return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, isSelected[0]||showAll, isSelected[10]||showAll, isSelected[30]||showAll));
 
         } catch (SQLException e) {
             e.printStackTrace();
