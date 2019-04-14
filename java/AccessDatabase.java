@@ -627,7 +627,7 @@ public class AccessDatabase {
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_COLOR_OPTION('"+model+"', '"+colorChoice+"');";
+                query="INSERT INTO MODEL_COLOR_OPTION VALUES('"+model+"', '"+colorChoice+"');";
                 stmt.execute(query);
             }
             query="SELECT COUNT(NAME) FROM UPHOLSTERY_OPTION WHERE NAME='"+upholstery+"';";
@@ -642,7 +642,7 @@ public class AccessDatabase {
             result=stmt.executeQuery(query);
             result.next();
             if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_UPHOLSTERY OPTION VALUES('"+model+"', '"+upholstery+"');";
+                query="INSERT INTO MODEL_UPHOLSTERY_OPTION VALUES('"+model+"', '"+upholstery+"');";
                 stmt.execute(query);
             }
             //Add the engine if it is not already added
@@ -686,7 +686,7 @@ public class AccessDatabase {
             for(int i=0; i<upgrades.size(); i++){
                 String[] parsed=upgrades.get(i).split(":");
                 query="SELECT COUNT(OPTIONAL_UPGRADE) FROM OPTIONAL_UPGRADES WHERE OPTIONAL_UPGRADE='"+
-                        parsed[0]+"' AND COST="+parsed[1]+";";
+                        parsed[0]+"';";
                 result=stmt.executeQuery(query);
                 result.next();
                 if(result.getString(1).equals("0")){
