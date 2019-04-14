@@ -58,6 +58,10 @@ public class Vehicle {
           + "DEALER_ID INT,"
           + "SALE_ID VARCHAR(255),"
           + "MANUFACTURER_ID INT,"
+          + "FOREIGN KEY (MODEL, WHEELS_ID) REFERENCES model_wheels_option(MODEL_NAME, WHEELS_ID),"
+          + "FOREIGN KEY (MODEL, COLOR) REFERENCES model_color_option(MODEL_NAME, COLOR),"
+          + "FOREIGN KEY (MODEL, DESIGN) REFERENCES model_body_design_option(MODEL_NAME, DESIGN_NAME),"
+          + "FOREIGN KEY (MODEL, STYLE) REFERENCES model_upholstery_option(MODEL_NAME, UPHOLSTERY)"
           + ");";
 
       /**
