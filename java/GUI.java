@@ -857,6 +857,11 @@ public class GUI{
         inventoryPane(DEALER_LOCATOR_HEADER, "AllDealers", e -> vehicleLocatorPane());
     }
 
+    /**
+     * VehicleLocatorPane displays the results from a search in the Vehicle Locator Services. If the dealership
+     *  has cars matching the criteria, then they will be displayed. If the dealership does not have cars
+     *  matching the criteria, then it will display the dealerships that do.
+     */
     private void vehicleLocatorPane() {
         GridBagConstraints constraints = setupNewPage(VEHICLE_LOCATOR_HEADER);
         constraints.gridy = 0;
@@ -939,6 +944,12 @@ public class GUI{
         body.repaint();
     }
 
+    /**
+     * Convert a List of String arrays to a 2D array of Strings
+     *
+     * @param data The list to be converted
+     * @return the new 2D array
+     */
     private String[][] ListTo2D(List<String[]> data){
         String[][] carData = new String[data.size()][];
         for (int i = 0; i < data.size(); i++) {
@@ -948,6 +959,13 @@ public class GUI{
         return carData;
     }
 
+    /**
+     * Create a table form of the car data, including labels
+     *
+     * @param carData 2D array of car data
+     * @param headers The labels
+     * @return A JScrollPane version of the table showing the car data
+     */
     private JScrollPane getCarTableFromData(String[][] carData, String[] headers) {
         JTable resultsTable = new JTable(carData.length, (carData.length > 0) ? carData[0].length : 0);
         for (int i = 0; i < carData[0].length; i++) {
