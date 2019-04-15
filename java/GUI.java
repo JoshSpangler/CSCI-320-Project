@@ -614,13 +614,6 @@ public class GUI{
         // Initialize the page
         GridBagConstraints constraints = setupNewPage(DEALER_ORDER_HEADER);
 
-        // Get contents of the file for populating the combo boxes
-        String[] fileContents = GetData.readFile(CAR_FILE_PATH);
-        if (fileContents == null) {
-            welcomePane();
-            return;
-        }
-
         // The middle has all of the options
         JPanel carSelection = new JPanel(new GridBagLayout());
         carSelection.setBorder(BORDER);
@@ -628,32 +621,25 @@ public class GUI{
         // Left pane containing some options
         JPanel requiredOptions = new JPanel(new GridLayout(7,1));
 
-        JComboBox<String> brandOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign, "Brand", 0, true));
+        JComboBox<String> brandOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Brand"));
         requiredOptions.add(brandOption);
 
-        JComboBox<String> modelOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign,"Model", 2, true));
+        JComboBox<String> modelOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Model"));
         requiredOptions.add(modelOption);
 
-        JComboBox<String> seriesOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign,"Series",1, true));
+        JComboBox<String> seriesOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Series"));
         requiredOptions.add(seriesOption);
 
-        JComboBox<String> designOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign,"Design", 4, true));
+        JComboBox<String> designOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Design"));
         requiredOptions.add(designOption);
 
-        JComboBox<String> colorOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign, "Color", 9, true));
+        JComboBox<String> colorOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Color"));
         requiredOptions.add(colorOption);
 
-        JComboBox<String> wheelOption = new JComboBox<>(GetData.getWheels(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign));
+        JComboBox<String> wheelOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Wheels"));
         requiredOptions.add(wheelOption);
 
-        JComboBox<String> upholsteryOption = new JComboBox<>(GetData.getAttribute(fileContents, dboBrand, dboModel,
-                dboSeries, dboDesign, "Upholstery",8, true));
+        JComboBox<String> upholsteryOption = new JComboBox<>(AccessDatabase.getOrderInfo(connection, dboBrand, dboModel, dboSeries, dboDesign, "Upholstery"));
         requiredOptions.add(upholsteryOption);
 
         //Sets the selected item
@@ -731,7 +717,7 @@ public class GUI{
         });
 
         wheelOption.addActionListener(e->{
-            if(wheelOption.getSelectedItem().equals("Wheels")){
+            if(!wheelOption.getSelectedItem().equals("Wheels")){
                 dboWheel=(String)(wheelOption.getSelectedItem());
             }
             else{
@@ -753,7 +739,7 @@ public class GUI{
         constraints.gridx++;
 
         // The right has the optional upgrades
-        JScrollPane optUpgrades = getDealerUpgrades(fileContents);
+        JScrollPane optUpgrades = getDealerUpgrades();
         carSelection.add(optUpgrades, constraints);
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -799,12 +785,10 @@ public class GUI{
     /**
      * Creates a list of checkboxes for each upgrade that you might want
      *
-     * @param filecontents contents of a file
      * @return scrollpane containing the checkboxes
      */
-    private JScrollPane getDealerUpgrades(String[] filecontents){
-        String[] attributes = GetData.getAttribute(filecontents, SELECT_ALL, SELECT_ALL, SELECT_ALL, SELECT_ALL,
-                "Upgrade", 10, true);
+    private JScrollPane getDealerUpgrades(){
+        String[] attributes = AccessDatabase.getOptUpgrades(connection);
         JPanel scroll = new JPanel();
         scroll.setLayout(new GridLayout(attributes.length, 1));
 

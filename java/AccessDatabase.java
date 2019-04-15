@@ -1,8 +1,18 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class AccessDatabase {
+
+    private static final String BRAND = "Brand";
+    private static final String MODEL = "Model";
+    private static final String SERIES = "Series";
+    private static final String COLOR = "Color";
+    private static final String DESIGN = "Design";
+    private static final String WHEELS = "Wheels";
+    private static final String UPHOLSTERY="Upholstery";
+    private static final String SELECT_ALL="*";
 
     /**
      * Connects to the database
@@ -574,23 +584,112 @@ public class AccessDatabase {
         return null;
     }
 
+    public static String[] getOrderInfo(Connection c, String brand, String model, String series, String design,
+                                    String attrib){
+        try {
+            Statement stmt = c.createStatement();
+            String query="SELECT DISTINCT";
+            if(attrib.equals(BRAND)){
+                query+=" MODEL.BRAND_NAME";
+            }
+            else if(attrib.equals(MODEL)){
+                query+=" MODEL.MODEL_NAME";
+            }
+            else if(attrib.equals(SERIES)){
+                query+=" MODEL.SERIES";
+            }
+            else if(attrib.equals(DESIGN)){
+                query+=" MODEL_BODY_DESIGN_OPTION.DESIGN_NAME";
+            }
+            else if(attrib.equals(COLOR)){
+                query+=" MODEL_COLOR_OPTION.COLOR";
+            }
+            else if(attrib.equals(WHEELS)){
+                query+=" WHEELS_OPTION.DIAMETER, WHEELS_OPTION.NAME, WHEELS_OPTION.STYLE, WHEELS_OPTION.RUNFLAT";
+            }
+            else if(attrib.equals(UPHOLSTERY)){
+                query+=" MODEL_UPHOLSTERY_OPTION.UPHOLSTERY";
+            }
+            query+=" FROM (((((MODEL JOIN MODEL_BODY_DESIGN_OPTION ON " +
+                    "MODEL.MODEL_NAME=MODEL_BODY_DESIGN_OPTION.MODEL_NAME) JOIN MODEL_COLOR_OPTION ON " +
+                    "MODEL_COLOR_OPTION.MODEL_NAME=MODEL.MODEL_NAME)JOIN MODEL_UPHOLSTERY_OPTION ON " +
+                    "MODEL.MODEL_NAME=MODEL_UPHOLSTERY_OPTION.MODEL_NAME) JOIN MODEL_WHEELS_OPTION ON " +
+                    "MODEL.MODEL_NAME=MODEL_WHEELS_OPTION.MODEL_NAME) JOIN WHEELS_OPTION ON " +
+                    "MODEL_WHEELS_OPTION.WHEELS_ID=WHEELS_OPTION.ID)";
+            int num=0;
+            if(!brand.equals(SELECT_ALL)){
+                query+=" WHERE MODEL.BRAND_NAME='"+brand+"'";
+                num++;
+            }
+            if(!series.equals(SELECT_ALL)){
+                if(num==0){
+                    query+=" WHERE";
+                }
+                else{
+                    query+=" AND";
+                }
+                query+=" MODEL.SERIES='"+series+"'";
+                num++;
+            }
+            if(!model.equals(SELECT_ALL)){
+                if(num==0){
+                    query+=" WHERE";
+                }
+                else{
+                    query+=" AND";
+                }
+                query+=" MODEL.MODEL_NAME='"+model+"'";
+                num++;
+            }
+            if(!design.equals(SELECT_ALL)){
+                if(num==0){
+                    query+=" WHERE";
+                }
+                else{
+                    query+=" AND";
+                }
+                query+=" MODEL_BODY_DESIGN_OPTION.DESIGN_NAME='"+design+"'";
+            }
+            query+=";";
+            ResultSet result=stmt.executeQuery(query);
+            ArrayList<String> attribute=new ArrayList<String>();
+            while(result.next()){
+                if(attrib.equals(WHEELS)){
+                    String indWheel=result.getString(1)+","+result.getString(2)+","+
+                            result.getString(3)+","+result.getString(4);
+                    attribute.add(indWheel);
+                }
+                else{
+                    attribute.add(result.getString(1));
+                }
+            }
+            Collections.sort(attribute);
+            attribute.add(0, attrib);
+            return attribute.toArray(String[]::new);
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String[] getOptUpgrades(Connection c){
+        try {
+            Statement stmt = c.createStatement();
+            String query="SELECT * FROM OPTIONAL_UPGRADES;";
+            ResultSet result=stmt.executeQuery(query);
+            ArrayList<String> upgrades=new ArrayList<String>();
+            while(result.next()){
+                upgrades.add(result.getString(1)+":"+result.getString(2));
+            }
+            return upgrades.toArray(String[]::new);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * Inserts a new vehicle into the dealer's database
-     *
-     * Alters:
-     * BODY_DESIGN_OPTION
-     * COLOR_OPTION
-     * MODEL
-     * WHEELS_OPTION
-     * VEHICLE
-     * MODEL_BODY_DESIGN_OPTION
-     * MODEL_COLOR_OPTION
-     * MODEL_UPHOLSTERY_OPTION
-     * MODEL_WHEELS_OPTION
-     * OPTIONAL_UPGRADES
-     * UPHOLSTERY_OPTION
-     * VEHICLE_OPTIONAL_UPGRADE
-     * WHEELS_OPTION
      */
     public static void buyCar(Connection c, String dealerID, String brand, String series, String model, String colorChoice, String wheelChoice,
                               String upholstery, String design, int baseprice,ArrayList<String> upgrades){
@@ -598,105 +697,13 @@ public class AccessDatabase {
         try {
             //Gets the date
             int[] date=getDate();
-            //Add the brand if it is not already added
-            String query="SELECT COUNT(BDNAME) FROM BODY_DESIGN_OPTION WHERE BDNAME='"+design+"';";
+            String query;
             Statement stmt=c.createStatement();
-            ResultSet result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO BODY_DESIGN_OPTION VALUES('"+design+"');";
-                stmt.execute(query);
-            }
-            query="SELECT COUNT(DESIGN_NAME) FROM MODEL_BODY_DESIGN_OPTION WHERE MODEL_NAME='"+model+
-                    "' AND DESIGN_NAME='"+design+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_BODY_DESIGN_OPTION VALUES('"+model+"', '"+design+"');";
-                stmt.execute(query);
-            }
-            //Add the color if it is not already added
-            query="SELECT COUNT(COLOR) FROM COLOR_OPTION WHERE COLOR='"+colorChoice+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO COLOR OPTION VALUES('"+colorChoice+"');";
-                stmt.execute(query);
-            }
-            query="SELECT COUNT(MODEL_NAME) FROM MODEL_COLOR_OPTION WHERE MODEL_NAME='"+model+"' AND COLOR='"+colorChoice+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_COLOR_OPTION VALUES('"+model+"', '"+colorChoice+"');";
-                stmt.execute(query);
-            }
-            query="SELECT COUNT(NAME) FROM UPHOLSTERY_OPTION WHERE NAME='"+upholstery+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO UPHOLSTERY_OPTION WHERE MODEL_NAME='"+model+"' AND UPHOLSTERY='"+upholstery+"';";
-                stmt.execute(query);
-            }
-            query="SELECT COUNT(MODEL_NAME) FROM MODEL_UPHOLSTERY_OPTION WHERE MODEL_NAME='"+
-                    model+"' AND UPHOLSTERY='"+upholstery+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_UPHOLSTERY_OPTION VALUES('"+model+"', '"+upholstery+"');";
-                stmt.execute(query);
-            }
-            //Add the engine if it is not already added
-            query="SELECT COUNT(ID) FROM ENGINE_OPTION;";
-            result=stmt.executeQuery(query);
-            result.next();
-            String engineID=(int)(Math.random()*Integer.parseInt(result.getString(1)))+"";
-            //Gets the manufacturer number
-            query="SELECT COUNT(ID) FROM MANUFACTURER;";
-            result=stmt.executeQuery(query);
-            result.next();
-            String manufacturerNumber=(int)(Math.random()*Integer.parseInt(result.getString(1)))+"";
-            //Sets the drivetrain randomly
-            String drivetrain;
-            int rand=(int)(Math.random()*3);
-            if(rand==0){
-                drivetrain="AWD";
-            }
-            else if(rand==1){
-                drivetrain="FWD";
-            }
-            else{
-                drivetrain="RWD";
-            }
-            query="SELECT COUNT(MODEL_NAME) FROM MODEL WHERE MODEL_NAME='"+model+"' AND BRAND_NAME='"+brand+
-                    "' AND SERIES='"+series+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            //Inserts into model if not already there
-            if(result.getString(1).equals("0")) {
-                query = "INSERT INTO MODEL VALUES('" + model + "', '" + brand + "', '" + series + "', " + date[2] + ", '" + drivetrain +
-                        "', 'Automatic', " + baseprice + ", " + engineID + ");";
-                stmt.execute(query);
-            }
             //Gets the next vin
             query = "SELECT MAX(VIN) FROM VEHICLE;";
-            result=stmt.executeQuery(query);
+            ResultSet result=stmt.executeQuery(query);
             result.next();
             String vin=(Integer.parseInt(result.getString(1))+1)+"";
-            //Adds the Optional_Upgrades
-            for(int i=0; i<upgrades.size(); i++){
-                String[] parsed=upgrades.get(i).split(":");
-                query="SELECT COUNT(OPTIONAL_UPGRADE) FROM OPTIONAL_UPGRADES WHERE OPTIONAL_UPGRADE='"+
-                        parsed[0]+"';";
-                result=stmt.executeQuery(query);
-                result.next();
-                if(result.getString(1).equals("0")){
-                    query="INSERT INTO OPTIONAL_UPGRADES VALUES('"+parsed[0]+"', "+parsed[1]+");";
-                    stmt.execute(query);
-                }
-                query="INSERT INTO VEHICLE_OPTIONAL_UPGRADE VALUES("+vin+", '"+parsed[0]+"');";
-                stmt.execute(query);
-            }
-            //Gets the total price
             int price=baseprice;
             for(int i=0; i<upgrades.size(); i++){
                 String[] parsedStr=upgrades.get(i).split(":");
@@ -707,40 +714,14 @@ public class AccessDatabase {
             result.next();
             int manufacturerID=(int)(Math.random()*Integer.parseInt(result.getString(1)));
             String wheelID;
-            String[] wheels=new String[4];
-            String[] parsedWheels=wheelChoice.split("\" ");
-            wheels[0]=parsedWheels[0];
-            parsedWheels=parsedWheels[1].split(" - ");
-            wheels[1]=parsedWheels[0];
-            parsedWheels=parsedWheels[1].split(" with ");
-            wheels[2]=parsedWheels[0];
-            wheels[3]=parsedWheels[1];
-            query = "SELECT COUNT(ID) FROM WHEELS_OPTION WHERE DIAMETER=" + wheels[0] + " AND NAME='" + wheels[1] + "' AND STYLE='" +
+            String[] wheels=wheelChoice.split(",");
+            query = "SELECT ID FROM WHEELS_OPTION WHERE DIAMETER=" + wheels[0] + " AND NAME='" + wheels[1] + "' AND STYLE='" +
                     wheels[2] + "' AND RUNFLAT='" + wheels[3] + "';";
-            result=stmt.executeQuery(query);
+            result = stmt.executeQuery(query);
             result.next();
-            if(!result.getString(1).equals("0")) {
-                query = "SELECT ID FROM WHEELS_OPTION WHERE DIAMETER=" + wheels[0] + " AND NAME='" + wheels[1] + "' AND STYLE='" +
-                        wheels[2] + "' AND RUNFLAT='" + wheels[3] + "';";
-                result = stmt.executeQuery(query);
-                result.next();
-                wheelID = result.getString(1);
-            }
-            else {
-                query = "SELECT MAX(ID) FROM WHEELS_OPTION;";
-                result = stmt.executeQuery(query);
-                result.next();
-                wheelID = (Integer.parseInt(result.getString(1)) + 1) + "";
-                //Inserts into wheels
-                query="INSERT INTO WHEELS_OPTION VALUES("+wheelID+", "+wheels[0]+", '"+wheels[1]+"', '"+wheels[2]+"', '"+wheels[3]+"');";
-                stmt.execute(query);
-            }
-            query="SELECT COUNT(WHEELS_ID) FROM MODEL_WHEELS_OPTION WHERE MODEL_NAME='"+model+"' AND WHEELS_ID='"+
-                    wheelID+"';";
-            result=stmt.executeQuery(query);
-            result.next();
-            if(result.getString(1).equals("0")){
-                query="INSERT INTO MODEL_WHEELS_OPTION VALUES('"+model+"', '"+wheelID+"');";
+            wheelID = result.getString(1);
+            for(int i=0; i<upgrades.size(); i++){
+                query="INSERT INTO VEHICLE_OPTIONAL_UPGRADE VALUES("+vin+", '"+upgrades.get(i)+"');";
                 stmt.execute(query);
             }
             query="INSERT INTO VEHICLE VALUES("+vin+", '"+model+"', "+wheelID+
