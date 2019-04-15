@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Handles the entire GUI...
  *
- * @author Tim Johnson and Samuel Adams
+ * @author Chris Murphy, Tim Johnson and Samuel Adams
  */
 public class GUI{
 
@@ -24,9 +24,6 @@ public class GUI{
     private static final String SELECT_ALL = "*";
 
     private static final String[] CAR_HEADERS = {"Series", "Model", "Color", "Design", "Upholstery", "Price",
-            "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
-    private static final String[] DEALER_CAR_HEADERS = {"Dealer ID", "Name", "Street", "County", "State", "ZIP",
-            "Series", "Model", "Color", "Design", "Upholstery", "Price",
             "Wheel Diameter", "Wheel Name", "Wheel Style", "Wheel Runflat"};
 
     private static final String WELCOME_PAGE_HEADER =

@@ -3,6 +3,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * Handels queries to the database.
+ *
+ * @author Chris Murphy
+ */
+
 public class AccessDatabase {
 
     private static final String BRAND = "Brand";
@@ -79,43 +85,43 @@ public class AccessDatabase {
         String monthString=date.toString().split(" ")[1];
         //Sets the month int
         if(monthString.equals("Jan")){
-            d[0]=1;
+            d[1]=1;
         }
         else if(monthString.equals("Feb")){
-            d[0]=2;
+            d[1]=2;
         }
         else if(monthString.equals("Mar")){
-            d[0]=3;
+            d[1]=3;
         }
         else if(monthString.equals("Apr")){
-            d[0]=4;
+            d[1]=4;
         }
         else if(monthString.equals("May")){
-            d[0]=5;
+            d[1]=5;
         }
         else if(monthString.equals("Jun")){
-            d[0]=6;
+            d[1]=6;
         }
         else if(monthString.equals("Jul")){
-            d[0]=7;
+            d[1]=7;
         }
         else if(monthString.equals("Aug")){
-            d[0]=8;
+            d[1]=8;
         }
         else if(monthString.equals("Sep")){
-            d[0]=9;
+            d[1]=9;
         }
         else if(monthString.equals("Oct")){
-            d[0]=10;
+            d[1]=10;
         }
         else if(monthString.equals("Nov")){
-            d[0]=11;
+            d[1]=11;
         }
         else{
-            d[0]=12;
+            d[1]=12;
         }
         //Sets the day integer
-        d[1]=Integer.parseInt(date.toString().split(" ")[2]);
+        d[0]=Integer.parseInt(date.toString().split(" ")[2]);
         //Sets the year integer
         d[2]=Integer.parseInt(date.toString().split(" ")[5]);
         return d;
@@ -506,7 +512,7 @@ public class AccessDatabase {
             }
             //If there are some selected but VIN isn't selected
             else {
-                if(!isSelected[0]){
+                if(!isSelected[1]){
                     //Adds VIN temporarily
                     query=query.substring(0,6)+" VEHICLE.VIN,"+query.substring(6);
                     count++;
@@ -575,7 +581,7 @@ public class AccessDatabase {
             Statement stmt = c.createStatement();
             ResultSet result = stmt.executeQuery(query);
             return(combineLikeVINs(getResults(result, count), optUpgrade, addCost, customerPhone, supplier,
-                    isSelected[0]||showAll, isSelected[10]||showAll,
+                    isSelected[1]||showAll, isSelected[10]||showAll,
                     isSelected[32]||showAll, isSelected[23]||showAll));
 
         } catch (SQLException e) {
