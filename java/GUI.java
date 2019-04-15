@@ -761,14 +761,14 @@ public class GUI{
             }
             //Otherwise add the car to the database
             else {
-                AccessDatabase.buyCar(connection, dboDealerID, brandOption.getItemAt(brandOption.getSelectedIndex()),
-                        seriesOption.getItemAt(seriesOption.getSelectedIndex()),
+                AccessDatabase.buyCar(connection, dboDealerID,
                         modelOption.getItemAt(modelOption.getSelectedIndex()),
                         colorOption.getItemAt(colorOption.getSelectedIndex()),
                         wheelOption.getItemAt(wheelOption.getSelectedIndex()),
                         upholsteryOption.getItemAt(upholsteryOption.getSelectedIndex()),
                         designOption.getItemAt(designOption.getSelectedIndex()),
-                        baseprice, optUpgradeList);
+                        baseprice,
+                        optUpgradeList);
                 welcomePane();
             }
         });

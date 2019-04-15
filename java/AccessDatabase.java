@@ -699,7 +699,7 @@ public class AccessDatabase {
      * Inserts a new vehicle into the dealer's database
      */
     public static void buyCar(Connection c, String dealerID, String model, String colorChoice, String wheelChoice,
-                              String upholstery, String design, int baseprice,ArrayList<String> upgrades){
+                              String upholstery, String design, int baseprice, ArrayList<String> upgrades){
 
         try {
             //Gets the date
