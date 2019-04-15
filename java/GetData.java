@@ -2,6 +2,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Gets data from text files
+ *
+ * @author Chris Murphy
+ */
+
 public class GetData {
 
     private static final String SELECT_ALL = "*";
