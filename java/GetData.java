@@ -68,41 +68,4 @@ public class GetData {
         }
         return attribute.toArray(String[]::new);
     }
-
-
-    /**
-     * Parses the wheels into a format that can be displayed on the dropdown menu
-     * @param fileContents the file contents
-     * @return the parsed contents of the file
-     */
-    public static String[] getWheels(String[] fileContents, String brand, String model, String series, String design){
-        String[] contents=GetData.getAttribute(fileContents, brand, model, series, design,
-                "Wheels", 7, false);
-        ArrayList<String> wheelList=new ArrayList<String>();
-        wheelList.add("Wheels");
-        String currentWheel="";
-        for(int i=0; i<contents.length; i++){
-            if(contents[i].contains("style")){
-                wheelList.add(currentWheel+" -"+contents[i]);
-            }
-            else{
-                currentWheel=contents[i];
-            }
-        }
-        String[] wheels=wheelList.toArray(String[]::new);
-        for(int i=1; i<wheels.length; i++){
-            for(int j=wheels[i].length()-1; j>=0; j--){
-                if(wheels[i].charAt(j)=='"'||wheels[i].charAt(j)=='”'){
-                    if(j!=wheels[i].length()-1){
-                        wheels[i]=wheels[i].substring(0,j)+wheels[i].substring(j+1);
-                    }
-                    else{
-                        wheels[i]=wheels[i].substring(0,j);
-                    }
-                }
-            }
-            wheels[i]=wheels[i].substring(0,2)+"\""+wheels[i].substring(2);
-        }
-        return wheels;
-    }
 }

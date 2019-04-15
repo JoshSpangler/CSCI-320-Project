@@ -446,6 +446,7 @@ public class AccessDatabase {
     public static boolean dealerInData(Connection c,String dealerID){
         try {
             String query = "SELECT COUNT(ID) FROM DEALER WHERE ID=" + dealerID + ";";
+            System.out.println(query);
             Statement stmt = c.createStatement();
             ResultSet result=stmt.executeQuery(query);
             result.next();
@@ -697,7 +698,7 @@ public class AccessDatabase {
     /**
      * Inserts a new vehicle into the dealer's database
      */
-    public static void buyCar(Connection c, String dealerID, String brand, String series, String model, String colorChoice, String wheelChoice,
+    public static void buyCar(Connection c, String dealerID, String model, String colorChoice, String wheelChoice,
                               String upholstery, String design, int baseprice,ArrayList<String> upgrades){
 
         try {
