@@ -2,7 +2,7 @@
 
 ### After Downloading the ZIP (or cloning)
 1. Make sure you are using **java 11** to prevent any initial compilation and execution issues
-2. Make sure the **h2-1.4.197** is added as a **module** in the **project settings**
+2. Make sure the **h2-1.4.197.jar** is added as a **module** in the **project settings**
 
 ### To Connect to the h2 Browser Database:
 1. Make sure a .db file is present in the **database/** folder (if not, run the **Populator.java** class)
