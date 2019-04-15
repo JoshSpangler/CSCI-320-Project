@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about a ColorOption
+ * @author Josh Spangler
  */
 public class ColorOption {
 

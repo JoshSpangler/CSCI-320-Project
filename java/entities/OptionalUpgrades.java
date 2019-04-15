@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about an OptionalUpgrades entity
+ * @author Josh Spangler
  */
 public class OptionalUpgrades {
 

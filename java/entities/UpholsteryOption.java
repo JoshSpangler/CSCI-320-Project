@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about an UpholsteryOption
+ * @author Josh Spangler
  */
 public class UpholsteryOption {
 

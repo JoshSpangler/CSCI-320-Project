@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Holds data about an IndividualBuyer
+ * @author Josh Spangler
  */
 public class IndividualBuyer {
 

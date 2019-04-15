@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about a Model
+ * @author Josh Spangler
  */
 public class Model {
 

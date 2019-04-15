@@ -10,6 +10,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about a BodyDesignOption
+ * @author Josh Spangler
  */
 public class BodyDesignOption {
 

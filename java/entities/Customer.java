@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about a Customer
+ * @author Josh Spangler
  */
 public class Customer {
 

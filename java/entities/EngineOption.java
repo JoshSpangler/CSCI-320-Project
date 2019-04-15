@@ -11,6 +11,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about an EngineOption
+ * @author Josh Spangler
  */
 public class EngineOption {
 

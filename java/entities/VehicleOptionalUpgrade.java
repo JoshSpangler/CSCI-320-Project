@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about reduction-resulting class VehicleOptionalUpgrade
+ * @author Josh Spangler
  */
 public class VehicleOptionalUpgrade {
 

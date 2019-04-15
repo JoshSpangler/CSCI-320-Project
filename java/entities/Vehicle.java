@@ -9,6 +9,8 @@ import java.sql.Statement;
 
 /**
  * Holds data about a Vehicle
+ * @author Josh Spangler
+ * @author Tim Johnson
  */
 public class Vehicle {
 

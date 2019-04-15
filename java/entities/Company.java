@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 /**
  * Holds data about a Company
+ * @author Josh Spangler
  */
 public class Company {
 
