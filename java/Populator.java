@@ -4,6 +4,7 @@ import java.sql.*;
 
 /**
  * Using the various Entities classes, populates the database with the CSV data
+ * @author Josh Spangler
  */
 public class Populator {
 
